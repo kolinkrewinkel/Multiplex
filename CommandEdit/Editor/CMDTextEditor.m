@@ -46,9 +46,10 @@
 {
     self.textStorage.syntaxColoringEnabled = YES;
 
-    NSMutableAttributedString *string = [self.textStorage contents];
+    NSRange wholeRange = NSMakeRange(0, [[self.textStorage contents] length]);
+    NSMutableAttributedString *string = [[self.textStorage attributedSubstringFromRange:wholeRange] mutableCopy];
 
-    NSRange currentRange = NSMakeRange(0, string.length);
+    NSRange currentRange = wholeRange;
     while (currentRange.location < string.length)
     {
         NSColor *color = [self.textStorage colorAtCharacterIndex:currentRange.location effectiveRange:&currentRange context:0];
@@ -95,7 +96,8 @@
 - (void)layout
 {
     NSLayoutManager *layoutManager = [[self.textStorage layoutManagers] firstObject];
-    [[layoutManager.textContainers firstObject] setContainerSize:self.frame.size];
+    NSTextContainer *container = [layoutManager.textContainers firstObject];
+    [container setContainerSize:self.frame.size];
 
     [self.selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
         CMDTextRange *textRange = self.selectedRanges[idx];
@@ -103,10 +105,12 @@
 
         if (range.length == 0)
         {
-            CGPoint linePoint = [layoutManager lineFragmentRectForGlyphAtIndex:range.location effectiveRange:NULL].origin;
+            CGRect lineRect = [layoutManager lineFragmentRectForGlyphAtIndex:range.location effectiveRange:NULL];
             CGPoint intraLinePoint = [layoutManager locationForGlyphAtIndex:range.location];
 
-            view.frame = CGRectMake(linePoint.x + intraLinePoint.x, linePoint.y, 1.f, intraLinePoint.y);
+            view.frame = CGRectMake(intraLinePoint.x, CGRectGetMaxY(lineRect) - intraLinePoint.y, 1.f, intraLinePoint.y);
+            NSLog(@"Composite frame: %@", NSStringFromRect(view.frame));
+            NSLog(@"Line Point: %@\nIntraLine Point: %@", NSStringFromRect(lineRect), NSStringFromPoint(intraLinePoint));
         }
     }];
 
