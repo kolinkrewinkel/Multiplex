@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		332D428419D5146200CE1BC2 /* CMDEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428319D5146200CE1BC2 /* CMDEditorController.m */; };
+		332D428819D516BE00CE1BC2 /* CMDTextEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428719D516BE00CE1BC2 /* CMDTextEditor.m */; };
+		332D428B19D528F700CE1BC2 /* CMDTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428A19D528F700CE1BC2 /* CMDTextRange.m */; };
 		3338E1A518EF740E00C76084 /* PLYView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3338E1A418EF740E00C76084 /* PLYView.m */; };
 		3396C02419D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m */; };
 		33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */; };
@@ -20,6 +23,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		332D428219D5146200CE1BC2 /* CMDEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDEditorController.h; path = Editor/CMDEditorController.h; sourceTree = "<group>"; };
+		332D428319D5146200CE1BC2 /* CMDEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDEditorController.m; path = Editor/CMDEditorController.m; sourceTree = "<group>"; };
+		332D428619D516BE00CE1BC2 /* CMDTextEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDTextEditor.h; path = Editor/CMDTextEditor.h; sourceTree = "<group>"; };
+		332D428719D516BE00CE1BC2 /* CMDTextEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDTextEditor.m; path = Editor/CMDTextEditor.m; sourceTree = "<group>"; };
+		332D428919D528F700CE1BC2 /* CMDTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDTextRange.h; path = Editor/CMDTextRange.h; sourceTree = "<group>"; };
+		332D428A19D528F700CE1BC2 /* CMDTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDTextRange.m; path = Editor/CMDTextRange.m; sourceTree = "<group>"; };
 		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
 		3338E1A318EF740E00C76084 /* PLYView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYView.h; sourceTree = "<group>"; };
 		3338E1A418EF740E00C76084 /* PLYView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLYView.m; sourceTree = "<group>"; };
@@ -38,6 +47,7 @@
 		33E0329E19D4FBBC003A655E /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
 		33E0329F19D4FBBC003A655E /* IDEKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEKit.framework"; sourceTree = "<group>"; };
 		33E032A219D506B7003A655E /* IDESourceEditor */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDESourceEditor; path = "../../../Applications/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS/IDESourceEditor"; sourceTree = "<group>"; };
+		33E032A419D50DAD003A655E /* CommandEdit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommandEdit-Bridging-Header.h"; sourceTree = "<group>"; };
 		33E48D1E18D3F4D700FCC557 /* IDEKit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDEKit; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework/Versions/A/IDEKit; sourceTree = "<group>"; };
 		33E48D2018D3F4F600FCC557 /* IDEFoundation */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDEFoundation; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation; sourceTree = "<group>"; };
 		33E48D2218D3F50500FCC557 /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework; sourceTree = "<group>"; };
@@ -66,6 +76,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		332D428519D5146600CE1BC2 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				332D428919D528F700CE1BC2 /* CMDTextRange.h */,
+				332D428A19D528F700CE1BC2 /* CMDTextRange.m */,
+				332D428219D5146200CE1BC2 /* CMDEditorController.h */,
+				332D428319D5146200CE1BC2 /* CMDEditorController.m */,
+				332D428619D516BE00CE1BC2 /* CMDTextEditor.h */,
+				332D428719D516BE00CE1BC2 /* CMDTextEditor.m */,
+			);
+			name = Editor;
+			sourceTree = "<group>";
+		};
 		3338E1A018EF740300C76084 /* Developer Kits */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,6 +155,8 @@
 				33B3A3F218CD36BE00AA64C8 /* Supporting Files */,
 				33B3A40418CD375300AA64C8 /* Utilities */,
 				3338E1A218EF740E00C76084 /* Views */,
+				33E032A419D50DAD003A655E /* CommandEdit-Bridging-Header.h */,
+				332D428519D5146600CE1BC2 /* Editor */,
 			);
 			path = CommandEdit;
 			sourceTree = "<group>";
@@ -226,9 +251,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				332D428419D5146200CE1BC2 /* CMDEditorController.m in Sources */,
 				3338E1A518EF740E00C76084 /* PLYView.m in Sources */,
 				33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */,
 				33B3A3F918CD36BF00AA64C8 /* CommandEdit.m in Sources */,
+				332D428819D516BE00CE1BC2 /* CMDTextEditor.m in Sources */,
+				332D428B19D528F700CE1BC2 /* CMDTextRange.m in Sources */,
 				3396C02419D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,6 +348,7 @@
 		33B3A3FE18CD36BF00AA64C8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(HOME)";
@@ -332,6 +361,7 @@
 				GCC_PREFIX_HEADER = "CommandEdit/CommandEdit-Prefix.pch";
 				INFOPLIST_FILE = "CommandEdit/CommandEdit-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
@@ -339,6 +369,8 @@
 					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
 				PRODUCT_NAME = CommandEdit;
+				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = xcplugin;
 			};
 			name = Debug;
@@ -346,6 +378,7 @@
 		33B3A3FF18CD36BF00AA64C8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(HOME)";
@@ -358,6 +391,7 @@
 				GCC_PREFIX_HEADER = "CommandEdit/CommandEdit-Prefix.pch";
 				INFOPLIST_FILE = "CommandEdit/CommandEdit-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
@@ -365,6 +399,7 @@
 					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
 				PRODUCT_NAME = CommandEdit;
+				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
 				WRAPPER_EXTENSION = xcplugin;
 			};
 			name = Release;

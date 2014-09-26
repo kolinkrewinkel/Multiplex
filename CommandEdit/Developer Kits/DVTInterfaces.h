@@ -854,11 +854,10 @@
 @interface IDEQuickHelpQueries : NSObject
 @end
 
-extern NSString *IDEEditorDocumentDidChangeNotification;
-
-@interface IDESourceCodeDocument <NSObject>
-- (id)knownFileReferences;
+@protocol IDEDocumentStructureProviding <NSObject>
+@property(readonly) NSArray *ideTopLevelStructureObjects;
 @end
+
 
 @interface Xcode3FileReference <NSObject>
 - (id)resolvedFilePath;
@@ -1059,6 +1058,18 @@ extern NSString *IDEEditorDocumentDidChangeNotification;
 
 #pragma mark -
 
+@protocol DVTTextStorageDelegate <NSTextStorageDelegate>
+
+@optional
+@property(readonly, nonatomic) NSDictionary *sourceLanguageServiceContext;
+- (void)sourceLanguageServiceAvailabilityNotification:(BOOL)arg1 message:(id)arg2;
+- (BOOL)textStorageShouldAllowEditing:(id)arg1;
+- (void)textStorageDidUpdateSourceLandmarks:(id)arg1;
+- (long long)nodeTypeForItem:(id)arg1 withContext:(id)arg2;
+@end
+
+
+
 @interface DVTSourceTextView : NSTextView
 
 -(void)_commonInitDVTSourceTextView;
@@ -1077,21 +1088,218 @@ extern NSString *IDEEditorDocumentDidChangeNotification;
 - (DVTSourceModel *)sourceModel;
 @end
 
+@class DVTFontAndColorTheme, DVTObservingToken, DVTSourceCodeLanguage, DVTSourceLandmarkItem, DVTSourceModel, NSDictionary, NSMutableAttributedString, NSString, NSTimer, _LazyInvalidationHelper;
+
 @interface DVTTextStorage : NSTextStorage
+{
+    NSMutableAttributedString *_contents;
+//    struct _DVTTextLineOffsetTable _lineOffsets;
+    unsigned long long _changeCapacity;
+    unsigned long long _numChanges;
+    struct _DVTTextChangeEntry *_changes;
+    DVTSourceCodeLanguage *_language;
+    NSTimer *_sourceModelUpdater;
+    DVTSourceLandmarkItem *_topSourceLandmark;
+    DVTSourceLandmarkItem *_rootImportLandmark;
+    NSTimer *_landmarksCacheTimer;
+    double _lastEditTimestamp;
+    unsigned long long _tabWidth;
+    unsigned long long _indentWidth;
+    unsigned long long _wrappedLineIndentWidth;
+    DVTObservingToken *_wrappedLinesIndentObserver;
+    double _advancementForSpace;
+    DVTFontAndColorTheme *_fontAndColorTheme;
+    struct _NSRange _rangeNeedingInvalidation;
+    struct {
+        unsigned int lineEndings:2;
+        unsigned int usesTabs:1;
+        unsigned int syntaxColoringEnabled:1;
+        unsigned int processingLazyInvalidation:1;
+        unsigned int breakChangeCoalescing:1;
+        unsigned int doingBatchEdit:1;
+        unsigned int batchEditMayContainTokens:1;
+        unsigned int batchEditMayContainLinks:1;
+        unsigned int batchEditMayContainAttachments:1;
+        unsigned int doingSubwordMovement:1;
+        unsigned int doingExpressionMovement:1;
+        unsigned int delegateRespondsToShouldAllowEditing:1;
+        unsigned int delegateRespondsToDidUpdateSourceLandmarks:1;
+        unsigned int delegateRespondsToNodeTypeForItem:1;
+        unsigned int delegateRespondsToSourceLanguageServiceContext:1;
+        unsigned int forceFixAttributes:1;
+        unsigned int languageServiceSupportsSourceModel:1;
+    } _tsflags;
+    _LazyInvalidationHelper *_lazyInvalidationHelper;
+    id<DVTSourceLanguageSourceModelService> _sourceLanguageService;
+    DVTObservingToken *_sourceLanguageServiceContextObservingToken;
+}
 
-@property DVTSourceModel* sourceModel;
-@property(readonly) id sourceModelService; // DVTSourceTextStorage
-
++ (id)keyPathsForValuesAffectingSourceLanguageServiceContext;
++ (void)initialize;
++ (BOOL)usesScreenFonts;
++ (id)_changeTrackingLogAspect;
++ (id)_sourceLandmarksLogAspect;
+@property unsigned long long wrappedLineIndentWidth; // @synthesize wrappedLineIndentWidth=_wrappedLineIndentWidth;
+@property unsigned long long indentWidth; // @synthesize indentWidth=_indentWidth;
+@property double lastEditTimestamp; // @synthesize lastEditTimestamp=_lastEditTimestamp;
+- (id)updatedLocationFromLocation:(id)arg1 toTimestamp:(double)arg2;
+- (id)compatibleLocationFromLocation:(id)arg1;
+- (id)convertLocationToNativeNSStringEncodedLocation:(id)arg1;
+- (id)convertLocationToUTF8EncodedLocation:(id)arg1;
+- (void)_restoreRecomputableState;
+- (void)_dropRecomputableState;
+- (unsigned long long)lineBreakBeforeIndex:(unsigned long long)arg1 withinRange:(struct _NSRange)arg2;
+- (id)_ancestorItemForTokenizableItem:(id)arg1;
+- (long long)nodeTypeForTokenizableItem:(id)arg1;
+- (double)indentationForWrappedLineAtIndex:(unsigned long long)arg1;
+- (unsigned long long)leadingWhitespacePositionsForLine:(unsigned long long)arg1;
+- (long long)syntaxTypeForItem:(id)arg1 context:(id)arg2;
+- (id)colorAtCharacterIndex:(unsigned long long)arg1 effectiveRange:(struct _NSRange *)arg2 context:(id)arg3;
+- (long long)nodeTypeAtCharacterIndex:(unsigned long long)arg1 effectiveRange:(struct _NSRange *)arg2 context:(id)arg3;
+- (void)_themeColorsChanged:(id)arg1;
+@property(retain) DVTFontAndColorTheme *fontAndColorTheme;
+@property(getter=isSyntaxColoringEnabled) BOOL syntaxColoringEnabled;
+- (id)stringBySwappingRange:(struct _NSRange)arg1 withAdjacentRange:(struct _NSRange)arg2;
+- (struct _NSRange)functionOrMethodBodyRangeAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)functionRangeAtIndex:(unsigned long long)arg1 isDefinitionOrCall:(char *)arg2;
+- (struct _NSRange)methodDefinitionRangeAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)methodCallRangeAtIndex:(unsigned long long)arg1;
+- (id)importStatementStringAtCharacterIndex:(unsigned long long)arg1;
+- (id)importStatementStringAtCharacterIndex:(unsigned long long)arg1 isModule:(char *)arg2;
+- (id)symbolNameAtCharacterIndex:(unsigned long long)arg1 nameRanges:(id *)arg2;
+- (unsigned long long)nextExpressionFromIndex:(unsigned long long)arg1 forward:(BOOL)arg2;
+@property(getter=isExpressionMovement) BOOL expressionMovement;
+- (unsigned long long)dvt_nextWordFromIndex:(unsigned long long)arg1 forward:(BOOL)arg2;
+- (unsigned long long)nextWordFromIndex:(unsigned long long)arg1 forward:(BOOL)arg2;
+@property(getter=isSubwordMovement) BOOL subwordMovement;
+- (struct _NSRange)doubleClickAtIndex:(unsigned long long)arg1 inRange:(struct _NSRange)arg2;
+- (struct _NSRange)rangeOfWordAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)rangeOfWordAtIndex:(unsigned long long)arg1 allowNonWords:(BOOL)arg2;
+- (id)sourceLandmarkAtCharacterIndex:(unsigned long long)arg1;
+- (id)_sourceLandmarkAtCharacterIndex:(unsigned long long)arg1 inLandmarkItems:(id)arg2;
+- (id)importLandmarkItems;
+@property(readonly) DVTSourceLandmarkItem *topSourceLandmark;
+@property(readonly) BOOL hasPendingSourceLandmarkInvalidation;
+- (void)_invalidateSourceLandmarks:(id)arg1;
+- (void)invalidateAllLandmarks;
+- (id)stringForItem:(id)arg1;
+@property(readonly) DVTSourceModel *sourceModelWithoutParsing;
+@property(readonly) DVTSourceModel *sourceModel;
+@property(readonly) id<DVTSourceLanguageSourceModelService> sourceModelService;
+@property(readonly, nonatomic) NSDictionary *sourceLanguageServiceContext;
+//@property(readonly) DVTSourceLanguageService<DVTSourceLanguageSyntaxTypeService> *languageService;
+@property(copy) DVTSourceCodeLanguage *language;
+- (void)didReplaceCharactersInRange:(struct _NSRange)arg1 withString:(id)arg2 changeInLength:(long long)arg3 replacedString:(id)arg4;
+- (void)willReplaceCharactersInRange:(struct _NSRange)arg1 withString:(id)arg2 changeInLength:(long long)arg3;
+- (void)_dumpChangeHistory;
+- (struct _NSRange)lineRangeForLineRange:(struct _NSRange)arg1 fromTimestamp:(double)arg2 toTimestamp:(double)arg3;
+- (struct _NSRange)characterRangeForCharacterRange:(struct _NSRange)arg1 fromTimestamp:(double)arg2 toTimestamp:(double)arg3;
+- (id)_debugInfoForChangeIndex:(unsigned long long)arg1 toChangeIndex:(unsigned long long)arg2;
+- (unsigned long long)changeIndexForTimestamp:(double)arg1;
+- (struct _NSRange)lineRangeForLineRange:(struct _NSRange)arg1 fromChangeIndex:(unsigned long long)arg2 toChangeIndex:(unsigned long long)arg3;
+- (struct _NSRange)characterRangeForCharacterRange:(struct _NSRange)arg1 fromChangeIndex:(unsigned long long)arg2 toChangeIndex:(unsigned long long)arg3;
+- (void)breakChangeTrackingCoalescing;
+- (void)clearChangeHistory;
 @property(readonly) unsigned long long currentChangeIndex;
-
--(NSColor*)colorAtCharacterIndex:(unsigned long long)charIndex effectiveRange:(NSRangePointer)range context:(id)context;
--(void)fixSyntaxColoringInRange:(NSRange)range;
--(short)nodeTypeAtCharacterIndex:(unsigned long long)charIndex effectiveRange:(NSRangePointer)range context:(id)context;
-// FIXME: Workaround for NSObject+YOLO buggyness
--(NSColor*)yl_colorAtCharacterIndex:(unsigned long long)charIndex effectiveRange:(NSRangePointer)range context:(id)context;
-- (id<DVTSourceLanguageSourceModelService>)sourceModelItemAtCharacterIndex:(unsigned long long)arg1; //DVTSourceTextStorage in Xcode 5, DVTSourceLanguageSourceModelService protocol in Xcode 5.1
+- (id)_debugInfoString;
+@property(readonly) unsigned long long numberOfLines;
+- (struct _NSRange)currentWordAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)lineRangeForCharacterRange:(struct _NSRange)arg1;
+- (struct _NSRange)characterRangeForLineRange:(struct _NSRange)arg1;
+- (struct _NSRange)characterRangeFromDocumentLocation:(id)arg1;
+- (void)_dumpLineOffsetsTable;
+- (id)_debugStringFromUnsignedIntegers:(const unsigned long long *)arg1 count:(unsigned long long)arg2;
+- (void)serviceAvailabilityNotification:(BOOL)arg1 message:(id)arg2;
+- (void)scheduleLazyInvalidationForRange:(struct _NSRange)arg1;
+- (void)_updateLazyInvalidationForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2;
+- (void)_processLazyInvalidation;
+- (void)_invalidateCallback:(id)arg1;
+@property BOOL processingLazyInvalidation;
+- (void)invalidateLayoutForLineRange:(struct _NSRange)arg1;
+- (void)delayedInvalidateDisplayForLineRange:(struct _NSRange)arg1;
+- (void)invalidateDisplayForLineRange:(struct _NSRange)arg1;
+- (void)invalidateDisplayInRange:(struct _NSRange)arg1;
+- (void)updateAttributesInRange:(struct _NSRange)arg1;
+- (void)fixAttributesInRange:(struct _NSRange)arg1;
+- (void)fixSyntaxColoringInRange:(struct _NSRange)arg1;
+- (void)fixAttachmentAttributeInRange:(struct _NSRange)arg1;
+@property id <DVTTextStorageDelegate> delegate;
+- (id)_associatedTextViews;
+- (void)replaceCharactersInRange:(struct _NSRange)arg1 withAttributedString:(id)arg2 withUndoManager:(id)arg3;
+- (void)replaceCharactersInRange:(struct _NSRange)arg1 withString:(id)arg2 withUndoManager:(id)arg3;
+- (void)addLayoutManager:(id)arg1;
+- (void)invalidateAttributesInRange:(struct _NSRange)arg1;
+- (BOOL)fixesAttributesLazily;
+- (BOOL)_forceFixAttributes;
+- (void)_setForceFixAttributes:(BOOL)arg1;
+- (void)processEditing;
+- (void)endEditing;
+- (void)beginEditing;
+- (void)replaceCharactersInRange:(struct _NSRange)arg1 withAttributedString:(id)arg2;
+- (void)removeAttribute:(id)arg1 range:(struct _NSRange)arg2;
+- (void)addAttributes:(id)arg1 range:(struct _NSRange)arg2;
+- (void)addAttribute:(id)arg1 value:(id)arg2 range:(struct _NSRange)arg3;
+- (void)setAttributes:(id)arg1 range:(struct _NSRange)arg2;
+- (void)replaceCharactersInRange:(struct _NSRange)arg1 withString:(id)arg2;
+- (BOOL)isDoingBatchEdit;
+- (void)doingBatchEdit:(BOOL)arg1;
+- (void)doingBatchEdit:(BOOL)arg1 notifyModel:(BOOL)arg2;
+@property BOOL batchEditMayContainAttachments;
+@property BOOL batchEditMayContainLinks;
+@property BOOL batchEditMayContainTokens;
+- (void)resetAdvancementForSpace;
+@property(readonly) double advancementForTab;
+@property(readonly) double advancementForSpace;
+@property BOOL usesTabs;
+@property(nonatomic) unsigned long long tabWidth;
+@property(readonly) BOOL isEditable;
+@property unsigned long long lineEndings;
+@property(readonly, copy) NSString *description;
+- (void)dealloc;
+- (id)init;
+- (id)initWithString:(id)arg1;
+- (id)initWithString:(id)arg1 attributes:(id)arg2;
+- (id)initWithAttributedString:(id)arg1;
+- (id)initWithOwnedMutableAttributedString:(id)arg1;
+- (void)_dvtTextStorageCommonInit;
+- (BOOL)_isExpressionItemLikeFunction:(id)arg1;
+- (BOOL)_isExpressionItemLikelyTarget:(id)arg1;
+- (BOOL)_isItemExpression:(id)arg1;
+- (unsigned long long)_reverseParseExpressionFromIndex:(unsigned long long)arg1 ofParent:(id)arg2;
+- (unsigned long long)_startLocationForObjCMethodCallAtLocation:(unsigned long long)arg1 withArgs:(char *)arg2;
+- (unsigned long long)locationForOpeningBracketForClosingBracket:(unsigned long long)arg1 withArgs:(char *)arg2;
+- (BOOL)isAtFirstArgumentInMethodCallAtLocation:(unsigned long long)arg1 inCall:(char *)arg2;
+- (BOOL)_isTextEmptyInBetweenItem:(id)arg1 prevItem:(id)arg2;
+- (id)_textInBetweenItem:(id)arg1 prevItem:(id)arg2;
+- (id)_parenLikeItemAtLocation:(unsigned long long)arg1;
+- (BOOL)_isItemParenExpression:(id)arg1;
+- (BOOL)_isItemBlockExpression:(id)arg1;
+- (BOOL)_isItemBracketLikeExpression:(id)arg1;
+- (BOOL)_isItemBracketExpression:(id)arg1;
+- (BOOL)indentAtBeginningOfLineForCharacterRange:(struct _NSRange)arg1 undoManager:(id)arg2;
+- (BOOL)isAtBOL:(struct _NSRange)arg1;
+- (void)indentCharacterRange:(struct _NSRange)arg1 undoManager:(id)arg2;
+- (void)indentLineRange:(struct _NSRange)arg1 undoManager:(id)arg2;
+- (BOOL)indentLine:(long long)arg1 options:(unsigned long long)arg2 undoManager:(id)arg3;
+- (long long)firstNonblankForLine:(long long)arg1 convertTabs:(BOOL)arg2;
+- (id)getTextForLineSansBlanks:(long long)arg1;
+@property(readonly, getter=isIndentable) BOOL indentable;
+- (long long)getIndentForLine:(long long)arg1;
+- (long long)_getIndentForObjectLiteral:(id)arg1 atLocation:(unsigned long long)arg2;
+- (BOOL)_isInvalidObjectLiteralItem:(id)arg1;
+- (unsigned long long)firstColonAfterItem:(id)arg1 inRange:(struct _NSRange)arg2;
+- (long long)columnForPositionConvertingTabs:(unsigned long long)arg1;
+- (id)attribute:(id)arg1 atIndex:(unsigned long long)arg2 longestEffectiveRange:(struct _NSRange *)arg3 inRange:(struct _NSRange)arg4;
+- (id)attributesAtIndex:(unsigned long long)arg1 longestEffectiveRange:(struct _NSRange *)arg2 inRange:(struct _NSRange)arg3;
+- (id)attributedSubstringFromRange:(struct _NSRange)arg1;
+- (id)attribute:(id)arg1 atIndex:(unsigned long long)arg2 effectiveRange:(struct _NSRange *)arg3;
+- (unsigned long long)length;
+- (id)attributesAtIndex:(unsigned long long)arg1 effectiveRange:(struct _NSRange *)arg2;
+- (id)contents;
+- (id)string;
 
 @end
+
 
 @class DVTCustomDataSpecifier, DVTPointerArray, DVTStackBacktrace, NSColor, NSFont, NSImage, NSString, NSURL;
 
@@ -1536,7 +1744,7 @@ extern NSString *IDEEditorDocumentDidChangeNotification;
 {
     NSScrollView *_scrollView;
     DVTSourceTextView *_textView;
-    //    DVTLayoutManager *_layoutManager;
+//    DVTLayoutManager *_layoutManager;
     //    IDESourceCodeEditorContainerView *_containerView;
     //    DVTTextSidebarView *_sidebarView;
     NSArray *_currentSelectedItems;
@@ -1812,6 +2020,371 @@ extern NSString *IDEEditorDocumentDidChangeNotification;
 @property(readonly) DVTSDK *sdk;
 @property(readonly) Class superclass;
 @property(readonly, nonatomic, getter=isValid) BOOL valid;
+
+@end
+
+@class DVTDispatchLock, DVTExtension, DVTFileDataType, DVTFilePath, DVTMapTable, DVTNotificationToken, DVTStackBacktrace, DVTUndoManager, NSDictionary, NSMutableArray, NSMutableSet, NSSet, NSString, NSURL;
+
+@interface IDEEditorDocument : NSDocument
+{
+    DVTDispatchLock *_editorDocumentLock;
+    DVTExtension *_extension;
+    DVTFileDataType *_ide_hintedFileDataType;
+    DVTFilePath *_filePath;
+    DVTFilePath *autosavedContentsFilePath;
+    DVTMapTable *_readOnlyClientsForRegistrationBacktrace;
+    DVTNotificationToken *_willRedoChangeNotificationToken;
+    DVTNotificationToken *_willUndoChangeNotificationToken;
+    DVTStackBacktrace *_addedToDocumentControllerBacktrace;
+    DVTStackBacktrace *_savePresentedItemChanges;
+    DVTStackBacktrace *_autosaveWithImplicitCancellabilityCallerBacktrace;
+    DVTStackBacktrace *_beginUnlockingBacktrace;
+    DVTStackBacktrace *_canCloseDocumentCallPriorToClosingDocumentStackBacktrace;
+    DVTStackBacktrace *_continueActivityCallerBacktrace;
+    DVTStackBacktrace *_continueAsynchronousWorkOnMainThreadCallerBacktrace;
+    DVTStackBacktrace *_continueFileAccessCallerBacktrace;
+    DVTStackBacktrace *_creationBacktrace;
+    DVTStackBacktrace *_firstPerformActivityMessageBacktrace;
+    DVTStackBacktrace *_invalidationBacktrace;
+    DVTStackBacktrace *_lastUndoChangeNotificationBacktrace;
+    DVTUndoManager *_dvtUndoManager;
+    int _readOnlyStatus;
+    NSDictionary *_willCloseNotificationUserInfo;
+    NSMutableArray *_pendingChanges;
+    NSMutableSet *_documentEditors;
+    NSURL *_ide_representedURL;
+    //    id <DVTCancellable> _closeAfterDelayToken;
+    id _filePresenterWriter;
+    BOOL _cachedHasRecentChanges;
+    BOOL _didDisableAutomaticTermination;
+    BOOL _ide_isTemporaryDocument;
+    BOOL _inSetUndoManager;
+    BOOL _inWriteSafelyToURL;
+    BOOL _isAttemptingToRespondToSaveDocumentAction;
+    BOOL _isClosing;
+    BOOL _isClosingForRevert;
+    BOOL _isInvalidated;
+    BOOL _isRespondingToFSChanges;
+    BOOL _isSafeToCallClose;
+    BOOL _isUndoingAfterFailureToUnlockDocument;
+    BOOL _isWritingToDisk;
+    BOOL _shouldAssertIfNotInvalidatedBeforeDealloc;
+    BOOL _trackFileSystemChanges;
+    BOOL _wholeDocumentChanged;
+    NSSet *_readOnlyClients;
+    DVTFilePath *_autosavedContentsFilePath;
+}
+
++ (BOOL)_presentsVersionsUserInterface;
++ (BOOL)autosavesInPlace;
++ (id)editedFileContents;
++ (id)keyPathsForValuesAffectingIde_displayName;
++ (id)readableTypes;
++ (BOOL)_validateDocumentExtension:(id)arg1;
++ (BOOL)_shouldShowUtilititesAreaAtLoadForSimpleFilesFocusedWorkspace;
++ (BOOL)shouldTrackFileSystemChanges;
++ (BOOL)shouldUnlockFileURLBeforeMakingChanges;
++ (void)initialize;
+@property(retain, nonatomic) DVTExtension *extension; // @synthesize extension=_extension;
+@property(retain) DVTStackBacktrace *creationBacktrace; // @synthesize creationBacktrace=_creationBacktrace;
+@property(retain) DVTFilePath *autosavedContentsFilePath; // @synthesize autosavedContentsFilePath=_autosavedContentsFilePath;
+@property(retain) DVTFilePath *filePath; // @synthesize filePath=_filePath;
+@property int readOnlyStatus; // @synthesize readOnlyStatus=_readOnlyStatus;
+@property(readonly) DVTStackBacktrace *invalidationBacktrace; // @synthesize invalidationBacktrace=_invalidationBacktrace;
+@property BOOL trackFileSystemChanges; // @synthesize trackFileSystemChanges=_trackFileSystemChanges;
+- (void)restoreStateWithCoder:(id)arg1;
+- (void)encodeRestorableStateWithCoder:(id)arg1;
+- (void)restoreDocumentWindowWithIdentifier:(id)arg1 state:(id)arg2 completionHandler:(id)arg3;
+- (void)unregisterReadOnlyClient:(id)arg1;
+- (void)registerReadOnlyClient:(id)arg1;
+@property(readonly) NSSet *readOnlyClients; // @synthesize readOnlyClients=_readOnlyClients;
+- (BOOL)makeWritableWithError:(id *)arg1;
+@property(readonly) NSURL *readOnlyItemURL;
+- (void)_updateReadOnlyStatus;
+- (void)exportDocument:(id)arg1;
+@property(readonly) BOOL canExportDocument;
+- (void)duplicateDocument:(id)arg1;
+- (void)revertDocumentToSaved:(id)arg1;
+- (BOOL)_checkAutosavingPossibilityAndReturnError:(id *)arg1;
+- (BOOL)checkAutosavingSafetyAndReturnError:(id *)arg1;
+- (BOOL)editingShouldAutomaticallyDuplicate;
+- (id)duplicateAndReturnError:(id *)arg1;
+- (id)printOperationWithSettings:(id)arg1 error:(id *)arg2;
+- (BOOL)readFromData:(id)arg1 ofType:(id)arg2 error:(id *)arg3;
+- (id)dataOfType:(id)arg1 error:(id *)arg2;
+- (void)presentedItemDidChange;
+- (void)presentedItemDidMoveToURL:(id)arg1;
+- (BOOL)canRevert;
+- (id)editedContents;
+- (id)diffDataSource;
+- (id)updatedLocationFromLocation:(id)arg1 toTimestamp:(double)arg2;
+- (id)emptyPrivateCopy;
+- (id)privateCopy;
+- (void)updateChangedLocation:(id)arg1;
+- (void)_sendOutDocumentUpdateLocation;
+- (void)updateChangeCountWithToken:(id)arg1 forSaveOperation:(unsigned long long)arg2;
+- (void)updateChangeCount:(unsigned long long)arg1;
+- (void)ide_didFixupChangeCountWithWasEdited:(BOOL)arg1 didHaveEditsSinceLastUserInitiatedSave:(BOOL)arg2 changeString:(id)arg3;
+- (BOOL)dvt_hasBeenEditedSinceLastUserInitiatedSave;
+- (BOOL)hasBeenEditedSinceLastUserInitiatedSave;
+- (void)ide_revertDocumentToSaved:(id)arg1;
+- (void)ide_moveDocumentTo:(id)arg1;
+- (void)ide_renameDocument:(id)arg1;
+- (void)ide_saveDocumentAs:(id)arg1;
+- (void)ide_duplicateDocument:(id)arg1;
+- (void)ide_saveDocument:(id)arg1;
+- (BOOL)validateUserInterfaceItem:(id)arg1;
+@property(readonly) BOOL canSaveAs;
+@property(readonly) BOOL canSave;
+- (BOOL)isClosingForRevert;
+- (void)didExternallyRelocateFileContent;
+- (void)willExternallyRelocateFileContent;
+- (void)closeToRevert;
+@property(readonly, getter=isClosed) BOOL closed;
+- (void)close;
+- (BOOL)_isClosing;
+- (void)closePrivateDocumentSynchronously;
+- (void)tryCloseAsynchronouslyWithCompletionBlock:(id)arg1;
+- (void)_tryCloseAsynchronouslyToRevert:(BOOL)arg1 withCompletionBlock:(id)arg2;
+- (void)_tryCloseAsynchronouslyToRevert:(BOOL)arg1 promptForUnsavedChanges:(BOOL)arg2 withCompletionBlock:(id)arg3;
+- (void)_canCloseAsynchronouslyToRevert:(BOOL)arg1 promptForUnsavedChanges:(BOOL)arg2 withCompletionBlock:(id)arg3;
+- (void)performActivityWithSynchronousWaiting:(BOOL)arg1 usingBlock:(id)arg2;
+- (void)_didAddToDocumentController;
+- (void)canCloseDocumentWithDelegate:(id)arg1 shouldCloseSelector:(SEL)arg2 contextInfo:(void *)arg3;
+- (void)ide_editorDocument:(id)arg1 shouldClose:(BOOL)arg2 contextInfo:(void *)arg3;
+@property(readonly) NSString *messageForIsValidAssertion;
+- (void)editorDocumentDidClose;
+- (void)editorDocumentWillClose;
+- (void)saveDocumentAs:(id)arg1;
+- (void)saveDocument:(id)arg1;
+- (id)initForURL:(id)arg1 withContentsOfURL:(id)arg2 ofType:(id)arg3 error:(id *)arg4;
+- (id)initWithContentsOfURL:(id)arg1 ofType:(id)arg2 error:(id *)arg3;
+- (id)initWithType:(id)arg1 error:(id *)arg2;
+- (void)_handleDocumentFileChanges:(id)arg1;
+- (id)windowForSheet;
+- (BOOL)_windowForSheet:(id *)arg1 workspaceForSheet:(id *)arg2 editor:(id *)arg3;
+@property(readonly, copy) NSString *ide_displayName;
+- (void)setAutosavedContentsFileURL:(id)arg1;
+- (id)autosavedContentsFileURL;
+- (void)setFileURL:(id)arg1;
+- (id)fileURL;
+- (void)relinquishPresentedItemToWriter:(id)arg1;
+- (void)_respondToFileChangeOnDiskWithFilePath:(id)arg1;
+- (void)saveForOperation:(unsigned long long)arg1 withCompletionHandler:(id)arg2;
+- (void)saveToURL:(id)arg1 ofType:(id)arg2 forSaveOperation:(unsigned long long)arg3 completionHandler:(id)arg4;
+- (void)ide_finishSaving:(BOOL)arg1 forSaveOperation:(unsigned long long)arg2 previousPath:(id)arg3;
+- (BOOL)writeSafelyToURL:(id)arg1 ofType:(id)arg2 forSaveOperation:(unsigned long long)arg3 error:(id *)arg4;
+- (id)fileNameExtensionForType:(id)arg1 saveOperation:(unsigned long long)arg2;
+- (BOOL)revertToContentsOfURL:(id)arg1 ofType:(id)arg2 error:(id *)arg3;
+- (void)unregisterDocumentEditor:(id)arg1;
+- (void)registerDocumentEditor:(id)arg1;
+- (id)_documentEditors;
+- (void)undoManagerWillModifyItself:(id)arg1;
+- (void)setHasUndoManager:(BOOL)arg1;
+@property(retain) DVTUndoManager *undoManager;
+- (void)ide_setUndoManager:(id)arg1;
+- (void)teardownUndoManager:(id)arg1;
+- (void)setupUndoManager:(id)arg1;
+- (id)newUndoManager;
+- (void)_startUnlockIfNeededForWorkspace:(id)arg1 window:(id)arg2 completionBlock:(id)arg3;
+- (void)_unlockIfNeededCompletionBlock:(id)arg1;
+- (id)init;
+- (void)_changeWasRedone:(id)arg1;
+- (void)_changeWasUndone:(id)arg1;
+- (void)_changeWasDone:(id)arg1;
+- (void)savePresentedItemChangesWithCompletionHandler:(id)arg1;
+- (void)autosaveWithImplicitCancellability:(BOOL)arg1 completionHandler:(id)arg2;
+- (void)continueAsynchronousWorkOnMainThreadUsingBlock:(id)arg1;
+- (void)continueActivityUsingBlock:(id)arg1;
+- (void)continueFileAccessUsingBlock:(id)arg1;
+- (id)applicableInspectorCategoriesGivenSuggestion:(id)arg1;
+- (void)setSdefSupport_displayName:(id)arg1;
+- (id)sdefSupport_displayName;
+@property(retain) DVTFileDataType *ide_hintedFileDataType;
+@property(copy) NSURL *ide_representedURL;
+@property(readonly) BOOL ide_isTextRepresentation;
+- (void)convertToDocumentAtFilePath:(id)arg1 forFileDataType:(id)arg2 completionBlock:(id)arg3;
+@property BOOL ide_isTemporaryDocument;
+
+// Remaining properties
+@property(readonly, copy) NSString *debugDescription;
+@property(readonly, copy) NSString *description;
+@property(readonly) unsigned long long hash;
+@property(readonly) Class superclass;
+
+@end
+
+extern NSString *IDEEditorDocumentDidChangeNotification;
+
+@class DVTDelayedInvocation, DVTFileDataType, DVTGeneratedContentProvider, DVTNotificationToken, DVTObservingToken, DVTPerformanceMetric, DVTSourceCodeLanguage, DVTTextStorage, IDEDiagnosticController, IDEGeneratedContentStatusContext, IDESourceCodeAdjustNodeTypesRequest, NSArray, NSDictionary, NSMutableArray, NSMutableSet, NSString, NSURL;
+
+@interface IDESourceCodeDocument : IDEEditorDocument </* IDEDiagnosticControllerDataSource, */ IDEDocumentStructureProviding /*, DVTTextFindable, DVTTextReplacable, DVTTextStorageDelegate, IDEObjectiveCSourceCodeGenerationDestination, DVTSourceLandmarkProvider, DVTSourceTextViewDelegate */>
+{
+    DVTTextStorage *_textStorage;
+    DVTSourceCodeLanguage *_language;
+    IDEDiagnosticController *_diagnosticController;
+    NSArray *_sourceLandmarks;
+    NSMutableSet *_pendingAdjustNodeTypeRequests;
+    IDESourceCodeAdjustNodeTypesRequest *_lastAdjustNodeTypesRequest;
+    struct _NSRange _prefetchedNodeTypesLineRange;
+    DVTGeneratedContentProvider *_generatedContentProvider;
+    IDEGeneratedContentStatusContext *_generatedContentStatusContext;
+    BOOL _generatesContent;
+    DVTObservingToken *_generatedContentProviderDisplayNameObserver;
+    DVTNotificationToken *_indexDidIndexWorkspaceObserver;
+    DVTNotificationToken *_indexDidChangeObserver;
+    unsigned long long _lineEndings;
+    unsigned long long _textEncoding;
+    BOOL _usesLanguageFromFileDataType;
+    BOOL _languageSupportsSymbolColoring;
+    BOOL _setUpPrintInfoDefaults;
+    BOOL _isUnicodeWithBOM;
+    BOOL _isUnicodeBE;
+    BOOL _droppedRecomputableState;
+    DVTDelayedInvocation *_dropRecomputableState;
+    DVTObservingToken *_firstEditorWorkspaceToken;
+    NSMutableArray *_registeredEditors;
+    BOOL _notifiesWhenClosing;
+    NSDictionary *__firstEditorWorkspaceBuildSettings;
+}
+
++ (id)keyPathsForValuesAffecting_firstEditorWorkspace;
++ (id)keyPathsForValuesAffectingSourceLanguageServiceContext;
++ (id)syntaxColoringPrefetchLogAspect;
++ (id)topLevelStructureLogAspect;
++ (void)initialize;
+@property(copy) NSDictionary *_firstEditorWorkspaceBuildSettings; // @synthesize _firstEditorWorkspaceBuildSettings=__firstEditorWorkspaceBuildSettings;
+@property BOOL notifiesWhenClosing; // @synthesize notifiesWhenClosing=_notifiesWhenClosing;
+@property(retain) IDEGeneratedContentStatusContext *generatedContentStatusContext; // @synthesize generatedContentStatusContext=_generatedContentStatusContext;
+@property BOOL generatesContent; // @synthesize generatesContent=_generatesContent;
+@property(readonly) struct _NSRange prefetchedNodeTypesLineRange; // @synthesize prefetchedNodeTypesLineRange=_prefetchedNodeTypesLineRange;
+@property(nonatomic) unsigned long long lineEndings; // @synthesize lineEndings=_lineEndings;
+@property unsigned long long textEncoding; // @synthesize textEncoding=_textEncoding;
+@property(nonatomic) BOOL usesLanguageFromFileDataType; // @synthesize usesLanguageFromFileDataType=_usesLanguageFromFileDataType;
+@property(retain, nonatomic) DVTSourceCodeLanguage *language; // @synthesize language=_language;
+@property(readonly) DVTTextStorage *textStorage; // @synthesize textStorage=_textStorage;
+- (void)_delayedDropRecomputableState:(id)arg1;
+- (void)_restoreRecomputableState;
+- (void)_dropRecomputableState;
+- (void)_documentMovingToForeground;
+- (void)_documentMovingToBackground:(BOOL)arg1;
+- (void)registerDocumentEditor:(id)arg1;
+- (void)unregisterDocumentEditor:(id)arg1;
+- (id)_firstEditorWorkspace;
+- (id)_firstEditor;
+- (id)sourceCodeGenerator:(id)arg1 commitInsertionOfSourceCodeForCompositeResult:(id)arg2 error:(id *)arg3;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCAtSynthesizeWithName:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCPropertyDeclarationWithName:(id)arg2 type:(id)arg3 inClassNamed:(id)arg4 options:(id)arg5 error:(id *)arg6;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCPropertyReleaseForTeardownWithName:(id)arg2 type:(id)arg3 inClassNamed:(id)arg4 options:(id)arg5 error:(id *)arg6;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCInstanceVariableReleaseForTeardownWithName:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)_primitiveAddObjectiveCReleaseForTeardownMethodWithSourceCodeGenerator:(id)arg1 withReleaseCallCode:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCInstanceVariableDeclarationWithName:(id)arg2 type:(id)arg3 inClassNamed:(id)arg4 options:(id)arg5 error:(id *)arg6;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCClassMethodDefinitionWithName:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCClassMethodDeclarationWithName:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCInstanceMethodDefinitionWithName:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)_primitiveAppendObjectiveCSourceCode:(id)arg1 afterItem:(id)arg2 prependNewLine:(BOOL)arg3;
+- (id)sourceCodeGenerator:(id)arg1 prepareToAddObjectiveCInstanceMethodDeclarationWithName:(id)arg2 inClassNamed:(id)arg3 options:(id)arg4 error:(id *)arg5;
+- (id)_primitiveAddObjectiveCMethodSourceCode:(id)arg1 toClassItem:(id)arg2 withOptions:(id)arg3 error:(id *)arg4;
+- (id)_primitiveAddObjectiveCSourceCode:(id)arg1 toClassItem:(id)arg2 withOptions:(id)arg3 insertAdditionalNewlineWhenInsertingWithAfterBeforeHint:(BOOL)arg4 insertAtEndWhenInsertingWithoutHint:(BOOL)arg5 insertAfterObjCBlockWhenInsertingAtBeginning:(BOOL)arg6 ignoreHintItemsConformingToSpecifications:(id)arg7 onlyConsiderItemsConformingToSpecifications:(id)arg8 error:(id *)arg9;
+- (id)_insertObjectiveCSourceCode:(id)arg1 inTeardownMethodForClassNamed:(id)arg2 options:(id)arg3 error:(id *)arg4;
+- (id)_teardownMethodNameForSourceCodeGeneratorWithOptions:(id)arg1;
+- (BOOL)_hasObjCMethodImplementationForName:(id)arg1 forClassNamed:(id)arg2;
+- (id)_objCMethodImplementationItemForName:(id)arg1 inClassItem:(id)arg2;
+- (id)_insertObjCSourceCode:(id)arg1 inTopLevelOfClassItem:(id)arg2 withInsertAfterHint:(id)arg3 andInsertBeforeHint:(id)arg4 ignoreHintItemsConformingToSpecifications:(id)arg5 onlyConsiderItemsConformingToSpecifications:(id)arg6 insertAdditionalNewline:(BOOL)arg7 insertAtEndWhenInsertingWithoutHint:(BOOL)arg8 insertAfterObjCBlockWhenInsertingAtBeginning:(BOOL)arg9;
+- (id)_insertObjCSourceCode:(id)arg1 inContainingSourceModelItem:(id)arg2 withInsertAfterHint:(id)arg3 andInsertBeforeHint:(id)arg4 ignoreHintItemsConformingToSpecifications:(id)arg5 onlyConsiderItemsConformingToSpecifications:(id)arg6 insertAdditionalNewline:(BOOL)arg7 fallbackInsertionBlock:(id)arg8;
+- (long long)_insertionHintMatchPriorityForObjCSourceModelItem:(id)arg1 givenInsertionHintItemName:(id)arg2 andLanguageSpecification:(id)arg3 ignoreItemsConformingToSpecifications:(id)arg4 onlyConsiderItemsConformingToSpecifications:(id)arg5;
+- (id)_insertObjCSourceCode:(id)arg1 inTopLevelOfClassItem:(id)arg2 asCloseAsPossibleToLineNumber:(unsigned long long)arg3 error:(id *)arg4;
+- (id)_insertObjCSourceCode:(id)arg1 inContainingSourceModelItem:(id)arg2 asCloseAsPossibleToLineNumber:(unsigned long long)arg3 firstPossibleItemToInsertBefore:(id)arg4 error:(id *)arg5;
+- (id)_insertionHintForObjCSourceModelItem:(id)arg1;
+- (id)_firstObjCSourceModelItemToInsertBeforeInInstanceVariableBlock:(id)arg1;
+- (id)_firstTopLevelObjCInterfaceSourceModelItemToInsertBeforeInClassItem:(id)arg1;
+- (id)_insertSourceCode:(id)arg1 atBeginningOfClassSourceModelItem:(id)arg2 insertOnNextLine:(BOOL)arg3 insertAfterObjCBlock:(BOOL)arg4;
+- (id)_insertSourceCode:(id)arg1 atEndOfClassSourceModelItem:(id)arg2 insertOnNextLine:(BOOL)arg3;
+- (id)_insertSourceCode:(id)arg1 atEndOfContainingSourceModelItem:(id)arg2 insertOnNextLine:(BOOL)arg3 beforeItemMatchingPredicateBlock:(id)arg4;
+- (id)_insertSourceCode:(id)arg1 atBeginningOfContainingSourceModelItem:(id)arg2 insertOnNextLine:(BOOL)arg3 afterItemMatchingPredicateBlock:(id)arg4;
+- (id)_primitiveInsertSourceCode:(id)arg1 atBeginning:(BOOL)arg2 ofContainingSourceModelItem:(id)arg3 insertOnNextLine:(BOOL)arg4 afterOrBeforeItemMatchingPredicateBlock:(id)arg5;
+- (id)textDocumentLocationForInsertingSourceCode:(id)arg1 atLocation:(unsigned long long)arg2;
+- (id)_instanceVariableDeclarationBlockItemForClassItem:(id)arg1;
+- (id)_objCCategoryImplementationClassModelItemForClassNamed:(id)arg1 categoryName:(id)arg2 error:(id *)arg3;
+- (id)_objCCategoryInterfaceClassModelItemForClassNamed:(id)arg1 categoryName:(id)arg2 options:(id)arg3 error:(id *)arg4;
+- (id)_objCImplementationClassModelItemForClassNamed:(id)arg1 error:(id *)arg2;
+- (id)_objCInterfaceClassModelItemForClassNamed:(id)arg1 error:(id *)arg2;
+- (id)_classModelItemForClassNamed:(id)arg1 withConditionBlock:(id)arg2;
+- (id)errorForNotFindingClassItemForClassNamed:(id)arg1 humanReadableClassItemType:(id)arg2;
+- (id)supportedSourceCodeLanguagesForSourceCodeGeneration;
+- (long long)defaultPropertyAccessControl;
+- (id)emptyPrivateCopy;
+- (id)privateCopy;
+- (id)diffDataSource;
+- (id)textViewWillReturnPrintJobTitle:(id)arg1;
+- (id)printOperationWithSettings:(id)arg1 error:(id *)arg2;
+- (void)sourceLanguageServiceAvailabilityNotification:(BOOL)arg1 message:(id)arg2;
+- (BOOL)textStorageShouldAllowEditing:(id)arg1;
+- (void)textStorageDidUpdateSourceLandmarks:(id)arg1;
+- (void)textStorageDidProcessEditing:(id)arg1;
+- (void)updateChangeCount:(unsigned long long)arg1;
+- (BOOL)replaceTextWithContentsOfURL:(id)arg1 error:(id *)arg2;
+- (BOOL)replaceFindResults:(id)arg1 inSelection:(struct _NSRange)arg2 withString:(id)arg3 withError:(id *)arg4;
+- (BOOL)replaceFindResults:(id)arg1 withString:(id)arg2 withError:(id *)arg3;
+- (BOOL)replaceFindResults:(id)arg1 withString:(id)arg2 inSelection:(struct _NSRange)arg3 withError:(id *)arg4;
+- (id)findStringMatchingDescriptor:(id)arg1 backwards:(BOOL)arg2 from:(id)arg3 to:(id)arg4;
+- (id)documentLocationFromCharacterRange:(struct _NSRange)arg1;
+- (struct _NSRange)characterRangeFromDocumentLocation:(id)arg1;
+- (id)updatedLocationFromLocation:(id)arg1 toTimestamp:(double)arg2;
+- (id)indexCompatibleLocationFromLocation:(id)arg1;
+- (id)editorCompatibleLocationFromLocation:(id)arg1;
+- (void)prefetchNodeTypesExtraLines:(unsigned long long)arg1 upDirection:(BOOL)arg2 withContext:(id)arg3;
+- (void)initialPrefetchNodeTypesForLineRange:(struct _NSRange)arg1 withContext:(id)arg2;
+- (void)_prefetchNodeTypesForLineRange:(struct _NSRange)arg1 withContext:(id)arg2;
+- (long long)nodeTypeForItem:(id)arg1 withContext:(id)arg2;
+- (void)_adjustNodeTypeForIdentifierItem:(id)arg1 withContext:(id)arg2;
+- (void)editorDocumentWillClose;
+- (id)dataOfType:(id)arg1 error:(id *)arg2;
+- (BOOL)writeToURL:(id)arg1 ofType:(id)arg2 error:(id *)arg3;
+- (BOOL)readFromData:(id)arg1 ofType:(id)arg2 error:(id *)arg3;
+- (BOOL)readFromURL:(id)arg1 ofType:(id)arg2 error:(id *)arg3;
+- (void)_configureDocumentReadFromURL:(id)arg1 orData:(id)arg2 ofType:(id)arg3 usedEncoding:(unsigned long long)arg4 preferredLineEndings:(unsigned long long)arg5 readOutAttributes:(id)arg6;
+- (id)_readOptionsDictionaryForURL:(id)arg1 preferredEncoding:(unsigned long long)arg2 inOutData:(id *)arg3;
+- (unsigned long long)_lineEndingUsedInString:(id)arg1;
+- (BOOL)canSaveAs;
+- (BOOL)canSave;
+@property(readonly) DVTPerformanceMetric *openingPerformanceMetric;
+- (id)editedContents;
+@property(readonly, copy) NSString *description;
+- (id)displayName;
+@property(readonly) NSArray *knownFileReferences;
+- (struct _NSRange)lineRangeOfSourceLandmark:(id)arg1;
+- (id)sourceLandmarkItemAtLineNumber:(unsigned long long)arg1;
+- (id)sourceLandmarkItemAtCharacterIndex:(unsigned long long)arg1;
+@property(readonly) NSArray *ideTopLevelStructureObjects;
+- (void)invalidateAndDisableDiagnosticController;
+- (void)invalidateDiagnosticController;
+@property(retain) IDEDiagnosticController *diagnosticController; // @synthesize diagnosticController=_diagnosticController;
+- (id)printInfo;
+- (void)setTextEncoding:(unsigned long long)arg1 convertContents:(BOOL)arg2;
+@property(readonly, nonatomic) NSDictionary *sourceLanguageServiceContext;
+@property(readonly) DVTFileDataType *fileDataType;
+- (id)init;
+- (void)setSdefSupport_text:(id)arg1;
+- (id)sdefSupport_text;
+- (void)setSdefSupport_selection:(id)arg1;
+- (id)sdefSupport_selection;
+- (void)setSdefSupport_selectedParagraphRange:(id)arg1;
+- (id)sdefSupport_selectedParagraphRange;
+- (void)setSdefSupport_selectedCharacterRange:(id)arg1;
+- (id)sdefSupport_selectedCharacterRange;
+- (void)setSdefSupport_notifiesWhenClosing:(BOOL)arg1;
+- (BOOL)sdefSupport_notifiesWhenClosing;
+- (void)setSdefSupport_contents:(id)arg1;
+- (id)sdefSupport_contents;
+- (void)setSdefSupport_editorSettings:(id)arg1;
+- (id)sdefSupport_editorSettings;
+- (id)objectSpecifier;
+
+// Remaining properties
+@property(readonly, copy) NSString *debugDescription;
+@property(readonly) NSURL *fileURL;
+@property unsigned long long supportedMatchingOptions;
 
 @end
 

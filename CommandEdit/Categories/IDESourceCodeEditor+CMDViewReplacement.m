@@ -9,6 +9,7 @@
 #import "IDESourceCodeEditor+CMDViewReplacement.h"
 
 #import "PLYSwizzling.h"
+#import "CMDEditorController.h"
 
 static IMP CMDIDESourceCodeEditorOriginalInit = nil;
 static IMP CMDIDESourceCodeEditorOriginalLoadView = nil;
@@ -23,9 +24,6 @@ static IMP CMDIDESourceCodeEditorOriginalLoadView = nil;
 
 - (instancetype)cmd_initWithNibName:(id)nibName bundle:(id)bundle document:(id)document
 {
-    NSAlert *alert = [NSAlert alertWithMessageText:@"test" defaultButton:@"dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Nib name: %@\nBundle: %@\nDocument: %@\n", nibName, bundle, document];
-    [alert runModal];
-
     return CMDIDESourceCodeEditorOriginalInit(self, @selector(initWithNibName:bundle:document:), nibName, bundle, document);
 }
 
@@ -33,18 +31,11 @@ static IMP CMDIDESourceCodeEditorOriginalLoadView = nil;
 {
     CMDIDESourceCodeEditorOriginalLoadView(self, @selector(loadView));
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.view.subviews enumerateObjectsUsingBlock:^(NSView *subview, NSUInteger idx, BOOL *stop) {
-            [subview removeFromSuperview];
-        }];
+    [self.view.subviews enumerateObjectsUsingBlock:^(NSView *subview, NSUInteger idx, BOOL *stop) {
+        [subview removeFromSuperview];
+    }];
 
-        [self.view addSubview:({
-            NSView *view = [[NSView alloc] initWithFrame:self.view.bounds];
-            view.wantsLayer = YES;
-            view.layer.backgroundColor = [[NSColor purpleColor] CGColor];
-            view;
-        })];
-    });
+    [self.view addSubview:[[CMDEditorController alloc] initWithFrame:self.view.bounds document:self.sourceCodeDocument]];
 }
 
 @end
