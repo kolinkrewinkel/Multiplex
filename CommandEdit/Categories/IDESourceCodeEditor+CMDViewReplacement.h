@@ -8,6 +8,6 @@
 
 #import "DVTInterfaces.h"
 
-@interface IDESourceCodeEditor (CMDViewReplacement)
+@interface DVTSourceTextView (CMDViewReplacement)
 
 @end

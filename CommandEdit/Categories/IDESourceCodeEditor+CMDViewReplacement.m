@@ -11,31 +11,36 @@
 #import "PLYSwizzling.h"
 #import "CMDEditorController.h"
 
-static IMP CMDIDESourceCodeEditorOriginalInit = nil;
-static IMP CMDIDESourceCodeEditorOriginalLoadView = nil;
+static IMP CMDDVTSourceTextViewOriginalDrawInsertion = nil;
 
-@implementation IDESourceCodeEditor (CMDViewReplacement)
+@implementation DVTSourceTextView (CMDViewReplacement)
 
 + (void)load
 {
-    CMDIDESourceCodeEditorOriginalInit = PLYPoseSwizzle(self, @selector(initWithNibName:bundle:document:), self, @selector(cmd_initWithNibName:bundle:document:), YES);
-    CMDIDESourceCodeEditorOriginalLoadView = PLYPoseSwizzle(self, @selector(loadView), self, @selector(cmd_loadView), YES);
+//    CMDDVTSourceTextViewOriginalDrawInsertion = PLYPoseSwizzle(self, @selector(drawInsertionPointInRect:color:turnedOn:), self, @selector(cmd_drawInsertionPointInRect:color:turnedOn:), YES);
 }
 
-- (instancetype)cmd_initWithNibName:(id)nibName bundle:(id)bundle document:(id)document
-{
-    return CMDIDESourceCodeEditorOriginalInit(self, @selector(initWithNibName:bundle:document:), nibName, bundle, document);
+
+-(void)_drawInsertionPointInRect:(NSRect)rect color:(NSColor*)color{
+    NSRange charRange = NSMakeRange(self.selectedRange.location, 1);
+    NSRect glyphRect = [[self layoutManager] boundingRectForGlyphRange:charRange inTextContainer:[self textContainer]];
+    if( glyphRect.size.width == 0 ||
+       [[NSCharacterSet newlineCharacterSet] characterIsMember:[[self string] characterAtIndex:self.selectedRange.location]] ){
+        glyphRect = rect;
+    }
+    color = [color colorWithAlphaComponent:0.5];
+    [color set];
+    NSRectFillUsingOperation(glyphRect, NSCompositeSourceOver);
+    // We do not call super calls since the method in the super class uses NSRectFill and calling it results in filling the rect with the color without transparency.
 }
 
-- (void)cmd_loadView
-{
-    CMDIDESourceCodeEditorOriginalLoadView(self, @selector(loadView));
-
-    [self.view.subviews enumerateObjectsUsingBlock:^(NSView *subview, NSUInteger idx, BOOL *stop) {
-        [subview removeFromSuperview];
-    }];
-
-    [self.view addSubview:[[CMDEditorController alloc] initWithFrame:self.view.bounds document:self.sourceCodeDocument]];
+- (void)drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)flag{
+    // Call super class first.
+    [super drawInsertionPointInRect:rect color:color turnedOn:flag];
+    // Then tell the view to redraw to clear a caret.
+    if( !flag ){
+        [self setNeedsDisplay:YES];
+    }
 }
 
 @end

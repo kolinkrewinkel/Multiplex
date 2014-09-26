@@ -10,11 +10,8 @@
 
 #import "DVTInterfaces.h"
 
-@interface CMDTextEditor : NSView
+@interface CMDTextEditor : DVTSourceTextView
 
-- (CGSize)sizeThatFits:(CGSize)size;
 - (instancetype)initWithTextStorage:(DVTTextStorage *)textStorage;
-
-@property (nonatomic) DVTTextStorage *textStorage;
 
 @end

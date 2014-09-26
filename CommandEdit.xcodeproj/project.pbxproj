@@ -10,6 +10,7 @@
 		332D428419D5146200CE1BC2 /* CMDEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428319D5146200CE1BC2 /* CMDEditorController.m */; };
 		332D428819D516BE00CE1BC2 /* CMDTextEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428719D516BE00CE1BC2 /* CMDTextEditor.m */; };
 		332D428B19D528F700CE1BC2 /* CMDTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428A19D528F700CE1BC2 /* CMDTextRange.m */; };
+		332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332D428C19D5466F00CE1BC2 /* DVTKit.framework */; };
 		3338E1A518EF740E00C76084 /* PLYView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3338E1A418EF740E00C76084 /* PLYView.m */; };
 		3396C02419D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m */; };
 		33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */; };
@@ -29,6 +30,7 @@
 		332D428719D516BE00CE1BC2 /* CMDTextEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDTextEditor.m; path = Editor/CMDTextEditor.m; sourceTree = "<group>"; };
 		332D428919D528F700CE1BC2 /* CMDTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDTextRange.h; path = Editor/CMDTextRange.h; sourceTree = "<group>"; };
 		332D428A19D528F700CE1BC2 /* CMDTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDTextRange.m; path = Editor/CMDTextRange.m; sourceTree = "<group>"; };
+		332D428C19D5466F00CE1BC2 /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
 		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
 		3338E1A318EF740E00C76084 /* PLYView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYView.h; sourceTree = "<group>"; };
 		3338E1A418EF740E00C76084 /* PLYView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLYView.m; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */,
 				33E032A319D506B7003A655E /* IDESourceEditor in Frameworks */,
 				33E032A019D4FBBC003A655E /* IDEFoundation.framework in Frameworks */,
 				33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */,
@@ -126,6 +129,7 @@
 		33B3A3EC18CD36BE00AA64C8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				332D428C19D5466F00CE1BC2 /* DVTKit.framework */,
 				33E032A219D506B7003A655E /* IDESourceEditor */,
 				33E0329E19D4FBBC003A655E /* IDEFoundation.framework */,
 				33E0329F19D4FBBC003A655E /* IDEKit.framework */,
@@ -356,6 +360,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks",
 					"$(DEVELOPER_DIR)/../SharedFrameworks",
+					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CommandEdit/CommandEdit-Prefix.pch";
@@ -386,6 +391,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks",
 					"$(DEVELOPER_DIR)/../SharedFrameworks",
+					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CommandEdit/CommandEdit-Prefix.pch";

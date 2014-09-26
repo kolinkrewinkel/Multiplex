@@ -11,7 +11,7 @@
 #import "DVTInterfaces.h"
 #import "CMDTextEditor.h"
 
-@interface CMDEditorController ()
+@interface CMDEditorController () <NSTextViewDelegate>
 
 @property (nonatomic) CMDTextEditor *editor;
 @property (nonatomic) NSScrollView *scrollView;
@@ -26,12 +26,23 @@
     {
         self.wantsLayer = YES;
 
-        self.editor = [[CMDTextEditor alloc] initWithTextStorage:document.textStorage];
-
         self.scrollView = [[NSScrollView alloc] init];
         self.scrollView.hasVerticalScroller = YES;
-        self.scrollView.documentView = self.editor;
         [self addSubview:self.scrollView];
+
+        self.editor = [[CMDTextEditor alloc] initWithTextStorage:document.textStorage];
+        self.editor.delegate = self;
+        [self.editor setMinSize:NSMakeSize(0.0, 0.f)];
+        [self.editor setMaxSize:NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX)];
+        [self.editor setVerticallyResizable:YES];
+        [self.editor setHorizontallyResizable:NO];
+        [self.editor setAutoresizingMask:NSViewWidthSizable];
+
+        self.scrollView.documentView = self.editor;
+
+        [self.editor setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(3, 0)]] affinity:NSSelectionAffinityDownstream stillSelecting:YES];
+
+        [self.editor becomeFirstResponder];
     }
 
     return self;
@@ -39,11 +50,15 @@
 
 - (void)layout
 {
+    [[self.editor textContainer] setContainerSize:NSMakeSize(self.scrollView.frame.size.width, CGFLOAT_MAX)];
     self.scrollView.frame = self.bounds;
 
-    self.editor.frame = (CGRect){.size = [self.editor sizeThatFits:self.frame.size]};
-
     [super layout];
+}
+
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+    NSLog(@"%@", self.editor.selectedRanges);
 }
 
 @end
