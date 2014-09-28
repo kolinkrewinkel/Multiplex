@@ -53,6 +53,8 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
 - (void)insertText:(id)insertString
 {
+    NSLog(@"insert text proprietary: %@", insertString);
+
     if (![insertString isKindOfClass:[NSString class]])
     {
         return;
@@ -82,41 +84,27 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
 - (void)deleteBackward:(id)sender
 {
-//    NSLog(@"%@", theEvent);
-//    NSLog(@"%lu", theEvent.modifierFlags);
-//
-//    if ((theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask) == 0)
-//    {
-//        NSLog(@"no modifier held. inserting text");
-//
-//        NSString *string = theEvent.charactersIgnoringModifiers;
-//        NSInteger delta = [string length];
-//
-//        [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
-//            NSRange range;
-//            [vRange getValue:&range];
-//
-//            NSRange rangeToReplace = range;
-//            if (delta < 0)
-//            {
-//                rangeToReplace.location += delta;
-//            }
-//
-//            [self insertText:string replacementRange:rangeToReplace];
-//        }];
-//
-//        [self cmd_setSelectedRanges:[[self.cmd_selectedRanges.rac_sequence map:^id(NSValue *vRange) {
-//            NSRange range;
-//            [vRange getValue:&range];
-//
-//            return [NSValue valueWithRange:NSMakeRange(range.location + delta, 0)];
-//        }] array]];
-//    }
-//    else
-//    {
-//        [super keyDown:theEvent];
-//    }
-    NSLog(@"DELETE BACKWARD");
+    __block NSInteger totalDelta = 0;
+
+    NSMutableArray *ranges = [[NSMutableArray alloc] init];
+
+    [self.cmd_selectedRanges enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+    {
+        NSRange range;
+        [vRange getValue:&range];
+
+        NSInteger lengthDeleted = -(range.length + 1);
+        NSRange rangeToReplace = NSMakeRange(range.location + totalDelta + lengthDeleted, -lengthDeleted);
+
+        [self insertText:@"" replacementRange:rangeToReplace];
+
+        NSRange deltaRange = NSMakeRange(rangeToReplace.location, 0);
+        [ranges addObject:[NSValue valueWithRange:deltaRange]];
+
+        totalDelta += lengthDeleted;
+    }];
+
+    [self cmd_setSelectedRanges:ranges];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
