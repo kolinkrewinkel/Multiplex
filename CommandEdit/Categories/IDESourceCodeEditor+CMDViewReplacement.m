@@ -51,6 +51,35 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 #pragma mark -
 #pragma mark Events
 
+- (void)insertText:(id)insertString
+{
+    if (![insertString isKindOfClass:[NSString class]])
+    {
+        return;
+    }
+
+    NSString *string = (NSString *)insertString;
+    NSInteger delta = [string length];
+    __block NSInteger totalDelta = 0;
+
+    NSMutableArray *ranges = [[NSMutableArray alloc] init];
+
+    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+        NSRange range;
+        [vRange getValue:&range];
+
+        NSRange rangeToReplace = NSMakeRange(range.location + totalDelta, range.length);
+        [self insertText:string replacementRange:rangeToReplace];
+
+        NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
+        [ranges addObject:[NSValue valueWithRange:deltaRange]];
+
+        totalDelta += delta;
+    }];
+
+    [self cmd_setSelectedRanges:ranges];
+}
+
 - (void)deleteBackward:(id)sender
 {
 //    NSLog(@"%@", theEvent);
