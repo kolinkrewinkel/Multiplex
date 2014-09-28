@@ -1,437 +1,1264 @@
-// !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 46;
-	objects = {
-
-/* Begin PBXBuildFile section */
-		332D428419D5146200CE1BC2 /* CMDEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428319D5146200CE1BC2 /* CMDEditorController.m */; };
-		332D428819D516BE00CE1BC2 /* CMDTextEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428719D516BE00CE1BC2 /* CMDTextEditor.m */; };
-		332D428B19D528F700CE1BC2 /* CMDTextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 332D428A19D528F700CE1BC2 /* CMDTextRange.m */; };
-		332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332D428C19D5466F00CE1BC2 /* DVTKit.framework */; };
-		3338E1A518EF740E00C76084 /* PLYView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3338E1A418EF740E00C76084 /* PLYView.m */; };
-		3396C02419D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m */; };
-		33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */; };
-		33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */; };
-		33B3A3F618CD36BE00AA64C8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 33B3A3F418CD36BE00AA64C8 /* InfoPlist.strings */; };
-		33B3A3F918CD36BF00AA64C8 /* CommandEdit.m in Sources */ = {isa = PBXBuildFile; fileRef = 33B3A3F818CD36BE00AA64C8 /* CommandEdit.m */; };
-		33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */ = {isa = PBXBuildFile; fileRef = 33B3A40C18CD38DF00AA64C8 /* PLYSwizzling.c */; };
-		33E032A019D4FBBC003A655E /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E0329E19D4FBBC003A655E /* IDEFoundation.framework */; };
-		33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E0329F19D4FBBC003A655E /* IDEKit.framework */; };
-		33E032A319D506B7003A655E /* IDESourceEditor in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E032A219D506B7003A655E /* IDESourceEditor */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXFileReference section */
-		332D428219D5146200CE1BC2 /* CMDEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDEditorController.h; path = Editor/CMDEditorController.h; sourceTree = "<group>"; };
-		332D428319D5146200CE1BC2 /* CMDEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDEditorController.m; path = Editor/CMDEditorController.m; sourceTree = "<group>"; };
-		332D428619D516BE00CE1BC2 /* CMDTextEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDTextEditor.h; path = Editor/CMDTextEditor.h; sourceTree = "<group>"; };
-		332D428719D516BE00CE1BC2 /* CMDTextEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDTextEditor.m; path = Editor/CMDTextEditor.m; sourceTree = "<group>"; };
-		332D428919D528F700CE1BC2 /* CMDTextRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CMDTextRange.h; path = Editor/CMDTextRange.h; sourceTree = "<group>"; };
-		332D428A19D528F700CE1BC2 /* CMDTextRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CMDTextRange.m; path = Editor/CMDTextRange.m; sourceTree = "<group>"; };
-		332D428C19D5466F00CE1BC2 /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
-		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
-		3338E1A318EF740E00C76084 /* PLYView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYView.h; sourceTree = "<group>"; };
-		3338E1A418EF740E00C76084 /* PLYView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLYView.m; sourceTree = "<group>"; };
-		3396C02219D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "IDESourceCodeEditor+CMDViewReplacement.h"; path = "Categories/IDESourceCodeEditor+CMDViewReplacement.h"; sourceTree = "<group>"; };
-		3396C02319D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "IDESourceCodeEditor+CMDViewReplacement.m"; path = "Categories/IDESourceCodeEditor+CMDViewReplacement.m"; sourceTree = "<group>"; };
-		33B3A3EA18CD36BE00AA64C8 /* CommandEdit.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CommandEdit.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
-		33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		33B3A3F318CD36BE00AA64C8 /* CommandEdit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CommandEdit-Info.plist"; sourceTree = "<group>"; };
-		33B3A3F518CD36BE00AA64C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		33B3A3F718CD36BE00AA64C8 /* CommandEdit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandEdit.h; sourceTree = "<group>"; };
-		33B3A3F818CD36BE00AA64C8 /* CommandEdit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CommandEdit.m; sourceTree = "<group>"; };
-		33B3A3FA18CD36BF00AA64C8 /* CommandEdit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommandEdit-Prefix.pch"; sourceTree = "<group>"; };
-		33B3A40C18CD38DF00AA64C8 /* PLYSwizzling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PLYSwizzling.c; sourceTree = "<group>"; };
-		33B3A40D18CD38DF00AA64C8 /* PLYSwizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYSwizzling.h; sourceTree = "<group>"; };
-		33E0329E19D4FBBC003A655E /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
-		33E0329F19D4FBBC003A655E /* IDEKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEKit.framework"; sourceTree = "<group>"; };
-		33E032A219D506B7003A655E /* IDESourceEditor */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDESourceEditor; path = "../../../Applications/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS/IDESourceEditor"; sourceTree = "<group>"; };
-		33E032A419D50DAD003A655E /* CommandEdit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommandEdit-Bridging-Header.h"; sourceTree = "<group>"; };
-		33E48D1E18D3F4D700FCC557 /* IDEKit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDEKit; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework/Versions/A/IDEKit; sourceTree = "<group>"; };
-		33E48D2018D3F4F600FCC557 /* IDEFoundation */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDEFoundation; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation; sourceTree = "<group>"; };
-		33E48D2218D3F50500FCC557 /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework; sourceTree = "<group>"; };
-		33E48D2418D3F51200FCC557 /* IDEKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEKit.framework; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework; sourceTree = "<group>"; };
-		33E48D2618D3F52400FCC557 /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
-		33E48D2718D3F52400FCC557 /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTKit.framework; sourceTree = "<group>"; };
-		33F94F1F18CED7650092E74C /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = "../../../../Applications/Xcode51-Beta5.app/Contents/SharedFrameworks/DVTFoundation.framework"; sourceTree = "<group>"; };
-		33F94F2118CED77A0092E74C /* IDEKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEKit.framework; path = "../../../../Applications/Xcode51-Beta5.app/Contents/Frameworks/IDEKit.framework"; sourceTree = "<group>"; };
-		33F94F2218CED77A0092E74C /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../../Applications/Xcode51-Beta5.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
-		33F94F2518CED78B0092E74C /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../../Applications/Xcode51-Beta5.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		33B3A3E718CD36BE00AA64C8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */,
-				33E032A319D506B7003A655E /* IDESourceEditor in Frameworks */,
-				33E032A019D4FBBC003A655E /* IDEFoundation.framework in Frameworks */,
-				33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */,
-				33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */,
-				33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		332D428519D5146600CE1BC2 /* Editor */ = {
-			isa = PBXGroup;
-			children = (
-				332D428919D528F700CE1BC2 /* CMDTextRange.h */,
-				332D428A19D528F700CE1BC2 /* CMDTextRange.m */,
-				332D428219D5146200CE1BC2 /* CMDEditorController.h */,
-				332D428319D5146200CE1BC2 /* CMDEditorController.m */,
-				332D428619D516BE00CE1BC2 /* CMDTextEditor.h */,
-				332D428719D516BE00CE1BC2 /* CMDTextEditor.m */,
-			);
-			name = Editor;
-			sourceTree = "<group>";
-		};
-		3338E1A018EF740300C76084 /* Developer Kits */ = {
-			isa = PBXGroup;
-			children = (
-				3338E1A118EF740300C76084 /* DVTInterfaces.h */,
-			);
-			path = "Developer Kits";
-			sourceTree = "<group>";
-		};
-		3338E1A218EF740E00C76084 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				3338E1A318EF740E00C76084 /* PLYView.h */,
-				3338E1A418EF740E00C76084 /* PLYView.m */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		33B3A3E118CD36BE00AA64C8 = {
-			isa = PBXGroup;
-			children = (
-				33B3A3F118CD36BE00AA64C8 /* CommandEdit */,
-				33B3A3EC18CD36BE00AA64C8 /* Frameworks */,
-				33B3A3EB18CD36BE00AA64C8 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		33B3A3EB18CD36BE00AA64C8 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				33B3A3EA18CD36BE00AA64C8 /* CommandEdit.xcplugin */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		33B3A3EC18CD36BE00AA64C8 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				332D428C19D5466F00CE1BC2 /* DVTKit.framework */,
-				33E032A219D506B7003A655E /* IDESourceEditor */,
-				33E0329E19D4FBBC003A655E /* IDEFoundation.framework */,
-				33E0329F19D4FBBC003A655E /* IDEKit.framework */,
-				33E48D2618D3F52400FCC557 /* DVTFoundation.framework */,
-				33E48D2718D3F52400FCC557 /* DVTKit.framework */,
-				33E48D2418D3F51200FCC557 /* IDEKit.framework */,
-				33E48D2218D3F50500FCC557 /* IDEFoundation.framework */,
-				33E48D2018D3F4F600FCC557 /* IDEFoundation */,
-				33E48D1E18D3F4D700FCC557 /* IDEKit */,
-				33F94F2518CED78B0092E74C /* DVTKit.framework */,
-				33F94F2118CED77A0092E74C /* IDEKit.framework */,
-				33F94F2218CED77A0092E74C /* IDEFoundation.framework */,
-				33F94F1F18CED7650092E74C /* DVTFoundation.framework */,
-				33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */,
-				33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		33B3A3F118CD36BE00AA64C8 /* CommandEdit */ = {
-			isa = PBXGroup;
-			children = (
-				33B3A3F718CD36BE00AA64C8 /* CommandEdit.h */,
-				33B3A3F818CD36BE00AA64C8 /* CommandEdit.m */,
-				33F94F3018CFC4DE0092E74C /* Categories */,
-				3338E1A018EF740300C76084 /* Developer Kits */,
-				33B3A3F218CD36BE00AA64C8 /* Supporting Files */,
-				33B3A40418CD375300AA64C8 /* Utilities */,
-				3338E1A218EF740E00C76084 /* Views */,
-				33E032A419D50DAD003A655E /* CommandEdit-Bridging-Header.h */,
-				332D428519D5146600CE1BC2 /* Editor */,
-			);
-			path = CommandEdit;
-			sourceTree = "<group>";
-		};
-		33B3A3F218CD36BE00AA64C8 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				33B3A3F418CD36BE00AA64C8 /* InfoPlist.strings */,
-				33B3A3F318CD36BE00AA64C8 /* CommandEdit-Info.plist */,
-				33B3A3FA18CD36BF00AA64C8 /* CommandEdit-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		33B3A40418CD375300AA64C8 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				33B3A40C18CD38DF00AA64C8 /* PLYSwizzling.c */,
-				33B3A40D18CD38DF00AA64C8 /* PLYSwizzling.h */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
-		33F94F3018CFC4DE0092E74C /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				3396C02219D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.h */,
-				3396C02319D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m */,
-			);
-			name = Categories;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		33B3A3E918CD36BE00AA64C8 /* CommandEdit */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "CommandEdit" */;
-			buildPhases = (
-				33B3A3E618CD36BE00AA64C8 /* Sources */,
-				33B3A3E718CD36BE00AA64C8 /* Frameworks */,
-				33B3A3E818CD36BE00AA64C8 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = CommandEdit;
-			productName = Semantique;
-			productReference = 33B3A3EA18CD36BE00AA64C8 /* CommandEdit.xcplugin */;
-			productType = "com.apple.product-type.bundle";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		33B3A3E218CD36BE00AA64C8 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = "Kolin Krewinkel";
-			};
-			buildConfigurationList = 33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "CommandEdit" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-			);
-			mainGroup = 33B3A3E118CD36BE00AA64C8;
-			productRefGroup = 33B3A3EB18CD36BE00AA64C8 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				33B3A3E918CD36BE00AA64C8 /* CommandEdit */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		33B3A3E818CD36BE00AA64C8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				33B3A3F618CD36BE00AA64C8 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		33B3A3E618CD36BE00AA64C8 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				332D428419D5146200CE1BC2 /* CMDEditorController.m in Sources */,
-				3338E1A518EF740E00C76084 /* PLYView.m in Sources */,
-				33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */,
-				33B3A3F918CD36BF00AA64C8 /* CommandEdit.m in Sources */,
-				332D428819D516BE00CE1BC2 /* CMDTextEditor.m in Sources */,
-				332D428B19D528F700CE1BC2 /* CMDTextRange.m in Sources */,
-				3396C02419D4FA63003E147C /* IDESourceCodeEditor+CMDViewReplacement.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		33B3A3F418CD36BE00AA64C8 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				33B3A3F518CD36BE00AA64C8 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
-/* Begin XCBuildConfiguration section */
-		33B3A3FB18CD36BF00AA64C8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		33B3A3FC18CD36BF00AA64C8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		33B3A3FE18CD36BF00AA64C8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = "$(HOME)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_DIR)/../Frameworks",
-					"$(DEVELOPER_DIR)/../SharedFrameworks",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CommandEdit/CommandEdit-Prefix.pch";
-				INFOPLIST_FILE = "CommandEdit/CommandEdit-Info.plist";
-				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
-					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
-				);
-				PRODUCT_NAME = CommandEdit;
-				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				WRAPPER_EXTENSION = xcplugin;
-			};
-			name = Debug;
-		};
-		33B3A3FF18CD36BF00AA64C8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = "$(HOME)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_DIR)/../Frameworks",
-					"$(DEVELOPER_DIR)/../SharedFrameworks",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CommandEdit/CommandEdit-Prefix.pch";
-				INFOPLIST_FILE = "CommandEdit/CommandEdit-Info.plist";
-				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
-					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
-				);
-				PRODUCT_NAME = CommandEdit;
-				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
-				WRAPPER_EXTENSION = xcplugin;
-			};
-			name = Release;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "CommandEdit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				33B3A3FB18CD36BF00AA64C8 /* Debug */,
-				33B3A3FC18CD36BF00AA64C8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "CommandEdit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				33B3A3FE18CD36BF00AA64C8 /* Debug */,
-				33B3A3FF18CD36BF00AA64C8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = 33B3A3E218CD36BE00AA64C8 /* Project object */;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>46</string>
+	<key>objects</key>
+	<dict>
+		<key>303CED84CD8D47809E5313FB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>332D428219D5146200CE1BC2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>CMDEditorController.h</string>
+			<key>path</key>
+			<string>Editor/CMDEditorController.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428319D5146200CE1BC2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>name</key>
+			<string>CMDEditorController.m</string>
+			<key>path</key>
+			<string>Editor/CMDEditorController.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428419D5146200CE1BC2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>332D428319D5146200CE1BC2</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>332D428519D5146600CE1BC2</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>332D428919D528F700CE1BC2</string>
+				<string>332D428A19D528F700CE1BC2</string>
+				<string>332D428219D5146200CE1BC2</string>
+				<string>332D428319D5146200CE1BC2</string>
+				<string>332D428619D516BE00CE1BC2</string>
+				<string>332D428719D516BE00CE1BC2</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Editor</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428619D516BE00CE1BC2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>CMDTextEditor.h</string>
+			<key>path</key>
+			<string>Editor/CMDTextEditor.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428719D516BE00CE1BC2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>name</key>
+			<string>CMDTextEditor.m</string>
+			<key>path</key>
+			<string>Editor/CMDTextEditor.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428819D516BE00CE1BC2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>332D428719D516BE00CE1BC2</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>332D428919D528F700CE1BC2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>CMDTextRange.h</string>
+			<key>path</key>
+			<string>Editor/CMDTextRange.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428A19D528F700CE1BC2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>name</key>
+			<string>CMDTextRange.m</string>
+			<key>path</key>
+			<string>Editor/CMDTextRange.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428B19D528F700CE1BC2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>332D428A19D528F700CE1BC2</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>332D428C19D5466F00CE1BC2</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>DVTKit.framework</string>
+			<key>path</key>
+			<string>../../../Applications/Xcode-Beta.app/Contents/SharedFrameworks/DVTKit.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>332D428D19D5466F00CE1BC2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>332D428C19D5466F00CE1BC2</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>3338E1A018EF740300C76084</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>3338E1A118EF740300C76084</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Developer Kits</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3338E1A118EF740300C76084</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>DVTInterfaces.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3338E1A218EF740E00C76084</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>3338E1A318EF740E00C76084</string>
+				<string>3338E1A418EF740E00C76084</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Views</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3338E1A318EF740E00C76084</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PLYView.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3338E1A418EF740E00C76084</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PLYView.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3338E1A518EF740E00C76084</key>
+		<dict>
+			<key>fileRef</key>
+			<string>3338E1A418EF740E00C76084</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>3396C02219D4FA63003E147C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>IDESourceCodeEditor+CMDViewReplacement.h</string>
+			<key>path</key>
+			<string>Categories/IDESourceCodeEditor+CMDViewReplacement.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3396C02319D4FA63003E147C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>name</key>
+			<string>IDESourceCodeEditor+CMDViewReplacement.m</string>
+			<key>path</key>
+			<string>Categories/IDESourceCodeEditor+CMDViewReplacement.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3396C02419D4FA63003E147C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>3396C02319D4FA63003E147C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33B3A3E118CD36BE00AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>33B3A3F118CD36BE00AA64C8</string>
+				<string>33B3A3EC18CD36BE00AA64C8</string>
+				<string>33B3A3EB18CD36BE00AA64C8</string>
+				<string>357F8AF843B94FDF3417124E</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3E218CD36BE00AA64C8</key>
+		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>LastUpgradeCheck</key>
+				<string>0510</string>
+				<key>ORGANIZATIONNAME</key>
+				<string>Kolin Krewinkel</string>
+			</dict>
+			<key>buildConfigurationList</key>
+			<string>33B3A3E518CD36BE00AA64C8</string>
+			<key>compatibilityVersion</key>
+			<string>Xcode 3.2</string>
+			<key>developmentRegion</key>
+			<string>English</string>
+			<key>hasScannedForEncodings</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXProject</string>
+			<key>knownRegions</key>
+			<array>
+				<string>en</string>
+			</array>
+			<key>mainGroup</key>
+			<string>33B3A3E118CD36BE00AA64C8</string>
+			<key>productRefGroup</key>
+			<string>33B3A3EB18CD36BE00AA64C8</string>
+			<key>projectDirPath</key>
+			<string></string>
+			<key>projectReferences</key>
+			<array/>
+			<key>projectRoot</key>
+			<string></string>
+			<key>targets</key>
+			<array>
+				<string>33B3A3E918CD36BE00AA64C8</string>
+			</array>
+		</dict>
+		<key>33B3A3E518CD36BE00AA64C8</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>33B3A3FB18CD36BF00AA64C8</string>
+				<string>33B3A3FC18CD36BF00AA64C8</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>33B3A3E618CD36BE00AA64C8</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>332D428419D5146200CE1BC2</string>
+				<string>3338E1A518EF740E00C76084</string>
+				<string>33B3A41818CD3B5100AA64C8</string>
+				<string>33B3A3F918CD36BF00AA64C8</string>
+				<string>332D428819D516BE00CE1BC2</string>
+				<string>332D428B19D528F700CE1BC2</string>
+				<string>3396C02419D4FA63003E147C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>33B3A3E718CD36BE00AA64C8</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>332D428D19D5466F00CE1BC2</string>
+				<string>33E032A319D506B7003A655E</string>
+				<string>33E032A019D4FBBC003A655E</string>
+				<string>33E032A119D4FBBC003A655E</string>
+				<string>33B3A3EE18CD36BE00AA64C8</string>
+				<string>33B3A3F018CD36BE00AA64C8</string>
+				<string>E3CE14A9F6994F318E10896B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>33B3A3E818CD36BE00AA64C8</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>33B3A3F618CD36BE00AA64C8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>33B3A3E918CD36BE00AA64C8</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>33B3A3FD18CD36BF00AA64C8</string>
+			<key>buildPhases</key>
+			<array>
+				<string>C03EF8C1E0814521B8BD1948</string>
+				<string>33B3A3E618CD36BE00AA64C8</string>
+				<string>33B3A3E718CD36BE00AA64C8</string>
+				<string>33B3A3E818CD36BE00AA64C8</string>
+				<string>303CED84CD8D47809E5313FB</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>CommandEdit</string>
+			<key>productName</key>
+			<string>Semantique</string>
+			<key>productReference</key>
+			<string>33B3A3EA18CD36BE00AA64C8</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle</string>
+		</dict>
+		<key>33B3A3EA18CD36BE00AA64C8</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>CommandEdit.xcplugin</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>33B3A3EB18CD36BE00AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>33B3A3EA18CD36BE00AA64C8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3EC18CD36BE00AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>332D428C19D5466F00CE1BC2</string>
+				<string>33E032A219D506B7003A655E</string>
+				<string>33E0329E19D4FBBC003A655E</string>
+				<string>33E0329F19D4FBBC003A655E</string>
+				<string>33E48D2618D3F52400FCC557</string>
+				<string>33E48D2718D3F52400FCC557</string>
+				<string>33E48D2418D3F51200FCC557</string>
+				<string>33E48D2218D3F50500FCC557</string>
+				<string>33E48D2018D3F4F600FCC557</string>
+				<string>33E48D1E18D3F4D700FCC557</string>
+				<string>33F94F2518CED78B0092E74C</string>
+				<string>33F94F2118CED77A0092E74C</string>
+				<string>33F94F2218CED77A0092E74C</string>
+				<string>33F94F1F18CED7650092E74C</string>
+				<string>33B3A3ED18CD36BE00AA64C8</string>
+				<string>33B3A3EF18CD36BE00AA64C8</string>
+				<string>901133F6A5444AC5A872D178</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3ED18CD36BE00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>AppKit.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/AppKit.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>33B3A3EE18CD36BE00AA64C8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33B3A3ED18CD36BE00AA64C8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33B3A3EF18CD36BE00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Foundation.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/Foundation.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>33B3A3F018CD36BE00AA64C8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33B3A3EF18CD36BE00AA64C8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33B3A3F118CD36BE00AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>33B3A3F718CD36BE00AA64C8</string>
+				<string>33B3A3F818CD36BE00AA64C8</string>
+				<string>33F94F3018CFC4DE0092E74C</string>
+				<string>3338E1A018EF740300C76084</string>
+				<string>33B3A3F218CD36BE00AA64C8</string>
+				<string>33B3A40418CD375300AA64C8</string>
+				<string>3338E1A218EF740E00C76084</string>
+				<string>33E032A419D50DAD003A655E</string>
+				<string>332D428519D5146600CE1BC2</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>CommandEdit</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F218CD36BE00AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>33B3A3F418CD36BE00AA64C8</string>
+				<string>33B3A3F318CD36BE00AA64C8</string>
+				<string>33B3A3FA18CD36BF00AA64C8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F318CD36BE00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>CommandEdit-Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F418CD36BE00AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>33B3A3F518CD36BE00AA64C8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F518CD36BE00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.strings</string>
+			<key>name</key>
+			<string>en</string>
+			<key>path</key>
+			<string>en.lproj/InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F618CD36BE00AA64C8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33B3A3F418CD36BE00AA64C8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33B3A3F718CD36BE00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>CommandEdit.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F818CD36BE00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>CommandEdit.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3F918CD36BF00AA64C8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33B3A3F818CD36BE00AA64C8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33B3A3FA18CD36BF00AA64C8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>CommandEdit-Prefix.pch</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A3FB18CD36BF00AA64C8</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_DYNAMIC_NO_PIC</key>
+				<string>NO</string>
+				<key>GCC_ENABLE_OBJC_EXCEPTIONS</key>
+				<string>YES</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.9</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
+				<key>SDKROOT</key>
+				<string>macosx</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>33B3A3FC18CD36BF00AA64C8</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf-with-dsym</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_ENABLE_OBJC_EXCEPTIONS</key>
+				<string>YES</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.9</string>
+				<key>SDKROOT</key>
+				<string>macosx</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>33B3A3FD18CD36BF00AA64C8</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>33B3A3FE18CD36BF00AA64C8</string>
+				<string>33B3A3FF18CD36BF00AA64C8</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>33B3A3FE18CD36BF00AA64C8</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>CED95905E2ACE0A16D009A9A</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>COMBINE_HIDPI_IMAGES</key>
+				<string>YES</string>
+				<key>DEPLOYMENT_LOCATION</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>$(HOME)</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_DIR)/../Frameworks</string>
+					<string>$(DEVELOPER_DIR)/../SharedFrameworks</string>
+					<string>$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks</string>
+				</array>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>CommandEdit/CommandEdit-Prefix.pch</string>
+				<key>INFOPLIST_FILE</key>
+				<string>CommandEdit/CommandEdit-Info.plist</string>
+				<key>INSTALL_PATH</key>
+				<string>/Library/Application Support/Developer/Shared/Xcode/Plug-ins</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A</string>
+					<string>$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A</string>
+					<string>$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>CommandEdit</string>
+				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
+				<string>CommandEdit/CommandEdit-Bridging-Header.h</string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>xcplugin</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>33B3A3FF18CD36BF00AA64C8</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>741626E234D8521A05F9E61C</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>COMBINE_HIDPI_IMAGES</key>
+				<string>YES</string>
+				<key>DEPLOYMENT_LOCATION</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>$(HOME)</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_DIR)/../Frameworks</string>
+					<string>$(DEVELOPER_DIR)/../SharedFrameworks</string>
+					<string>$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks</string>
+				</array>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>CommandEdit/CommandEdit-Prefix.pch</string>
+				<key>INFOPLIST_FILE</key>
+				<string>CommandEdit/CommandEdit-Info.plist</string>
+				<key>INSTALL_PATH</key>
+				<string>/Library/Application Support/Developer/Shared/Xcode/Plug-ins</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A</string>
+					<string>$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A</string>
+					<string>$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>CommandEdit</string>
+				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
+				<string>CommandEdit/CommandEdit-Bridging-Header.h</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>xcplugin</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>33B3A40418CD375300AA64C8</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>33B3A40C18CD38DF00AA64C8</string>
+				<string>33B3A40D18CD38DF00AA64C8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Utilities</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A40C18CD38DF00AA64C8</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.c</string>
+			<key>path</key>
+			<string>PLYSwizzling.c</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A40D18CD38DF00AA64C8</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PLYSwizzling.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33B3A41818CD3B5100AA64C8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33B3A40C18CD38DF00AA64C8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33E0329E19D4FBBC003A655E</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>IDEFoundation.framework</string>
+			<key>path</key>
+			<string>../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEFoundation.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E0329F19D4FBBC003A655E</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>IDEKit.framework</string>
+			<key>path</key>
+			<string>../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEKit.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E032A019D4FBBC003A655E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33E0329E19D4FBBC003A655E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33E032A119D4FBBC003A655E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33E0329F19D4FBBC003A655E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33E032A219D506B7003A655E</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>IDESourceEditor</string>
+			<key>path</key>
+			<string>../../../Applications/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS/IDESourceEditor</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E032A319D506B7003A655E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>33E032A219D506B7003A655E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>33E032A419D50DAD003A655E</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>CommandEdit-Bridging-Header.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E48D1E18D3F4D700FCC557</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>IDEKit</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework/Versions/A/IDEKit</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E48D2018D3F4F600FCC557</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>IDEFoundation</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E48D2218D3F50500FCC557</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>IDEFoundation.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E48D2418D3F51200FCC557</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>IDEKit.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E48D2618D3F52400FCC557</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>DVTFoundation.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33E48D2718D3F52400FCC557</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>DVTKit.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTKit.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33F94F1F18CED7650092E74C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>DVTFoundation.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode51-Beta5.app/Contents/SharedFrameworks/DVTFoundation.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33F94F2118CED77A0092E74C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>IDEKit.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode51-Beta5.app/Contents/Frameworks/IDEKit.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33F94F2218CED77A0092E74C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>IDEFoundation.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode51-Beta5.app/Contents/Frameworks/IDEFoundation.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33F94F2518CED78B0092E74C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>DVTKit.framework</string>
+			<key>path</key>
+			<string>../../../../Applications/Xcode51-Beta5.app/Contents/SharedFrameworks/DVTKit.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>33F94F3018CFC4DE0092E74C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>3396C02219D4FA63003E147C</string>
+				<string>3396C02319D4FA63003E147C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Categories</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>357F8AF843B94FDF3417124E</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CED95905E2ACE0A16D009A9A</string>
+				<string>741626E234D8521A05F9E61C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Pods</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>741626E234D8521A05F9E61C</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods/Pods.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>901133F6A5444AC5A872D178</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libPods.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>C03EF8C1E0814521B8BD1948</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>CED95905E2ACE0A16D009A9A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods/Pods.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E3CE14A9F6994F318E10896B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>901133F6A5444AC5A872D178</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>33B3A3E218CD36BE00AA64C8</string>
+</dict>
+</plist>
