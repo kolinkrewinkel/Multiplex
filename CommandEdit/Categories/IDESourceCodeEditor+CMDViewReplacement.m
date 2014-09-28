@@ -8,13 +8,13 @@
 
 #import <libextobjc/extobjc.h>
 #import <pop/POP.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 #import "IDESourceCodeEditor+CMDViewReplacement.h"
 
 #import "PLYSwizzling.h" 
 #import "CMDEditorController.h"
 
-static  IMP CMDDVTSourceTextViewOriginalSetSelectedRange = nil; 
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
 @implementation DVTSourceTextView (CMDViewReplacement)
@@ -28,7 +28,6 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 + (void)load
 {
     CMDDVTSourceTextViewOriginalInit = PLYPoseSwizzle(self, @selector(init), self, @selector(init), YES);
-//    CMDDVTSourceTextViewOriginalSetSelectedRange = PLYPoseSwizzle(self, @selector(setSelectedRange:), self, @selector(cmd_setSelectedRange:), YES);
 }
 
 #pragma mark -
@@ -38,22 +37,12 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 {
     id val = CMDDVTSourceTextViewOriginalInit(self, @selector(init));
 
-//    self.selectedRange = NSMakeRange(NSNotFound, 0);
-//    self.selectable = NO;
-//    self.editable = YES;
-
     return val;
 }
 
 #pragma mark -
 #pragma mark Setters
 
-//-(void)cmd_setSelectedRange:(NSRange)range
-//{
-//    self.selectable = NO;
-//    NSLog(@"%@", NSStringFromRange(self.selectedRange));
-//}
-//
 - (BOOL)isSelectable
 {
     return NO;
@@ -61,6 +50,45 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
 #pragma mark -
 #pragma mark Events
+
+- (void)deleteBackward:(id)sender
+{
+//    NSLog(@"%@", theEvent);
+//    NSLog(@"%lu", theEvent.modifierFlags);
+//
+//    if ((theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask) == 0)
+//    {
+//        NSLog(@"no modifier held. inserting text");
+//
+//        NSString *string = theEvent.charactersIgnoringModifiers;
+//        NSInteger delta = [string length];
+//
+//        [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+//            NSRange range;
+//            [vRange getValue:&range];
+//
+//            NSRange rangeToReplace = range;
+//            if (delta < 0)
+//            {
+//                rangeToReplace.location += delta;
+//            }
+//
+//            [self insertText:string replacementRange:rangeToReplace];
+//        }];
+//
+//        [self cmd_setSelectedRanges:[[self.cmd_selectedRanges.rac_sequence map:^id(NSValue *vRange) {
+//            NSRange range;
+//            [vRange getValue:&range];
+//
+//            return [NSValue valueWithRange:NSMakeRange(range.location + delta, 0)];
+//        }] array]];
+//    }
+//    else
+//    {
+//        [super keyDown:theEvent];
+//    }
+    NSLog(@"DELETE BACKWARD");
+}
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
@@ -113,20 +141,29 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
         [selectionViews addObject:view];
         [self addSubview:view];
 
-        [view.layer pop_addAnimation:
-         ({
-            POPSpringAnimation *animation = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerOpacity];
-            animation.springBounciness = 0.f;
-//            animation.velocity = @0.05f;
-            animation.springSpeed = 1.f;
-            animation.toValue = @0.f;
-            animation.repeatForever = YES;
-            animation.autoreverses = YES;
-            animation;
-        }) forKey:nil];
+        [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
     }];
 
     self.cmd_selectionViews = selectionViews;
+}
+
+- (POPBasicAnimation *)basicAnimationWithView:(NSView *)view
+{
+    POPBasicAnimation *animation = [POPBasicAnimation easeInEaseOutAnimation];
+    animation.property = [POPAnimatableProperty propertyWithName:kPOPLayerOpacity];
+    animation.toValue = @(view.layer.opacity == 1.f ? 0.f : 1.f);
+    animation.duration = view.layer.opacity == 1.f ? 0.10 : 0.15;
+    animation.beginTime = CACurrentMediaTime() + 0.275;
+    animation.removedOnCompletion = YES;
+    [animation setCompletionBlock:^(POPAnimation *animation, BOOL complete)
+     {
+         if (view && view.superview)
+         {
+             [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
+         }
+     }];
+
+    return animation;
 }
 
 - (void)layout
