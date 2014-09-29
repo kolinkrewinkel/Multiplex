@@ -53,8 +53,6 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
 - (void)insertText:(id)insertString
 {
-    NSLog(@"insert text proprietary: %@", insertString);
-
     if (![insertString isKindOfClass:[NSString class]])
     {
         return;
@@ -66,7 +64,8 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
 
-    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+    {
         NSRange range;
         [vRange getValue:&range];
 
@@ -75,6 +74,8 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
         NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
         [ranges addObject:[NSValue valueWithRange:deltaRange]];
+
+        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
 
         totalDelta += delta;
     }];
@@ -88,7 +89,7 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
 
-    [self.cmd_selectedRanges enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
     {
         NSRange range;
         [vRange getValue:&range];
@@ -100,6 +101,8 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
         NSRange deltaRange = NSMakeRange(rangeToReplace.location, 0);
         [ranges addObject:[NSValue valueWithRange:deltaRange]];
+
+        NSLog(@"\n-----------\nDeleting text @ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)lengthDeleted, (long)totalDelta);
 
         totalDelta += lengthDeleted;
     }];
@@ -144,13 +147,35 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
 - (void)cmd_setSelectedRanges:(NSArray *)ranges
 {
-    self.cmd_selectedRanges = ranges;
+    NSArray *sortedRanges = [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
+        NSRange range1;
+        NSRange range2;
+
+        [vRange1 getValue:&range1];
+        [vRange2 getValue:&range2];
+
+        NSInteger range1End = (range1.location + range1.length);
+        NSInteger range2End = (range2.location + range2.length);
+
+        if (range2End > range1End)
+        {
+            return NSOrderedAscending;
+        }
+        else if (range2End < range1End)
+        {
+            return NSOrderedDescending;
+        }
+
+        return NSOrderedSame;
+    }];
+
+    self.cmd_selectedRanges = sortedRanges;
 
     [self.cmd_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     NSMutableArray *selectionViews = [[NSMutableArray alloc] init];
 
-    [ranges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [sortedRanges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSView *view = [[NSView alloc] init];
         view.wantsLayer = YES;
         view.layer.backgroundColor = [[NSColor redColor] CGColor];
