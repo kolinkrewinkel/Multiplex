@@ -227,7 +227,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     animation.property = [POPAnimatableProperty propertyWithName:kPOPLayerOpacity];
     animation.toValue = @(view.layer.opacity == 1.f ? 0.f : 1.f);
     animation.duration = view.layer.opacity == 1.f ? 0.10 : 0.15;
-    animation.beginTime = CACurrentMediaTime() + 0.275;
+    animation.beginTime = CACurrentMediaTime() + 0.3;
     animation.removedOnCompletion = YES;
     [animation setCompletionBlock:^(POPAnimation *animation, BOOL complete)
      {
