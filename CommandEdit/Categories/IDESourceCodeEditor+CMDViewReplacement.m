@@ -16,6 +16,7 @@
 #import "CMDEditorController.h"
 
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
+static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 @implementation DVTSourceTextView (CMDViewReplacement)
 
@@ -28,6 +29,7 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 + (void)load
 {
     CMDDVTSourceTextViewOriginalInit = PLYPoseSwizzle(self, @selector(init), self, @selector(init), YES);
+    CMDDVTSourceTextViewOriginalMouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cmd_mouseDragged:), YES);
 }
 
 #pragma mark -
@@ -110,6 +112,12 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
     [self cmd_setSelectedRanges:ranges];
 }
 
+- (void)cmd_mouseDragged:(NSEvent *)theEvent
+{
+    CMDDVTSourceTextViewOriginalMouseDragged(self, @selector(mouseDragged:), theEvent);
+    NSLog(@"mouse dragged %@", theEvent);
+}
+
 - (void)mouseDown:(NSEvent *)theEvent
 {
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
@@ -120,16 +128,7 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
         existingSelections = @[];
     }
 
-    CGPoint clickLocation =
-    ({
-        CGPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-
-        CGFloat sidebarWidth = [[[[self enclosingScrollView] verticalRulerView] valueForKey:@"sidebarWidth"] floatValue];
-        CGFloat foldbarWidth = [[[[self enclosingScrollView] verticalRulerView] valueForKey:@"foldbarWidth"] floatValue];
-
-        location.x -= (sidebarWidth + foldbarWidth) * 2.f;
-        location;
-    });
+    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
 
     if (commandKeyHeld)
@@ -173,6 +172,26 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
     [sortedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
         NSRange range;
         [vRange getValue:&range];
+
+        __block BOOL contained = NO;
+        [coallescedRanges enumerateObjectsUsingBlock:^(NSValue *vRange2, NSUInteger idx, BOOL *stop) {
+            NSRange range2;
+            [vRange2 getValue:&range2];
+
+            NSRange intersectionRange = NSIntersectionRange(range, range2);
+            BOOL overlap = intersectionRange.length != 0;
+            BOOL sameIndex = intersectionRange.length == 0 && (range2.location == range.location);
+            if (overlap || sameIndex)
+            {
+                *stop = YES;
+                contained = YES;
+            }
+        }];
+
+        if (!contained)
+        {
+            [coallescedRanges addObject:vRange];
+        }
     }];
 
     return [[NSArray alloc] initWithArray:coallescedRanges];
