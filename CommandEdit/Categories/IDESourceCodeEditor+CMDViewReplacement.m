@@ -38,7 +38,6 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (instancetype)init
 {
     id val = CMDDVTSourceTextViewOriginalInit(self, @selector(init));
-
     return val;
 }
 
@@ -77,7 +76,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
         [ranges addObject:[NSValue valueWithRange:deltaRange]];
 
-        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
+//        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
 
         totalDelta += delta;
     }];
