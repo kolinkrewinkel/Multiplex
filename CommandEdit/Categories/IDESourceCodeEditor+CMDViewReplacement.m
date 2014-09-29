@@ -122,7 +122,7 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 
     CGPoint clickLocation =
     ({
-        CGPoint location = [self convertPoint:[theEvent locationInWindow] toView:nil];
+        CGPoint location = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 
         CGFloat sidebarWidth = [[[[self enclosingScrollView] verticalRulerView] valueForKey:@"sidebarWidth"] floatValue];
         CGFloat foldbarWidth = [[[[self enclosingScrollView] verticalRulerView] valueForKey:@"foldbarWidth"] floatValue];
