@@ -145,7 +145,7 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
 #pragma mark -
 #pragma mark Setters
 
-- (void)cmd_setSelectedRanges:(NSArray *)ranges
+- (NSArray *)derivedRanges:(NSArray *)ranges
 {
     NSArray *sortedRanges = [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
         NSRange range1;
@@ -169,13 +169,26 @@ static IMP CMDDVTSourceTextViewOriginalInit = nil;
         return NSOrderedSame;
     }];
 
-    self.cmd_selectedRanges = sortedRanges;
+    NSMutableArray *coallescedRanges = [[NSMutableArray alloc] init];
+    [sortedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+        NSRange range;
+        [vRange getValue:&range];
+    }];
+
+    return [[NSArray alloc] initWithArray:coallescedRanges];
+}
+
+- (void)cmd_setSelectedRanges:(NSArray *)ranges
+{
+    ranges = [self derivedRanges:ranges];
+
+    self.cmd_selectedRanges = ranges;
 
     [self.cmd_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     NSMutableArray *selectionViews = [[NSMutableArray alloc] init];
 
-    [sortedRanges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [ranges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSView *view = [[NSView alloc] init];
         view.wantsLayer = YES;
         view.layer.backgroundColor = [[NSColor redColor] CGColor];
