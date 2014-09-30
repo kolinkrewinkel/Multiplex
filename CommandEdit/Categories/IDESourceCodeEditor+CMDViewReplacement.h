@@ -11,6 +11,9 @@
 @interface DVTSourceTextView (CMDViewReplacement)
 
 @property (nonatomic) NSArray *cmd_selectedRanges;
-@property (nonatomic) NSArray *cmd_selectionViews;
+@property (nonatomic) NSDictionary *cmd_selectionViews;
+
+@property (nonatomic) NSValue *cmd_rangeInProgress;
+@property (nonatomic) NSArray *cmd_finalizingRanges;
 
 @end

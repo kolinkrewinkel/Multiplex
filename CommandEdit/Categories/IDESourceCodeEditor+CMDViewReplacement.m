@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
+@import QuartzCore;
+
 #import <libextobjc/extobjc.h>
 #import <pop/POP.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
@@ -20,6 +22,8 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 @implementation DVTSourceTextView (CMDViewReplacement)
 
+@synthesizeAssociation(DVTSourceTextView, cmd_rangeInProgress);
+@synthesizeAssociation(DVTSourceTextView, cmd_finalizingRanges);
 @synthesizeAssociation(DVTSourceTextView, cmd_selectedRanges);
 @synthesizeAssociation(DVTSourceTextView, cmd_selectionViews);
 
@@ -38,6 +42,9 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (instancetype)init
 {
     id val = CMDDVTSourceTextViewOriginalInit(self, @selector(init));
+
+    self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+
     return val;
 }
 
@@ -81,7 +88,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         totalDelta += delta;
     }];
 
-    [self cmd_setSelectedRanges:ranges];
+    [self cmd_setSelectedRanges:ranges finalized:YES];
 }
 
 - (void)deleteBackward:(id)sender
@@ -108,20 +115,36 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         totalDelta += lengthDeleted;
     }];
 
-    [self cmd_setSelectedRanges:ranges];
+    [self cmd_setSelectedRanges:ranges finalized:YES];
 }
 
 - (void)cmd_mouseDragged:(NSEvent *)theEvent
 {
-    CMDDVTSourceTextViewOriginalMouseDragged(self, @selector(mouseDragged:), theEvent);
-    NSLog(@"mouse dragged %@", theEvent);
+//    CMDDVTSourceTextViewOriginalMouseDragged(self, @selector(mouseDragged:), theEvent);
+
+    NSRange rangeInProgress;
+    [self.cmd_rangeInProgress getValue:&rangeInProgress];
+
+    if (rangeInProgress.location == NSNotFound)
+    {
+        return;
+    }
+
+    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
+
+    if (index > rangeInProgress.location)
+    {
+        NSArray *ranges = self.cmd_selectedRanges;
+        [self cmd_setSelectedRanges:[ranges arrayByAddingObject:[NSValue valueWithRange:NSMakeRange(rangeInProgress.location, index - rangeInProgress.location)]] finalized:NO];
+    }
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
 
-    NSArray *existingSelections = self.cmd_selectedRanges;
+    NSArray *existingSelections = [self cmd_effectiveSelectedRanges];
     if (!existingSelections)
     {
         existingSelections = @[];
@@ -130,14 +153,24 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
 
+    NSRange rangeOfSelection = NSMakeRange(index, 0);
+    self.cmd_rangeInProgress = [NSValue valueWithRange:rangeOfSelection];
+
     if (commandKeyHeld)
     {
-        [self cmd_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:NSMakeRange(index, 0)]]];
+
+        [self cmd_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
     else
     {
-        [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(index, 0)]]];
+        [self cmd_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+    [self cmd_setSelectedRanges:[self cmd_effectiveSelectedRanges] finalized:YES];
+    self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
 }
 
 #pragma mark -
@@ -196,28 +229,71 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     return [[NSArray alloc] initWithArray:coallescedRanges];
 }
 
-- (void)cmd_setSelectedRanges:(NSArray *)ranges
+- (void)cmd_setSelectedRanges:(NSArray *)ranges finalized:(BOOL)finalized
 {
     ranges = [self derivedRanges:ranges];
 
-    self.cmd_selectedRanges = ranges;
+    if (finalized)
+    {
+        self.cmd_selectedRanges = ranges;
+        self.cmd_finalizingRanges = nil;
+    }
+    else
+    {
+        self.cmd_finalizingRanges = ranges;
+    }
 
-    [self.cmd_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop) {
+        if (view == self)
+        {
+            NSRange range;
+            [value getValue:&range];
 
-    NSMutableArray *selectionViews = [[NSMutableArray alloc] init];
+            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
 
-    [ranges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSView *view = [[NSView alloc] init];
-        view.wantsLayer = YES;
-        view.layer.backgroundColor = [[NSColor redColor] CGColor];
+            [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
 
-        [selectionViews addObject:view];
-        [self addSubview:view];
+            return;
+        }
 
-        [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
+        [view removeFromSuperview];
     }];
 
-    self.cmd_selectionViews = selectionViews;
+    self.cmd_selectionViews =
+    ({
+        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+        NSMutableDictionary *selectionViews = [[NSMutableDictionary alloc] init];
+
+        [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+         {
+             NSRange range;
+             [vRange getValue:&range];
+
+             if (range.length == 0)
+             {
+                 CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:range.location effectiveRange:NULL];
+                 CGPoint location = [self.layoutManager locationForGlyphAtIndex:range.location];
+
+                 NSView *view = [[NSView alloc] init];
+                 view.wantsLayer = YES;
+                 view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
+                 CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 2.f, 18.f);
+                 [self addSubview:view];
+                 [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
+
+                 selectionViews[[NSValue valueWithRect:rect]] = view;
+             }
+             else
+             {
+                selectionViews[[NSValue valueWithRange:range]] = self;
+             }
+         }];
+        
+        selectionViews;
+    });
+
+    [self setNeedsLayout:YES];
 }
 
 - (POPBasicAnimation *)basicAnimationWithView:(NSView *)view
@@ -241,20 +317,32 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)layout
 {
-    [self.cmd_selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
-        NSValue *vRange = self.cmd_selectedRanges[idx];
-        NSRange range;
-        [vRange getValue:&range];
+    [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect, NSView *view, BOOL *stop) {
+        CGRect rect = CGRectZero;
+        [vRect getValue:&rect];
 
-        CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:range.location effectiveRange:NULL];
-        CGPoint location = [self.layoutManager locationForGlyphAtIndex:range.location];
+        if (view == self)
+        {
+            NSRange range;
+            [vRect getValue:&range];
 
-        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-        view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
-        view.frame = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 2.f, 18.f);
+            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+
+            [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
+
+            return;
+        }
+
+        view.frame = rect;
     }];
 
     [super layout];
+}
+
+- (NSArray *)cmd_effectiveSelectedRanges
+{
+    return self.cmd_finalizingRanges ? self.cmd_finalizingRanges : self.cmd_selectedRanges;
 }
 
 @end
