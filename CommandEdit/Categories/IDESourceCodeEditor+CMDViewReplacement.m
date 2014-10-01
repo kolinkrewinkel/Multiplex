@@ -212,22 +212,56 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (NSArray *)reducedRanges:(NSArray *)sortedRanges
 {
     NSMutableArray *reducedRanges = [[NSMutableArray alloc] init];
-    [sortedRanges enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
-        NSRange range;
-        [vRange getValue:&range];
+    NSMutableArray *shouldCompare = [[NSMutableArray alloc] init];
 
-        if (idx > 0 && [reducedRanges count] > 0)
+    [sortedRanges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [shouldCompare addObject:@YES];
+    }];
+
+    [sortedRanges enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSValue *vRange1, NSUInteger idx, BOOL *stop)
+    {
+        if (![shouldCompare[idx] boolValue])
         {
-            [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(NSValue *vRange2, NSUInteger idx, BOOL *stop)
-             {
-                 NSRange range2;
-                 [vRange2 getValue:&range2];
-
-                 NSLog(@"\nCompare: %@\n   Against: %@\n", NSStringFromRange(range), NSStringFromRange(range2));
-             }];
+            return;
         }
 
-        [reducedRanges addObject:vRange];
+        NSRange range1;
+        [vRange1 getValue:&range1];
+
+        __block NSRange rangeToAdd = range1;
+        __block BOOL shouldAdd = YES;
+
+        [sortedRanges enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, idx)] options:NSEnumerationReverse usingBlock:^(NSValue *vRange2, NSUInteger idx2, BOOL *stop2)
+         {
+             NSRange range2;
+             [vRange2 getValue:&range2];
+
+             if (NSEqualRanges(rangeToAdd, range2))
+             {
+                 NSLog(@"Equal ranges (range1 not being added.): %@", NSStringFromRange(rangeToAdd));
+
+                 shouldAdd = NO;
+                 *stop2 = YES;
+                 return;
+             }
+
+             BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
+             BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
+
+             if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
+             {
+                 NSRange _rangeToAdd = rangeToAdd;
+                 shouldCompare[idx2] = @NO;
+                 rangeToAdd.length += range2.length;
+
+                 NSLog(@"Range %@ combined with %@ to equal: %@", NSStringFromRange(_rangeToAdd), NSStringFromRange(range2), NSStringFromRange(rangeToAdd));
+             }
+         }];
+
+        if (shouldAdd)
+        {
+            [reducedRanges addObject:[NSValue valueWithRange:rangeToAdd]];
+        }
     }];
 
     return [[NSArray alloc] initWithArray:reducedRanges];
@@ -278,24 +312,27 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
              NSRange range;
              [vRange getValue:&range];
 
-             if (range.length == 0)
-             {
-                 CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:range.location effectiveRange:NULL];
-                 CGPoint location = [self.layoutManager locationForGlyphAtIndex:range.location];
+             NSRange rangeToDraw = range;
 
-                 NSView *view = [[NSView alloc] init];
-                 view.wantsLayer = YES;
-                 view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
-                 CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 2.f, 18.f);
-                 [self addSubview:view];
-                 [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
-
-                 selectionViews[[NSValue valueWithRect:rect]] = view;
-             }
-             else
+             if (range.length > 0)
              {
-                selectionViews[[NSValue valueWithRange:range]] = self;
+                 selectionViews[[NSValue valueWithRange:range]] = self;
+                 rangeToDraw = NSMakeRange(range.location + range.length, 0);
              }
+
+             CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:rangeToDraw.location effectiveRange:NULL];
+             CGPoint location = [self.layoutManager locationForGlyphAtIndex:rangeToDraw.location];
+
+             NSView *view = [[NSView alloc] init];
+             view.wantsLayer = YES;
+             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
+             CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 2.f, 18.f);
+
+             NSLog(@"%f %f", CGRectGetMaxY(lineLocation), location.y);
+             [self addSubview:view];
+             [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
+
+             selectionViews[[NSValue valueWithRect:rect]] = view;
          }];
         
         selectionViews;
