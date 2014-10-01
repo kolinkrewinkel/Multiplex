@@ -158,11 +158,12 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     if (commandKeyHeld)
     {
-
+        NSLog(@"adding range");
         [self cmd_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
     else
     {
+        [self cmd_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:YES];
         [self cmd_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
 }
@@ -178,14 +179,21 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (NSArray *)derivedRanges:(NSArray *)ranges
 {
-    NSArray *sortedRanges = [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
+    NSArray *sortedRanges = [self sortedRanges:ranges];
+    NSArray *reducedRanges = [self reducedRanges:sortedRanges];
+
+    return reducedRanges;
+}
+
+- (NSArray *)sortedRanges:(NSArray *)ranges
+{
+    return [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
         NSRange range1;
-        NSRange range2;
-
         [vRange1 getValue:&range1];
-        [vRange2 getValue:&range2];
-
         NSInteger range1End = (range1.location + range1.length);
+
+        NSRange range2;
+        [vRange2 getValue:&range2];
         NSInteger range2End = (range2.location + range2.length);
 
         if (range2End > range1End)
@@ -199,34 +207,30 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
         return NSOrderedSame;
     }];
+}
 
-    NSMutableArray *coallescedRanges = [[NSMutableArray alloc] init];
-    [sortedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+- (NSArray *)reducedRanges:(NSArray *)sortedRanges
+{
+    NSMutableArray *reducedRanges = [[NSMutableArray alloc] init];
+    [sortedRanges enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
         NSRange range;
         [vRange getValue:&range];
 
-        __block BOOL contained = NO;
-        [coallescedRanges enumerateObjectsUsingBlock:^(NSValue *vRange2, NSUInteger idx, BOOL *stop) {
-            NSRange range2;
-            [vRange2 getValue:&range2];
-
-            NSRange intersectionRange = NSIntersectionRange(range, range2);
-            BOOL overlap = intersectionRange.length != 0;
-            BOOL sameIndex = intersectionRange.length == 0 && (range2.location == range.location);
-            if (overlap || sameIndex)
-            {
-                *stop = YES;
-                contained = YES;
-            }
-        }];
-
-        if (!contained)
+        if (idx > 0 && [reducedRanges count] > 0)
         {
-            [coallescedRanges addObject:vRange];
+            [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(NSValue *vRange2, NSUInteger idx, BOOL *stop)
+             {
+                 NSRange range2;
+                 [vRange2 getValue:&range2];
+
+                 NSLog(@"\nCompare: %@\n   Against: %@\n", NSStringFromRange(range), NSStringFromRange(range2));
+             }];
         }
+
+        [reducedRanges addObject:vRange];
     }];
 
-    return [[NSArray alloc] initWithArray:coallescedRanges];
+    return [[NSArray alloc] initWithArray:reducedRanges];
 }
 
 - (void)cmd_setSelectedRanges:(NSArray *)ranges finalized:(BOOL)finalized
@@ -237,10 +241,14 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     {
         self.cmd_selectedRanges = ranges;
         self.cmd_finalizingRanges = nil;
+
+        NSLog(@"finalized ranges to %@", self.cmd_selectedRanges);
     }
     else
     {
         self.cmd_finalizingRanges = ranges;
+
+        NSLog(@"temp'd ranges to %@", self.cmd_finalizingRanges);
     }
 
     [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop) {
