@@ -120,8 +120,6 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)cmd_mouseDragged:(NSEvent *)theEvent
 {
-//    CMDDVTSourceTextViewOriginalMouseDragged(self, @selector(mouseDragged:), theEvent);
-
     NSRange rangeInProgress;
     [self.cmd_rangeInProgress getValue:&rangeInProgress];
 
@@ -135,8 +133,10 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     if (index > rangeInProgress.location)
     {
-        NSArray *ranges = self.cmd_selectedRanges;
-        [self cmd_setSelectedRanges:[ranges arrayByAddingObject:[NSValue valueWithRange:NSMakeRange(rangeInProgress.location, index - rangeInProgress.location)]] finalized:NO];
+        NSRange newRange = NSMakeRange(rangeInProgress.location, index - rangeInProgress.location);
+        NSLog(@"new range: %@", NSStringFromRange(newRange));
+
+        [self cmd_setSelectedRanges:[self.cmd_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
     }
 }
 
@@ -158,7 +158,6 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     if (commandKeyHeld)
     {
-        NSLog(@"adding range");
         [self cmd_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
     else
@@ -252,7 +251,14 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
              {
                  NSRange _rangeToAdd = rangeToAdd;
                  shouldCompare[idx2] = @NO;
+
+                 rangeToAdd.location = range2.location;
                  rangeToAdd.length += range2.length;
+
+                 if (NSEqualRanges(_rangeToAdd, [[self cmd_rangeInProgress] rangeValue]))
+                 {
+                     self.cmd_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
+                 }
 
                  NSLog(@"Range %@ combined with %@ to equal: %@", NSStringFromRange(_rangeToAdd), NSStringFromRange(range2), NSStringFromRange(rangeToAdd));
              }
@@ -273,6 +279,11 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     if (finalized)
     {
+        if ([self.cmd_selectedRanges isEqual:ranges] && self.cmd_finalizingRanges == nil)
+        {
+            return;
+        }
+
         self.cmd_selectedRanges = ranges;
         self.cmd_finalizingRanges = nil;
 
@@ -280,6 +291,11 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     }
     else
     {
+        if ([self.cmd_finalizingRanges isEqual:ranges])
+        {
+            return;
+        }
+
         self.cmd_finalizingRanges = ranges;
 
         NSLog(@"temp'd ranges to %@", self.cmd_finalizingRanges);
@@ -328,7 +344,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
              view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 2.f, 18.f);
 
-             NSLog(@"%f %f", CGRectGetMaxY(lineLocation), location.y);
+//             NSLog(@"%f %f", CGRectGetMaxY(lineLocation), location.y);
              [self addSubview:view];
              [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
 
