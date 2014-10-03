@@ -134,7 +134,9 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     if (index > rangeInProgress.location)
     {
         NSRange newRange = NSMakeRange(rangeInProgress.location, index - rangeInProgress.location);
-        NSLog(@"new range: %@", NSStringFromRange(newRange));
+
+        // Update the model value for when it is used combinatorily.
+        self.cmd_rangeInProgress = [NSValue valueWithRange:newRange];
 
         [self cmd_setSelectedRanges:[self.cmd_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
     }
@@ -249,18 +251,18 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
              if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
              {
-                 NSRange _rangeToAdd = rangeToAdd;
+                 NSRange originalRangeToAdd = rangeToAdd;
                  shouldCompare[idx2] = @NO;
 
                  rangeToAdd.location = range2.location;
                  rangeToAdd.length += range2.length;
 
-                 if (NSEqualRanges(_rangeToAdd, [[self cmd_rangeInProgress] rangeValue]))
+                  NSLog(@"UPDATED RANGE IN PROGRESS: %@", NSStringFromRange([self.cmd_rangeInProgress rangeValue]));
+                 if (NSEqualRanges(originalRangeToAdd, [self.cmd_rangeInProgress rangeValue]))
                  {
                      self.cmd_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
+                     NSLog(@"UPDATED RANGE IN PROGRESS: %@", NSStringFromRange([self.cmd_rangeInProgress rangeValue]));
                  }
-
-                 NSLog(@"Range %@ combined with %@ to equal: %@", NSStringFromRange(_rangeToAdd), NSStringFromRange(range2), NSStringFromRange(rangeToAdd));
              }
          }];
 
@@ -291,7 +293,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     }
     else
     {
-        if ([self.cmd_finalizingRanges isEqual:ranges])
+        if ([ranges isEqualToArray:self.cmd_finalizingRanges])
         {
             return;
         }
