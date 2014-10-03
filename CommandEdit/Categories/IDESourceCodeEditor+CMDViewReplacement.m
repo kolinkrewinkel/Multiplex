@@ -74,8 +74,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
     {
-        NSRange range;
-        [vRange getValue:&range];
+        NSRange range = [vRange rangeValue];
 
         NSRange rangeToReplace = NSMakeRange(range.location + totalDelta, range.length);
         [self insertText:string replacementRange:rangeToReplace];
@@ -99,8 +98,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
     {
-        NSRange range;
-        [vRange getValue:&range];
+        NSRange range = [vRange rangeValue];
 
         NSInteger lengthDeleted = -(range.length + 1);
         NSRange rangeToReplace = NSMakeRange(range.location + totalDelta + lengthDeleted, -lengthDeleted);
@@ -120,8 +118,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)cmd_mouseDragged:(NSEvent *)theEvent
 {
-    NSRange rangeInProgress;
-    [self.cmd_rangeInProgress getValue:&rangeInProgress];
+    NSRange rangeInProgress = [self.cmd_rangeInProgress rangeValue];
 
     if (rangeInProgress.location == NSNotFound)
     {
@@ -189,12 +186,10 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (NSArray *)sortedRanges:(NSArray *)ranges
 {
     return [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
-        NSRange range1;
-        [vRange1 getValue:&range1];
+        NSRange range1 = [vRange1 rangeValue];
         NSInteger range1End = (range1.location + range1.length);
 
-        NSRange range2;
-        [vRange2 getValue:&range2];
+        NSRange range2 = [vRange2 rangeValue];
         NSInteger range2End = (range2.location + range2.length);
 
         if (range2End > range1End)
@@ -226,16 +221,14 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
             return;
         }
 
-        NSRange range1;
-        [vRange1 getValue:&range1];
+        NSRange range1 = [vRange1 rangeValue];
 
         __block NSRange rangeToAdd = range1;
         __block BOOL shouldAdd = YES;
 
         [sortedRanges enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, idx)] options:NSEnumerationReverse usingBlock:^(NSValue *vRange2, NSUInteger idx2, BOOL *stop2)
          {
-             NSRange range2;
-             [vRange2 getValue:&range2];
+             NSRange range2 = [vRange2 rangeValue];
 
              if (NSEqualRanges(rangeToAdd, range2))
              {
@@ -306,8 +299,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop) {
         if (view == self)
         {
-            NSRange range;
-            [value getValue:&range];
+            NSRange range = [value rangeValue];
 
             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
@@ -327,8 +319,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
         [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
          {
-             NSRange range;
-             [vRange getValue:&range];
+             NSRange range = [vRange rangeValue];
 
              NSRange rangeToDraw = range;
 
@@ -381,13 +372,11 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (void)layout
 {
     [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect, NSView *view, BOOL *stop) {
-        CGRect rect = CGRectZero;
-        [vRect getValue:&rect];
+        CGRect rect = [vRect CGRectValue];
 
         if (view == self)
         {
-            NSRange range;
-            [vRect getValue:&range];
+            NSRange range = [vRect rangeValue];
 
             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
