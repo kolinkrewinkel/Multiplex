@@ -22,6 +22,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 @implementation DVTSourceTextView (CMDViewReplacement)
 
+@synthesizeAssociation(DVTSourceTextView, cmd_rangeInProgressStart);
 @synthesizeAssociation(DVTSourceTextView, cmd_rangeInProgress);
 @synthesizeAssociation(DVTSourceTextView, cmd_finalizingRanges);
 @synthesizeAssociation(DVTSourceTextView, cmd_selectedRanges);
@@ -44,6 +45,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     id val = CMDDVTSourceTextViewOriginalInit(self, @selector(init));
 
     self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+    self.cmd_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
 
     return val;
 }
@@ -119,24 +121,31 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (void)cmd_mouseDragged:(NSEvent *)theEvent
 {
     NSRange rangeInProgress = [self.cmd_rangeInProgress rangeValue];
+    NSRange rangeInProgressOrigin = [self.cmd_rangeInProgressStart rangeValue];
 
-    if (rangeInProgress.location == NSNotFound)
+    if (rangeInProgress.location == NSNotFound || rangeInProgressOrigin.location == NSNotFound)
     {
         return;
     }
 
     CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
+    NSRange newRange;
 
-    if (index > rangeInProgress.location)
+    if (index > rangeInProgressOrigin.location)
     {
-        NSRange newRange = NSMakeRange(rangeInProgress.location, index - rangeInProgress.location);
+        newRange = NSMakeRange(rangeInProgressOrigin.location, index - rangeInProgressOrigin.location);
 
-        // Update the model value for when it is used combinatorily.
-        self.cmd_rangeInProgress = [NSValue valueWithRange:newRange];
-
-        [self cmd_setSelectedRanges:[self.cmd_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
     }
+    else
+    {
+        newRange = NSMakeRange(index, (rangeInProgressOrigin.location + rangeInProgressOrigin.length) - index);
+    }
+
+    // Update the model value for when it is used combinatorily.
+    self.cmd_rangeInProgress = [NSValue valueWithRange:newRange];
+
+    [self cmd_setSelectedRanges:[self.cmd_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -154,6 +163,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     NSRange rangeOfSelection = NSMakeRange(index, 0);
     self.cmd_rangeInProgress = [NSValue valueWithRange:rangeOfSelection];
+    self.cmd_rangeInProgressStart = [NSValue valueWithRange:rangeOfSelection];
 
     if (commandKeyHeld)
     {
@@ -170,6 +180,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 {
     [self cmd_setSelectedRanges:[self cmd_effectiveSelectedRanges] finalized:YES];
     self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+    self.cmd_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
 }
 
 #pragma mark -

@@ -14,6 +14,8 @@
 @property (nonatomic) NSDictionary *cmd_selectionViews;
 
 @property (nonatomic) NSValue *cmd_rangeInProgress;
+@property (nonatomic) NSValue *cmd_rangeInProgressStart;
+
 @property (nonatomic) NSArray *cmd_finalizingRanges;
 
 @end
