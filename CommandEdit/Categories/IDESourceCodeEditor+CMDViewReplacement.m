@@ -14,7 +14,7 @@
 
 #import "IDESourceCodeEditor+CMDViewReplacement.h"
 
-#import "PLYSwizzling.h" 
+#import "PLYSwizzling.h"
 #import "CMDEditorController.h"
 
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
@@ -73,19 +73,19 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
 
     [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
-    {
-        NSRange range = [vRange rangeValue];
+     {
+         NSRange range = [vRange rangeValue];
 
-        NSRange rangeToReplace = NSMakeRange(range.location + totalDelta, range.length);
-        [self insertText:string replacementRange:rangeToReplace];
+         NSRange rangeToReplace = NSMakeRange(range.location + totalDelta, range.length);
+         [self insertText:string replacementRange:rangeToReplace];
 
-        NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
-        [ranges addObject:[NSValue valueWithRange:deltaRange]];
+         NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
+         [ranges addObject:[NSValue valueWithRange:deltaRange]];
 
-//        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
+         //        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
 
-        totalDelta += delta;
-    }];
+         totalDelta += delta;
+     }];
 
     [self cmd_setSelectedRanges:ranges finalized:YES];
 }
@@ -97,21 +97,21 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
 
     [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
-    {
-        NSRange range = [vRange rangeValue];
+     {
+         NSRange range = [vRange rangeValue];
 
-        NSInteger lengthDeleted = -(range.length + 1);
-        NSRange rangeToReplace = NSMakeRange(range.location + totalDelta + lengthDeleted, -lengthDeleted);
+         NSInteger lengthDeleted = -(range.length + 1);
+         NSRange rangeToReplace = NSMakeRange(range.location + totalDelta + lengthDeleted, -lengthDeleted);
 
-        [self insertText:@"" replacementRange:rangeToReplace];
+         [self insertText:@"" replacementRange:rangeToReplace];
 
-        NSRange deltaRange = NSMakeRange(rangeToReplace.location, 0);
-        [ranges addObject:[NSValue valueWithRange:deltaRange]];
+         NSRange deltaRange = NSMakeRange(rangeToReplace.location, 0);
+         [ranges addObject:[NSValue valueWithRange:deltaRange]];
 
-        NSLog(@"\n-----------\nDeleting text @ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)lengthDeleted, (long)totalDelta);
+//         NSLog(@"\n-----------\nDeleting text @ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)lengthDeleted, (long)totalDelta);
 
-        totalDelta += lengthDeleted;
-    }];
+         totalDelta += lengthDeleted;
+     }];
 
     [self cmd_setSelectedRanges:ranges finalized:YES];
 }
@@ -187,16 +187,16 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 {
     return [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
         NSRange range1 = [vRange1 rangeValue];
-        NSInteger range1End = (range1.location + range1.length);
+        NSInteger range1Loc = range1.location;
 
         NSRange range2 = [vRange2 rangeValue];
-        NSInteger range2End = (range2.location + range2.length);
+        NSInteger range2Loc = range2.location;
 
-        if (range2End > range1End)
+        if (range2Loc > range1Loc)
         {
             return NSOrderedAscending;
         }
-        else if (range2End < range1End)
+        else if (range2Loc < range1Loc)
         {
             return NSOrderedDescending;
         }
@@ -214,56 +214,64 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         [shouldCompare addObject:@YES];
     }];
 
-    [sortedRanges enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSValue *vRange1, NSUInteger idx, BOOL *stop)
-    {
-        if (![shouldCompare[idx] boolValue])
-        {
-            return;
-        }
-
-        NSRange range1 = [vRange1 rangeValue];
-
-        __block NSRange rangeToAdd = range1;
-        __block BOOL shouldAdd = YES;
-
-        [sortedRanges enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, idx)] options:NSEnumerationReverse usingBlock:^(NSValue *vRange2, NSUInteger idx2, BOOL *stop2)
+    [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(NSValue *vRange1, NSUInteger idx, BOOL *stop)
+     {
+         if (![shouldCompare[idx] boolValue])
          {
-             NSRange range2 = [vRange2 rangeValue];
+             return;
+         }
 
-             if (NSEqualRanges(rangeToAdd, range2))
-             {
-                 NSLog(@"Equal ranges (range1 not being added.): %@", NSStringFromRange(rangeToAdd));
+         NSRange range1 = [vRange1 rangeValue];
 
-                 shouldAdd = NO;
-                 *stop2 = YES;
-                 return;
-             }
+         __block NSRange rangeToAdd = range1;
+         __block BOOL shouldAdd = YES;
 
-             BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
-             BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
+         [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(NSValue *vRange2, NSUInteger idx2, BOOL *stop2)
+          {
+              NSRange range2 = [vRange2 rangeValue];
 
-             if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
-             {
-                 NSRange originalRangeToAdd = rangeToAdd;
-                 shouldCompare[idx2] = @NO;
+              BOOL literallyTheSameRange = idx == idx2;
+              BOOL equivalentRanges = NSEqualRanges(rangeToAdd, range2);
 
-                 rangeToAdd.location = range2.location;
-                 rangeToAdd.length += range2.length;
+              if (equivalentRanges && !literallyTheSameRange)
+              {
+                  NSLog(@"Equal ranges (range1 not being added.): %@", NSStringFromRange(rangeToAdd));
 
-                  NSLog(@"UPDATED RANGE IN PROGRESS: %@", NSStringFromRange([self.cmd_rangeInProgress rangeValue]));
-                 if (NSEqualRanges(originalRangeToAdd, [self.cmd_rangeInProgress rangeValue]))
-                 {
-                     self.cmd_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
-                     NSLog(@"UPDATED RANGE IN PROGRESS: %@", NSStringFromRange([self.cmd_rangeInProgress rangeValue]));
-                 }
-             }
-         }];
+                  shouldAdd = NO;
+                  *stop2 = YES;
+                  return;
+              }
+              else if (literallyTheSameRange)
+              {
+                  return;
+              }
 
-        if (shouldAdd)
-        {
-            [reducedRanges addObject:[NSValue valueWithRange:rangeToAdd]];
-        }
-    }];
+              BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
+              BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
+
+              if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
+              {
+                  NSRange originalRangeToAdd = rangeToAdd;
+                  shouldCompare[idx2] = @NO;
+
+                  NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
+                  if (relativeIncrease < range2.length)
+                  {
+                      rangeToAdd.length += range2.length - relativeIncrease;
+                  }
+
+                  if (NSEqualRanges(originalRangeToAdd, [self.cmd_rangeInProgress rangeValue]))
+                  {
+                      self.cmd_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
+                  }
+              }
+          }];
+
+         if (shouldAdd)
+         {
+             [reducedRanges addObject:[NSValue valueWithRange:rangeToAdd]];
+         }
+     }];
 
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
@@ -282,7 +290,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         self.cmd_selectedRanges = ranges;
         self.cmd_finalizingRanges = nil;
 
-        NSLog(@"finalized ranges to %@", self.cmd_selectedRanges);
+        NSLog(@"Finalized ranges to %@.", self.cmd_selectedRanges);
     }
     else
     {
@@ -292,8 +300,6 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         }
 
         self.cmd_finalizingRanges = ranges;
-
-        NSLog(@"temp'd ranges to %@", self.cmd_finalizingRanges);
     }
 
     [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop) {
@@ -337,13 +343,12 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
              view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 2.f, 18.f);
 
-//             NSLog(@"%f %f", CGRectGetMaxY(lineLocation), location.y);
              [self addSubview:view];
              [view.layer pop_addAnimation:[self basicAnimationWithView:view] forKey:kPOPLayerOpacity];
 
              selectionViews[[NSValue valueWithRect:rect]] = view;
          }];
-        
+
         selectionViews;
     });
 
@@ -373,22 +378,22 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 {
     [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect, NSView *view, BOOL *stop) {
         CGRect rect = [vRect CGRectValue];
-
+        
         if (view == self)
         {
             NSRange range = [vRect rangeValue];
-
+            
             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-
+            
             [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
-
+            
             return;
         }
-
+        
         view.frame = rect;
     }];
-
+    
     [super layout];
 }
 
