@@ -84,7 +84,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
          [ranges addObject:[NSValue valueWithRange:deltaRange]];
 
-         //        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
+        NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
 
          totalDelta += delta;
      }];
@@ -313,19 +313,13 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         self.cmd_finalizingRanges = ranges;
     }
 
+
+    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
+
+    [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:NSMakeRange(0, [textStorage.string length])];
+
     [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop) {
-        if (view == self)
-        {
-            NSRange range = [value rangeValue];
-
-            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
-
-            [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
-
-            return;
-        }
-
         [view removeFromSuperview];
     }];
 
