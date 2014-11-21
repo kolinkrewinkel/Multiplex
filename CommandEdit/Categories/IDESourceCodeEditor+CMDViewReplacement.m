@@ -15,7 +15,6 @@
 #import "IDESourceCodeEditor+CMDViewReplacement.h"
 
 #import "PLYSwizzling.h"
-#import "CMDEditorController.h"
 
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
 static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
