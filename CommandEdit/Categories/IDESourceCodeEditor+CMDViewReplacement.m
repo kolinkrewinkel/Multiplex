@@ -336,6 +336,18 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         self.cmd_finalizingRanges = ranges;
     }
 
+    [ranges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+    {
+        if (idx == 0)
+        {
+            NSRange range = [vRange rangeValue];
+            self.selectedRange = range;
+        }
+        else
+        {
+            *stop = YES;
+        }
+    }];
 
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
     NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
