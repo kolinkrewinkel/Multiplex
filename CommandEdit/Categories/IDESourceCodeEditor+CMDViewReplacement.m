@@ -14,6 +14,7 @@
 
 #import "IDESourceCodeEditor+CMDViewReplacement.h"
 
+#import "CATNextNavigator.h"
 #import "PLYSwizzling.h"
 
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
@@ -49,6 +50,17 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     self.cmd_blinkTimer = [NSTimer timerWithTimeInterval:0.5 target:self selector:@selector(cmd_blinkCursors:) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:self.cmd_blinkTimer forMode:NSRunLoopCommonModes];
 
+    [NSEvent addLocalMonitorForEventsMatchingMask:NSKeyDownMask handler:^NSEvent *(NSEvent *event)
+    {
+        if (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "])
+        {
+            CATNextNavigator *navigator = [[CATNextNavigator alloc] initWithView:self.superview.superview symbol:nil];
+            [navigator show:YES];
+        }
+
+        return event;
+    }];
+
     CMDDVTSourceTextViewOriginalInit(self, @selector(_commonInitDVTSourceTextView));
 }
 
@@ -70,15 +82,58 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         NSRange range = [vRange rangeValue];
         NSRange newRange = range;
 
-        if (range.location > 0)
+        if (range.length == 0)
         {
-            newRange.location = range.location - 1;
+            if (range.location > 0)
+            {
+                newRange.location = range.location - 1;
+            }
+        }
+        else
+        {
+            newRange.length = 0;
         }
 
         [ranges addObject:[NSValue valueWithRange:newRange]];
     }];
 
     [self cmd_setSelectedRanges:ranges finalized:(self.cmd_finalizingRanges == nil)];
+}
+
+- (void)moveRight:(id)sender
+{
+    NSMutableArray *ranges = [[NSMutableArray alloc] init];
+    [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+        NSRange range = [vRange rangeValue];
+        NSRange newRange = range;
+
+        if (range.length == 0)
+        {
+            if (range.location < self.textStorage.length)
+            {
+                newRange.location = range.location + 1;
+            }
+        }
+        else
+        {
+            newRange.location = range.location + range.length;
+            newRange.length = 0;
+        }
+
+        [ranges addObject:[NSValue valueWithRange:newRange]];
+    }];
+
+    [self cmd_setSelectedRanges:ranges finalized:(self.cmd_finalizingRanges == nil)];
+}
+
+- (void)moveUp:(id)sender
+{
+
+}
+
+- (void)moveDown:(id)sender
+{
+
 }
 
 - (void)cmd_blinkCursors:(NSTimer *)sender
@@ -439,6 +494,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
              NSView *view = [[NSView alloc] init];
              view.wantsLayer = YES;
              view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 1.f, 18.f);
 
              [self addSubview:view];
