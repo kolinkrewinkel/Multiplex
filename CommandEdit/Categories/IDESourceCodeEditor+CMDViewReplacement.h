@@ -11,6 +11,9 @@
 @interface DVTSourceTextView (CMDViewReplacement)
 
 @property (nonatomic) NSArray *cmd_selectedRanges;
+
+@property (nonatomic) NSTimer *cmd_blinkTimer;
+@property (nonatomic) BOOL cmd_blinkState;
 @property (nonatomic) NSDictionary *cmd_selectionViews;
 
 @property (nonatomic) NSValue *cmd_rangeInProgress;
