@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33B3A3E918CD36BE00AA64C8"
-               BuildableName = "CommandEdit.xcplugin"
-               BlueprintName = "CommandEdit"
-               ReferencedContainer = "container:CommandEdit.xcodeproj">
+               BuildableName = "Catalyst.xcplugin"
+               BlueprintName = "Catalyst"
+               ReferencedContainer = "container:Catalyst.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,15 +40,16 @@
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <PathRunnable
+         runnableDebuggingMode = "0"
          FilePath = "/Applications/Xcode-Beta.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33B3A3E918CD36BE00AA64C8"
-            BuildableName = "CommandEdit.xcplugin"
-            BlueprintName = "CommandEdit"
-            ReferencedContainer = "container:CommandEdit.xcodeproj">
+            BuildableName = "Catalyst.xcplugin"
+            BlueprintName = "Catalyst"
+            ReferencedContainer = "container:Catalyst.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>

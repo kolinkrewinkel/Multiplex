@@ -1,14 +1,14 @@
 //
-//  CommandEdit.m
-//  CommandEdit
+//  Catalyst.m
+//  Catalyst
 //
 //  Created by Kolin Krewinkel on 3/9/14.
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import "CommandEdit.h"
+#import "Catalyst.h"
 
-@interface CommandEdit()
+@interface Catalyst()
 
 @property (nonatomic, strong) NSBundle *bundle;
 
@@ -16,7 +16,7 @@
 
 @end
 
-@implementation CommandEdit
+@implementation Catalyst
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
