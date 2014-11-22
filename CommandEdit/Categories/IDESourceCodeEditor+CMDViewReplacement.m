@@ -438,7 +438,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
              NSView *view = [[NSView alloc] init];
              view.wantsLayer = YES;
-             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextSelectionColor CGColor];
+             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 1.f, 18.f);
 
              [self addSubview:view];
