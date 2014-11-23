@@ -71,6 +71,8 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
                 *stop = YES;
             }];
+
+            return nil;
         }
 
         return event;
