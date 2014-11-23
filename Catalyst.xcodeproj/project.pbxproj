@@ -44,7 +44,6 @@
 		33E0329E19D4FBBC003A655E /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
 		33E0329F19D4FBBC003A655E /* IDEKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEKit.framework"; sourceTree = "<group>"; };
 		33E032A219D506B7003A655E /* IDESourceEditor */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDESourceEditor; path = "../../../Applications/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS/IDESourceEditor"; sourceTree = "<group>"; };
-		33E032A419D50DAD003A655E /* CommandEdit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommandEdit-Bridging-Header.h"; sourceTree = "<group>"; };
 		33E48D1E18D3F4D700FCC557 /* IDEKit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDEKit; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework/Versions/A/IDEKit; sourceTree = "<group>"; };
 		33E48D2018D3F4F600FCC557 /* IDEFoundation */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDEFoundation; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation; sourceTree = "<group>"; };
 		33E48D2218D3F50500FCC557 /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework; sourceTree = "<group>"; };
@@ -157,7 +156,6 @@
 				33B3A3F218CD36BE00AA64C8 /* Supporting Files */,
 				33B3A40418CD375300AA64C8 /* Utilities */,
 				3338E1A218EF740E00C76084 /* Views */,
-				33E032A419D50DAD003A655E /* CommandEdit-Bridging-Header.h */,
 			);
 			path = Catalyst;
 			sourceTree = "<group>";
