@@ -12,7 +12,7 @@
 #import <pop/POP.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
-#import "IDESourceCodeEditor+CMDViewReplacement.h"
+#import "DVTSourceTextView+CMDEditorExtensions.h"
 
 #import "CATNextNavigator.h"
 #import "PLYSwizzling.h"
@@ -20,7 +20,7 @@
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
 static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
-@implementation DVTSourceTextView (CMDViewReplacement)
+@implementation DVTSourceTextView (CMDEditorExtensions)
 
 @synthesizeAssociation(DVTSourceTextView, cmd_blinkTimer);
 @synthesizeAssociation(DVTSourceTextView, cmd_blinkState);

@@ -1,5 +1,5 @@
 //
-//  IDESourceCodeEditor+CMDViewReplacement.h
+//  DVTSourceTextView+CMDEditorExtensions.h
 //  Catalyst
 //
 //  Created by Kolin Krewinkel on 9/25/14.
@@ -8,7 +8,7 @@
 
 #import "DVTInterfaces.h"
 
-@interface DVTSourceTextView (CMDViewReplacement)
+@interface DVTSourceTextView (CMDEditorExtensions)
 
 @property (nonatomic) NSArray *cmd_selectedRanges;
 
