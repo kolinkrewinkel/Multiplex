@@ -1,17 +1,18 @@
 PODS:
+  - INPopoverController (0.0.1)
   - libextobjc (0.4):
-    - libextobjc/EXTADT
-    - libextobjc/EXTConcreteProtocol
-    - libextobjc/EXTKeyPathCoding
-    - libextobjc/EXTNil
-    - libextobjc/EXTSafeCategory
-    - libextobjc/EXTScope
-    - libextobjc/EXTSelectorChecking
-    - libextobjc/EXTSynthesize
-    - libextobjc/NSInvocation+EXT
-    - libextobjc/NSMethodSignature+EXT
-    - libextobjc/RuntimeExtensions
-    - libextobjc/UmbrellaHeader
+    - libextobjc/EXTADT (= 0.4)
+    - libextobjc/EXTConcreteProtocol (= 0.4)
+    - libextobjc/EXTKeyPathCoding (= 0.4)
+    - libextobjc/EXTNil (= 0.4)
+    - libextobjc/EXTSafeCategory (= 0.4)
+    - libextobjc/EXTScope (= 0.4)
+    - libextobjc/EXTSelectorChecking (= 0.4)
+    - libextobjc/EXTSynthesize (= 0.4)
+    - libextobjc/NSInvocation+EXT (= 0.4)
+    - libextobjc/NSMethodSignature+EXT (= 0.4)
+    - libextobjc/RuntimeExtensions (= 0.4)
+    - libextobjc/UmbrellaHeader (= 0.4)
   - libextobjc/EXTADT (0.4):
     - libextobjc/RuntimeExtensions
   - libextobjc/EXTConcreteProtocol (0.4):
@@ -36,7 +37,7 @@ PODS:
   - libextobjc/UmbrellaHeader (0.4)
   - pop (1.0.7)
   - ReactiveCocoa (2.3.1):
-    - ReactiveCocoa/UI
+    - ReactiveCocoa/UI (= 2.3.1)
   - ReactiveCocoa/Core (2.3.1):
     - ReactiveCocoa/no-arc
   - ReactiveCocoa/no-arc (2.3.1)
@@ -44,13 +45,24 @@ PODS:
     - ReactiveCocoa/Core
 
 DEPENDENCIES:
+  - INPopoverController (from `https://github.com/indragiek/INPopoverController.git`)
   - libextobjc
   - pop (~> 1.0)
   - ReactiveCocoa (~> 2.3)
 
+EXTERNAL SOURCES:
+  INPopoverController:
+    :git: https://github.com/indragiek/INPopoverController.git
+
+CHECKOUT OPTIONS:
+  INPopoverController:
+    :commit: 3564f98827415c858766720c0d0d3092c989b78d
+    :git: https://github.com/indragiek/INPopoverController.git
+
 SPEC CHECKSUMS:
+  INPopoverController: 98d3a1678f0e986ed47b22c22ad39994617c6ad1
   libextobjc: ba42e4111f433273a886cd54f0ddaddb7f62f82f
   pop: 2f14a1ea61339767af9e66741b418c831b3844df
   ReactiveCocoa: dca75777b9d18990c8714a3a6f2149f29b4d1462
 
-COCOAPODS: 0.34.1
+COCOAPODS: 0.35.0
