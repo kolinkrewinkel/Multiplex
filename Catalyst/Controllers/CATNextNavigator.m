@@ -57,7 +57,8 @@
 
     NSView *view = [[NSView alloc] initWithFrame:targetRect];
     view.wantsLayer = YES;
-    view.layer.backgroundColor = [[NSColor redColor] CGColor];
+    view.layer.backgroundColor = [[NSColor blueColor] CGColor];
+    view.layer.opacity = 0.4f;
     [self.targetView addSubview:view];
 
     NSLog(@"%@", NSStringFromRect(targetRect));
