@@ -6,27 +6,33 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import "Catalyst.h"
+#import "CatalystPlugin.h"
 
-@interface Catalyst()
+static NSString *kCATApplicationName = @"Xcode";
 
-@property (nonatomic, strong) NSBundle *bundle;
+@interface CatalystPlugin ()
 
-@property (nonatomic, strong) NSMenuItem *enableItem;
+@property (nonatomic) NSBundle *bundle;
 
 @end
 
-@implementation Catalyst
+@implementation CatalystPlugin
+
+#pragma mark -
+#pragma mark Instantiation
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
-    NSString *currentApplicationName = [[NSBundle mainBundle] infoDictionary][@"CFBundleName"];
+    NSString *currentApplicationName = [[NSBundle mainBundle] infoDictionary][(NSString *)kCFBundleNameKey];
 
-    if ([currentApplicationName isEqual:@"Xcode"])
+    if ([currentApplicationName isEqual:kCATApplicationName])
     {
         [self sharedPluginWithBundle:plugin];
     }
 }
+
+#pragma mark -
+#pragma mark Singleton
 
 + (instancetype)sharedPluginWithBundle:(NSBundle *)bundle
 {
@@ -45,9 +51,12 @@
     return [self sharedPluginWithBundle:nil];
 }
 
+#pragma mark -
+#pragma mark Designated Initializer
+
 - (id)initWithBundle:(NSBundle *)bundle
 {
-    if ((self = [super init]))
+    if ((self = [self init]))
     {
         self.bundle = bundle;
     }

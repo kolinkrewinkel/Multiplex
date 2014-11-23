@@ -8,10 +8,11 @@
 
 #import <AppKit/AppKit.h>
 
-@interface Catalyst : NSObject
+@interface CatalystPlugin : NSObject
+
+#pragma mark -
+#pragma mark Singleton
 
 + (instancetype)sharedPlugin;
-
-- (BOOL)pluginEnabled;
 
 @end
