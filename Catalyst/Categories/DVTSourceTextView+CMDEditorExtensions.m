@@ -66,7 +66,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                 NSUInteger count = 0;
                 NSRectArray rects = [self.layoutManager rectArrayForCharacterRange:modelItem.range withinSelectedCharacterRange:NSMakeRange(NSNotFound, 0) inTextContainer:self.textContainer rectCount:&count];
 
-                CATNextNavigator *navigator = [[CATNextNavigator alloc] initWithView:self.superview.superview targetRect:rects[count - 1]];
+                CATNextNavigator *navigator = [[CATNextNavigator alloc] initWithView:self.superview targetRect:rects[count - 1]];
                 [navigator show:YES];
 
                 *stop = YES;
