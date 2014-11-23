@@ -38,7 +38,8 @@
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      viewDebuggingEnabled = "No">
       <PathRunnable
          runnableDebuggingMode = "0"
          FilePath = "/Applications/Xcode-Beta.app">

@@ -8,6 +8,7 @@
 
 @import QuartzCore;
 
+#import <INPopoverController/INPopoverController.h>
 #import <libextobjc/extobjc.h>
 #import <pop/POP.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
@@ -54,8 +55,22 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     {
         if (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "])
         {
-            CATNextNavigator *navigator = [[CATNextNavigator alloc] initWithView:self.superview.superview symbol:nil];
-            [navigator show:YES];
+            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+
+            [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+            {
+                NSRange range = [vRange rangeValue];
+
+                DVTSourceModelItem *modelItem = [textStorage.sourceModelService sourceModelItemAtCharacterIndex:range.location];
+
+                NSUInteger count = 0;
+                NSRectArray rects = [self.layoutManager rectArrayForCharacterRange:modelItem.range withinSelectedCharacterRange:NSMakeRange(NSNotFound, 0) inTextContainer:self.textContainer rectCount:&count];
+
+                CATNextNavigator *navigator = [[CATNextNavigator alloc] initWithView:self.superview.superview targetRect:rects[count - 1]];
+                [navigator show:YES];
+
+                *stop = YES;
+            }];
         }
 
         return event;

@@ -14,7 +14,7 @@
 
 #pragma mark - Designated Initializer
 
-- (instancetype)initWithView:(NSView *)view symbol:(id)symbol;
+- (instancetype)initWithView:(NSView *)view targetRect:(CGRect)targetRect;
 
 #pragma mark -
 
