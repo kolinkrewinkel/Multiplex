@@ -14,10 +14,10 @@
 
 #pragma mark - Designated Initializer
 
-- (instancetype)initWithView:(NSView *)view targetRect:(CGRect)targetRect;
+- (instancetype)initWithView:(NSView *)view targetItems:(NSArray *)targetItems layoutManager:(NSLayoutManager *)layoutManager;
 
 #pragma mark -
 
-- (void)show:(BOOL)animated;
+- (void)showItems:(NSArray *)items;
 
 @end

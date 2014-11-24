@@ -6,16 +6,21 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import <INPopoverController/INPopoverController.h>
-
 @import AppKit;
+#import "DVTInterfaces.h"
+#import <INPopoverController/INPopoverController.h>
+#import <pop/POP.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
+#import "CATNavigatorTarget.h"
 #import "CATNextNavigator.h"
+#import "CATActionViewController.h"
 
-@interface CATNextNavigator ()
+@interface CATNextNavigator () <INPopoverControllerDelegate>
 
 @property (nonatomic) NSView *targetView;
-@property (nonatomic) CGRect targetRect;
+@property (nonatomic) NSArray *targetItems;
+@property (nonatomic) NSLayoutManager *layoutManager;
 
 @end
 
@@ -24,44 +29,74 @@
 #pragma mark -
 #pragma mark Designated Initializer
 
-- (instancetype)initWithView:(NSView *)view targetRect:(CGRect)targetRect
+- (instancetype)initWithView:(NSView *)view
+                 targetItems:(NSArray *)targetItems
+               layoutManager:(NSLayoutManager *)layoutManager
 {
     if ((self = [super init]))
     {
         self.targetView = view;
-        self.targetRect = targetRect;
+        self.targetItems = targetItems;
+        self.layoutManager = layoutManager;
     }
 
     return self;
 }
 
-- (void)show:(BOOL)animated
+- (void)cycleForward
 {
-    self.targetView.wantsLayer = YES;
+
+}
+
+- (void)cycleBackwards
+{
+
+}
+
+- (void)showItems:(NSArray *)items
+{
+    if ([items count] == 0)
+    {
+        return;
+    }
 
     CGFloat width = 320.f;
     CGRect rect = CGRectMake(0.f, 0.f, width, 400.f);
 
-    NSViewController *viewController = [[NSViewController alloc] init];
-    viewController.view = ({
-        NSView *view = [[NSView alloc] initWithFrame:rect];
-        view.wantsLayer = YES;
-        view.layer.backgroundColor = [[NSColor clearColor] CGColor];
-        view;
-    });
-
-    CGRect targetRect = self.targetRect;
+    CATActionViewController *viewController = [[CATActionViewController alloc] init];
 
     INPopoverController *controller = [[INPopoverController alloc] initWithContentViewController:viewController];
-    [controller presentPopoverFromRect:self.targetRect inView:self.targetView preferredArrowDirection:INPopoverArrowDirectionUp anchorsToPositionView:YES];
+    controller.animates = NO;
+    controller.delegate = self;
 
-    NSView *view = [[NSView alloc] initWithFrame:targetRect];
-    view.wantsLayer = YES;
-    view.layer.backgroundColor = [[NSColor blueColor] CGColor];
-    view.layer.opacity = 0.4f;
-    [self.targetView addSubview:view];
+    [items enumerateObjectsUsingBlock:^(CATNavigatorTarget *target, NSUInteger idx, BOOL *stop)
+    {
+        [self.layoutManager addTemporaryAttributes:@{NSBackgroundColorAttributeName: [[DVTFontAndColorTheme currentTheme] sourceTextTokenizedBackgroundColor]} forCharacterRange:target.modelItem.range];
+    }];
 
-    NSLog(@"%@", NSStringFromRect(targetRect));
+    [[self rac_signalForSelector:@selector(popoverDidClose:)
+                    fromProtocol:@protocol(INPopoverControllerDelegate)] subscribeNext:^(id x)
+    {
+        [items enumerateObjectsUsingBlock:^(CATNavigatorTarget *target, NSUInteger idx, BOOL *stop) {
+            [self.layoutManager removeTemporaryAttribute:NSBackgroundColorAttributeName forCharacterRange:target.modelItem.range];
+        }];
+    }];
+
+    CGRect popoverTargetRect = CGRectZero;
+    if ([items count] > 1)
+    {
+        popoverTargetRect = CGRectMake(CGRectGetWidth(self.targetView.frame),
+                                       CGRectGetHeight(self.targetView.frame) * 0.5f,
+                                       0.f,
+                                       0.f);
+    }
+    else
+    {
+        CATNavigatorTarget *target = [items lastObject];
+        popoverTargetRect = target.rect;
+    }
+
+    [controller presentPopoverFromRect:popoverTargetRect inView:self.targetView preferredArrowDirection:INPopoverArrowDirectionUndefined anchorsToPositionView:YES];
 }
 
 @end

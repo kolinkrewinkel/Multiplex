@@ -7,8 +7,11 @@
 //
 
 #import "DVTInterfaces.h"
+#import "CATNextNavigator.h"
 
 @interface DVTSourceTextView (CMDEditorExtensions)
+
+@property (nonatomic) CATNextNavigator *cmd_nextNavigator;
 
 @property (nonatomic) NSArray *cmd_selectedRanges;
 
