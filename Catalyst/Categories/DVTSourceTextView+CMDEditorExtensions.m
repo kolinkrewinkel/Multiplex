@@ -232,11 +232,16 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)deleteBackward:(id)sender
 {
+    // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
+    // Replacement insertion-pointer ranges
+    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
 
-    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+    // _Never_ concurrent. Always synchronous-in order.
+    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange,
+                                                          NSUInteger idx,
+                                                          BOOL *stop)
      {
          NSRange range = [vRange rangeValue];
 
@@ -245,15 +250,14 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
          [self insertText:@"" replacementRange:rangeToReplace];
 
-         NSRange deltaRange = NSMakeRange(rangeToReplace.location, 0);
-         [ranges addObject:[NSValue valueWithRange:deltaRange]];
-
-         //         NSLog(@"\n-----------\nDeleting text @ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)lengthDeleted, (long)totalDelta);
+         NSRange newInsertionPointRange = NSMakeRange(rangeToReplace.location, 0);
+         [newRanges addObject:[NSValue valueWithRange:newInsertionPointRange]];
 
          totalDelta += lengthDeleted;
      }];
 
-    [self cmd_setSelectedRanges:ranges finalized:YES];
+    // Update the ranges, and force finalization.
+    [self cmd_setSelectedRanges:newRanges finalized:YES];
 }
 
 - (void)cmd_mouseDragged:(NSEvent *)theEvent
