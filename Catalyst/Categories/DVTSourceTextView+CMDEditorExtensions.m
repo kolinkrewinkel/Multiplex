@@ -192,35 +192,42 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     self.cmd_blinkState = !self.cmd_blinkState;
 }
 
-- (void)insertText:(id)insertString
+- (void)insertText:(id)insertObject
 {
+    NSString *insertString = (NSString *)insertObject;
+
+    // Prevents random stuff being thrown in.
     if (![insertString isKindOfClass:[NSString class]])
     {
         return;
     }
 
-    NSString *string = (NSString *)insertString;
-    NSInteger delta = [string length];
+    // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
-
-    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+    // The updated-0 length, and offseted, ranges to replace the old ones after insertion.
+    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
+    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange,
+                                                          NSUInteger idx,
+                                                          BOOL *stop)
      {
          NSRange range = [vRange rangeValue];
 
-         NSRange rangeToReplace = NSMakeRange(range.location + totalDelta, range.length);
-         [self insertText:string replacementRange:rangeToReplace];
+         // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point correspond to the relative offset made by inserting a # of chars.)
+         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
+         [self insertText:insertString replacementRange:offsetRange];
 
-         NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, 0);
-         [ranges addObject:[NSValue valueWithRange:deltaRange]];
+         // Move cursor (or range-selection) to the end of what was just added with 0-length.
+         NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + [insertString length], 0);
+         [newRanges addObject:[NSValue valueWithRange:newInsertionPointRange]];
 
-         NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
-
-         totalDelta += delta;
+         // Offset the following ones by noting the original length and updating for the replacement's length, moving cursors following forward/backward.
+         NSInteger delta = range.length - [insertString length];
+         totalDelta -= delta;
      }];
 
-    [self cmd_setSelectedRanges:ranges finalized:YES];
+    // Update the ranges, and force finalization.
+    [self cmd_setSelectedRanges:newRanges finalized:YES];
 }
 
 - (void)deleteBackward:(id)sender
