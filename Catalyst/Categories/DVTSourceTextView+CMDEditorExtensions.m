@@ -355,11 +355,9 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     return [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
         NSRange range1 = [vRange1 rangeValue];
         NSInteger range1Loc = range1.location;
-        NSInteger range1Len = range1.length;
 
         NSRange range2 = [vRange2 rangeValue];
         NSInteger range2Loc = range2.location;
-        NSInteger range2Len = range2.length;
 
         if (range2Loc > range1Loc)
         {
