@@ -212,7 +212,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          NSRange rangeToReplace = NSMakeRange(range.location + totalDelta, range.length);
          [self insertText:string replacementRange:rangeToReplace];
 
-         NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, rangeToReplace.length);
+         NSRange deltaRange = NSMakeRange(rangeToReplace.location + delta, 0);
          [ranges addObject:[NSValue valueWithRange:deltaRange]];
 
          NSLog(@"\n-----------\nInserting text: %@\n@ range: %@\nNew cursor range: %@\nDelta used: %li\nTotal delta: %li", string, NSStringFromRange(rangeToReplace), NSStringFromRange(deltaRange), (long)delta, (long)totalDelta);
