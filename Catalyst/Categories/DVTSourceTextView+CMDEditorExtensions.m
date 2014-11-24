@@ -251,8 +251,6 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)cmd_mouseDragged:(NSEvent *)theEvent
 {
-    //    CMDDVTSourceTextViewOriginalMouseDragged(self, @selector(mouseDragged:), theEvent);
-
     NSRange rangeInProgress = [self.cmd_rangeInProgress rangeValue];
     NSRange rangeInProgressOrigin = [self.cmd_rangeInProgressStart rangeValue];
 
@@ -313,18 +311,17 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     [self cmd_setSelectedRanges:[self cmd_effectiveSelectedRanges] finalized:YES];
     self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
     self.cmd_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
-    //    [NSCursor setHiddenUntilMouseMoves:YES];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
-    NSRect frameRelativeToWindow = [self convertRect:self.frame toView:nil];
+    NSRect frameRelativeToWindow = [self convertRect:self.frame
+                                              toView:nil];
     NSRect frameRelativeToScreen = [self.window convertRectToScreen:frameRelativeToWindow];
 
     if (CGRectContainsPoint(frameRelativeToScreen, [NSEvent mouseLocation])
         && [NSCursor currentCursor] != [NSCursor IBeamCursor])
     {
-        NSLog(@"push");
         [[NSCursor IBeamCursor] push];
     }
 }
