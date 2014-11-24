@@ -243,17 +243,23 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                                                           NSUInteger idx,
                                                           BOOL *stop)
      {
+         // Update the base range with the delta'd amount of change from previous mutations.
          NSRange range = [vRange rangeValue];
+         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
 
-         NSInteger lengthDeleted = -(range.length + 1);
-         NSRange rangeToReplace = NSMakeRange(range.location + totalDelta + lengthDeleted, -lengthDeleted);
+         // Accounts for the fact that the cursor is always +1 of the target character/range.
+         NSInteger lengthDeleted = range.length + 1;
+         NSRange deletingRange = NSMakeRange(offsetRange.location - lengthDeleted, lengthDeleted);
 
-         [self insertText:@"" replacementRange:rangeToReplace];
+         // Delete the characters
+         [self insertText:@"" replacementRange:deletingRange];
 
-         NSRange newInsertionPointRange = NSMakeRange(rangeToReplace.location, 0);
+         // New range for the beam (to the beginning of the range we replaced)
+         NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
          [newRanges addObject:[NSValue valueWithRange:newInsertionPointRange]];
 
-         totalDelta += lengthDeleted;
+         // Increment/decrement the delta by how much we trimmed.
+         totalDelta -= lengthDeleted;
      }];
 
     // Update the ranges, and force finalization.
