@@ -107,7 +107,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-
+    [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(0, 0)]] finalized:YES];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
