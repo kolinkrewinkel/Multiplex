@@ -247,9 +247,19 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          NSRange range = [vRange rangeValue];
          NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
 
-         // Accounts for the fact that the cursor is always +1 of the target character/range.
-         NSInteger lengthDeleted = range.length + 1;
-         NSRange deletingRange = NSMakeRange(offsetRange.location - lengthDeleted, lengthDeleted);
+         NSLog(@"Offset range: %@", NSStringFromRange(offsetRange));
+
+         NSRange deletingRange = NSMakeRange(0, 0);
+         if (offsetRange.length == 0)
+         {
+             deletingRange = NSMakeRange(offsetRange.location - 1, 1);
+         }
+         else
+         {
+             deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
+         }
+
+         NSLog(@"Range deleting: %@", NSStringFromRange(deletingRange));
 
          // Delete the characters
          [self insertText:@"" replacementRange:deletingRange];
@@ -259,7 +269,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          [newRanges addObject:[NSValue valueWithRange:newInsertionPointRange]];
 
          // Increment/decrement the delta by how much we trimmed.
-         totalDelta -= lengthDeleted;
+         totalDelta -= deletingRange.length;
      }];
 
     // Update the ranges, and force finalization.
