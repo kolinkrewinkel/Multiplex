@@ -105,6 +105,55 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 #pragma mark -
 #pragma mark Events
 
+- (void)moveToBeginningOfDocument:(id)sender
+{
+    [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(0, 0)]]
+                      finalized:YES];
+}
+
+- (void)moveToEndOfDocument:(id)sender
+{
+    NSUInteger documentLength = [self.textStorage.string length];
+    [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(documentLength - 1, 0)]]
+                      finalized:YES];
+}
+
+- (void)moveCursorsToLineRelativeRangeIncludingLength:(BOOL)includeLength
+{
+    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
+    [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+     {
+         NSRange range = [vRange rangeValue];
+
+         // The cursors are being pushed to the line's relative location of 0 or .length.
+         NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
+         NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
+
+         if (includeLength)
+         {
+             cursorRange.location += rangeOfContainingLine.length - 1;
+         }
+
+         // Add the range with length of 0 at the position on the line.
+         [newRanges addObject:[NSValue valueWithRange:cursorRange]];
+     }];
+
+    [self cmd_setSelectedRanges:newRanges
+                      finalized:YES];
+}
+
+- (void)moveToLeftEndOfLine:(id)sender
+{
+    [self moveCursorsToLineRelativeRangeIncludingLength:NO];
+}
+
+- (void)moveToRightEndOfLine:(id)sender
+{
+    [self moveCursorsToLineRelativeRangeIncludingLength:YES];
+}
+
 - (void)moveLeft:(id)sender
 {
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
