@@ -105,6 +105,26 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 #pragma mark -
 #pragma mark Events
 
+- (void)moveToBeginningOfDocument:(id)sender
+{
+
+}
+
+- (void)moveToBeginningOfLine:(id)sender
+{
+
+}
+
+- (void)moveToEndOfLine:(id)sender
+{
+
+}
+
+- (void)moveToEndOfDocument:(id)sender
+{
+
+}
+
 - (void)moveLeft:(id)sender
 {
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
