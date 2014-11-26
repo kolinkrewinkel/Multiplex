@@ -111,6 +111,13 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                       finalized:YES];
 }
 
+- (void)moveToEndOfDocument:(id)sender
+{
+    NSUInteger documentLength = [self.textStorage.string length];
+    [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(documentLength - 1, 0)]]
+                      finalized:YES];
+}
+
 - (void)moveCursorsToLineRelativeRangeIncludingLength:(BOOL)includeLength
 {
     NSMutableArray *newRanges = [[NSMutableArray alloc] init];
@@ -145,11 +152,6 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (void)moveToRightEndOfLine:(id)sender
 {
     [self moveCursorsToLineRelativeRangeIncludingLength:YES];
-}
-
-- (void)moveToEndOfDocument:(id)sender
-{
-
 }
 
 - (void)moveLeft:(id)sender
