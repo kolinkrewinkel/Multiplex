@@ -120,7 +120,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
      {
          NSRange range = [vRange rangeValue];
 
-         // The cursors are being pushed to the line's relative location of 0.
+         // The cursors are being pushed to the line's relative location of 0 or .length.
          NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
          NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
 
@@ -129,7 +129,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
              cursorRange.location += rangeOfContainingLine.length - 1;
          }
 
-         // Add the range with length of 0 at the beginning of the line.
+         // Add the range with length of 0 at the position on the line.
          [newRanges addObject:[NSValue valueWithRange:cursorRange]];
      }];
 
