@@ -111,12 +111,28 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                       finalized:YES];
 }
 
-- (void)moveToBeginningOfLine:(id)sender
+- (void)moveToLeftEndOfLine:(id)sender
 {
+    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
+    [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+    {
+        NSRange range = [vRange rangeValue];
 
+        // The cursors are being pushed to the line's relative location of 0.
+        NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
+        NSRange leftLineRange = NSMakeRange(rangeOfContainingLine.location, 0);
+
+        // Add the range with length of 0 at the beginning of the line.
+        [newRanges addObject:[NSValue valueWithRange:leftLineRange]];
+    }];
+
+    [self cmd_setSelectedRanges:newRanges
+                      finalized:YES];
 }
 
-- (void)moveToEndOfLine:(id)sender
+- (void)moveToRightEndOfLine:(id)sender
 {
 
 }
