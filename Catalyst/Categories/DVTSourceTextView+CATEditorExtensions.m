@@ -19,8 +19,8 @@
 #import "CATNavigatorTarget.h"
 #import "PLYSwizzling.h"
 
-static IMP CMDDVTSourceTextViewOriginalInit = nil;
-static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
+static IMP CAT_DVTSourceTextView_Original_Init = nil;
+static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 @implementation DVTSourceTextView (CATEditorExtensions)
 
@@ -38,8 +38,8 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 + (void)load
 {
-    CMDDVTSourceTextViewOriginalInit = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), YES);
-    CMDDVTSourceTextViewOriginalMouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
+    CAT_DVTSourceTextView_Original_Init = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), YES);
+    CAT_DVTSourceTextView_Original_MouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
 }
 
 #pragma mark -
@@ -91,7 +91,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          return event;
      }];
 
-    CMDDVTSourceTextViewOriginalInit(self, @selector(_commonInitDVTSourceTextView));
+    CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
 }
 
 #pragma mark -
