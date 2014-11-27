@@ -108,14 +108,14 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 - (void)moveToBeginningOfDocument:(id)sender
 {
     [self cat_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(0, 0)]]
-                      finalized:YES];
+                       finalize:YES];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
     NSUInteger documentLength = [self.textStorage.string length];
     [self cat_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(documentLength - 1, 0)]]
-                      finalized:YES];
+                       finalize:YES];
 }
 
 - (void)moveCursorsToLineRelativeRangeIncludingLength:(BOOL)includeLength
@@ -141,7 +141,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      }];
 
     [self cat_setSelectedRanges:newRanges
-                      finalized:YES];
+                       finalize:YES];
 }
 
 - (void)moveToLeftEndOfLine:(id)sender
@@ -176,7 +176,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
         [ranges addObject:[NSValue valueWithRange:newRange]];
     }];
 
-    [self cat_setSelectedRanges:ranges finalized:(self.cat_finalizingRanges == nil)];
+    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
 }
 
 - (void)moveRight:(id)sender
@@ -202,7 +202,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
         [ranges addObject:[NSValue valueWithRange:newRange]];
     }];
 
-    [self cat_setSelectedRanges:ranges finalized:(self.cat_finalizingRanges == nil)];
+    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
 }
 
 - (void)moveUp:(id)sender
@@ -276,7 +276,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      }];
 
     // Update the ranges, and force finalization.
-    [self cat_setSelectedRanges:newRanges finalized:YES];
+    [self cat_setSelectedRanges:newRanges finalize:YES];
 }
 
 - (void)deleteBackward:(id)sender
@@ -322,7 +322,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      }];
 
     // Update the ranges, and force finalization.
-    [self cat_setSelectedRanges:newRanges finalized:YES];
+    [self cat_setSelectedRanges:newRanges finalize:YES];
 }
 
 - (void)cat_mouseDragged:(NSEvent *)theEvent
@@ -351,7 +351,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     // Update the model value for when it is used combinatorily.
     self.cat_rangeInProgress = [NSValue valueWithRange:newRange];
 
-    [self cat_setSelectedRanges:[self.cat_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
+    [self cat_setSelectedRanges:[self.cat_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalize:NO];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -373,18 +373,18 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
     if (commandKeyHeld)
     {
-        [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
+        [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalize:NO];
     }
     else
     {
-        [self cat_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:YES];
-        [self cat_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
+        [self cat_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalize:YES];
+        [self cat_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalize:NO];
     }
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-    [self cat_setSelectedRanges:[self cat_effectiveSelectedRanges] finalized:YES];
+    [self cat_setSelectedRanges:[self cat_effectiveSelectedRanges] finalize:YES];
     self.cat_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
     self.cat_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
 }
@@ -413,19 +413,23 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 }
 
 #pragma mark -
-#pragma mark Setters
+#pragma mark Range Manipulation
 
-- (NSArray *)derivedRanges:(NSArray *)ranges
+- (NSArray *)prepareRanges:(NSArray *)ranges
 {
-    NSArray *sortedRanges = [self sortedRanges:ranges];
-    NSArray *reducedRanges = [self reducedRanges:sortedRanges];
+    NSArray *sortedRanges = [self sortRanges:ranges];
+    NSArray *reducedRanges = [self reduceRanges:sortedRanges];
 
     return reducedRanges;
 }
 
-- (NSArray *)sortedRanges:(NSArray *)ranges
+- (NSArray *)sortRanges:(NSArray *)ranges
 {
-    return [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1, NSValue *vRange2) {
+    // Standard sorting logic.
+    // Do not include the length so that iteration can do sequential iteration thereafter and do reducing.
+    return [ranges sortedArrayUsingComparator:^NSComparisonResult(NSValue *vRange1,
+                                                                  NSValue *vRange2)
+    {
         NSRange range1 = [vRange1 rangeValue];
         NSInteger range1Loc = range1.location;
 
@@ -445,16 +449,21 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     }];
 }
 
-- (NSArray *)reducedRanges:(NSArray *)sortedRanges
+- (NSArray *)reduceRanges:(NSArray *)sortedRanges
 {
     NSMutableArray *reducedRanges = [[NSMutableArray alloc] init];
     NSMutableArray *shouldCompare = [[NSMutableArray alloc] init];
 
-    [sortedRanges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [sortedRanges enumerateObjectsUsingBlock:^(id obj,
+                                               NSUInteger idx,
+                                               BOOL *stop)
+    {
         [shouldCompare addObject:@YES];
     }];
 
-    [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(NSValue *vRange1, NSUInteger idx, BOOL *stop)
+    [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(NSValue *vRange1,
+                                                             NSUInteger idx,
+                                                             BOOL *stop)
      {
          if (![shouldCompare[idx] boolValue])
          {
@@ -520,9 +529,9 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
 
-- (void)cat_setSelectedRanges:(NSArray *)ranges finalized:(BOOL)finalized
+- (void)cat_setSelectedRanges:(NSArray *)ranges finalize:(BOOL)finalized
 {
-    ranges = [self derivedRanges:ranges];
+    ranges = [self prepareRanges:ranges];
 
     if (finalized)
     {
