@@ -1,5 +1,5 @@
 //
-//  IDESourceCodeEditor+CMDViewReplacement.m
+//  IDESourceCodeEditor+CATViewReplacement.m
 //  Catalyst
 //
 //  Created by Kolin Krewinkel on 9/25/14.
@@ -13,7 +13,7 @@
 #import <pop/POP.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
-#import "DVTSourceTextView+CMDEditorExtensions.h"
+#import "DVTSourceTextView+CATEditorExtensions.h"
 
 #import "CATNextNavigator.h"
 #import "CATNavigatorTarget.h"
@@ -22,36 +22,36 @@
 static IMP CMDDVTSourceTextViewOriginalInit = nil;
 static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
-@implementation DVTSourceTextView (CMDEditorExtensions)
+@implementation DVTSourceTextView (CATEditorExtensions)
 
-@synthesizeAssociation(DVTSourceTextView, cmd_blinkTimer);
-@synthesizeAssociation(DVTSourceTextView, cmd_blinkState);
-@synthesizeAssociation(DVTSourceTextView, cmd_rangeInProgressStart);
-@synthesizeAssociation(DVTSourceTextView, cmd_rangeInProgress);
-@synthesizeAssociation(DVTSourceTextView, cmd_finalizingRanges);
-@synthesizeAssociation(DVTSourceTextView, cmd_selectedRanges);
-@synthesizeAssociation(DVTSourceTextView, cmd_selectionViews);
-@synthesizeAssociation(DVTSourceTextView, cmd_nextNavigator);
+@synthesizeAssociation(DVTSourceTextView, cat_blinkTimer);
+@synthesizeAssociation(DVTSourceTextView, cat_blinkState);
+@synthesizeAssociation(DVTSourceTextView, cat_rangeInProgressStart);
+@synthesizeAssociation(DVTSourceTextView, cat_rangeInProgress);
+@synthesizeAssociation(DVTSourceTextView, cat_finalizingRanges);
+@synthesizeAssociation(DVTSourceTextView, cat_selectedRanges);
+@synthesizeAssociation(DVTSourceTextView, cat_selectionViews);
+@synthesizeAssociation(DVTSourceTextView, cat_nextNavigator);
 
 #pragma mark -
 #pragma mark NSObject
 
 + (void)load
 {
-    CMDDVTSourceTextViewOriginalInit = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cmd_commonInitDVTSourceTextView), YES);
-    CMDDVTSourceTextViewOriginalMouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cmd_mouseDragged:), YES);
+    CMDDVTSourceTextViewOriginalInit = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), YES);
+    CMDDVTSourceTextViewOriginalMouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
 }
 
 #pragma mark -
 #pragma mark Initializer
 
-- (void)cmd_commonInitDVTSourceTextView
+- (void)cat_commonInitDVTSourceTextView
 {
-    self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
-    self.cmd_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+    self.cat_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+    self.cat_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
 
-    self.cmd_blinkTimer = [NSTimer timerWithTimeInterval:0.5 target:self selector:@selector(cmd_blinkCursors:) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.cmd_blinkTimer forMode:NSRunLoopCommonModes];
+    self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5 target:self selector:@selector(cat_blinkCursors:) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer forMode:NSRunLoopCommonModes];
 
     [NSEvent addLocalMonitorForEventsMatchingMask:NSKeyDownMask handler:^NSEvent *(NSEvent *event)
      {
@@ -64,7 +64,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                  NSMutableArray *items = [[NSMutableArray alloc] init];
                  DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
-                 [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+                 [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
                   {
                       NSRange range = [vRange rangeValue];
 
@@ -78,10 +78,10 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                       [items addObject:target];
                   }];
 
-                 self.cmd_nextNavigator = [[CATNextNavigator alloc] initWithView:self.superview
+                 self.cat_nextNavigator = [[CATNextNavigator alloc] initWithView:self.superview
                                                                      targetItems:items
                                                                    layoutManager:self.layoutManager];
-                 [self.cmd_nextNavigator showItems:items];
+                 [self.cat_nextNavigator showItems:items];
 
 
                  return nil;
@@ -107,21 +107,21 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(0, 0)]]
+    [self cat_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(0, 0)]]
                       finalized:YES];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
     NSUInteger documentLength = [self.textStorage.string length];
-    [self cmd_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(documentLength - 1, 0)]]
+    [self cat_setSelectedRanges:@[[NSValue valueWithRange:NSMakeRange(documentLength - 1, 0)]]
                       finalized:YES];
 }
 
 - (void)moveCursorsToLineRelativeRangeIncludingLength:(BOOL)includeLength
 {
     NSMutableArray *newRanges = [[NSMutableArray alloc] init];
-    [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange,
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange,
                                                                      NSUInteger idx,
                                                                      BOOL *stop)
      {
@@ -140,7 +140,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          [newRanges addObject:[NSValue valueWithRange:cursorRange]];
      }];
 
-    [self cmd_setSelectedRanges:newRanges
+    [self cat_setSelectedRanges:newRanges
                       finalized:YES];
 }
 
@@ -157,7 +157,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 - (void)moveLeft:(id)sender
 {
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
         NSRange range = [vRange rangeValue];
         NSRange newRange = range;
 
@@ -176,13 +176,13 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         [ranges addObject:[NSValue valueWithRange:newRange]];
     }];
 
-    [self cmd_setSelectedRanges:ranges finalized:(self.cmd_finalizingRanges == nil)];
+    [self cat_setSelectedRanges:ranges finalized:(self.cat_finalizingRanges == nil)];
 }
 
 - (void)moveRight:(id)sender
 {
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop) {
         NSRange range = [vRange rangeValue];
         NSRange newRange = range;
 
@@ -202,7 +202,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         [ranges addObject:[NSValue valueWithRange:newRange]];
     }];
 
-    [self cmd_setSelectedRanges:ranges finalized:(self.cmd_finalizingRanges == nil)];
+    [self cat_setSelectedRanges:ranges finalized:(self.cat_finalizingRanges == nil)];
 }
 
 - (void)moveUp:(id)sender
@@ -215,16 +215,16 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 }
 
-- (void)cmd_blinkCursors:(NSTimer *)sender
+- (void)cat_blinkCursors:(NSTimer *)sender
 {
-    if ([self.cmd_selectionViews count] == 0)
+    if ([self.cat_selectionViews count] == 0)
     {
         return;
     }
 
-    BOOL previous = self.cmd_blinkState;
+    BOOL previous = self.cat_blinkState;
 
-    [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(id key, NSView *view, BOOL *stop) {
+    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(id key, NSView *view, BOOL *stop) {
         if (view != self)
         {
             if (self.window.isKeyWindow)
@@ -238,7 +238,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
         }
     }];
 
-    self.cmd_blinkState = !self.cmd_blinkState;
+    self.cat_blinkState = !self.cat_blinkState;
 }
 
 - (void)insertText:(id)insertObject
@@ -256,7 +256,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     // The updated-0 length, and offseted, ranges to replace the old ones after insertion.
     NSMutableArray *newRanges = [[NSMutableArray alloc] init];
-    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange,
+    [self.cat_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange,
                                                           NSUInteger idx,
                                                           BOOL *stop)
      {
@@ -276,7 +276,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
      }];
 
     // Update the ranges, and force finalization.
-    [self cmd_setSelectedRanges:newRanges finalized:YES];
+    [self cat_setSelectedRanges:newRanges finalized:YES];
 }
 
 - (void)deleteBackward:(id)sender
@@ -288,7 +288,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     NSMutableArray *newRanges = [[NSMutableArray alloc] init];
 
     // _Never_ concurrent. Always synchronous-in order.
-    [self.cmd_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange,
+    [self.cat_selectedRanges enumerateObjectsUsingBlock:^(NSValue *vRange,
                                                           NSUInteger idx,
                                                           BOOL *stop)
      {
@@ -322,13 +322,13 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
      }];
 
     // Update the ranges, and force finalization.
-    [self cmd_setSelectedRanges:newRanges finalized:YES];
+    [self cat_setSelectedRanges:newRanges finalized:YES];
 }
 
-- (void)cmd_mouseDragged:(NSEvent *)theEvent
+- (void)cat_mouseDragged:(NSEvent *)theEvent
 {
-    NSRange rangeInProgress = [self.cmd_rangeInProgress rangeValue];
-    NSRange rangeInProgressOrigin = [self.cmd_rangeInProgressStart rangeValue];
+    NSRange rangeInProgress = [self.cat_rangeInProgress rangeValue];
+    NSRange rangeInProgressOrigin = [self.cat_rangeInProgressStart rangeValue];
 
     if (rangeInProgress.location == NSNotFound || rangeInProgressOrigin.location == NSNotFound)
     {
@@ -349,16 +349,16 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     }
 
     // Update the model value for when it is used combinatorily.
-    self.cmd_rangeInProgress = [NSValue valueWithRange:newRange];
+    self.cat_rangeInProgress = [NSValue valueWithRange:newRange];
 
-    [self cmd_setSelectedRanges:[self.cmd_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
+    [self cat_setSelectedRanges:[self.cat_selectedRanges arrayByAddingObject:[NSValue valueWithRange:newRange]] finalized:NO];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
 
-    NSArray *existingSelections = [self cmd_effectiveSelectedRanges];
+    NSArray *existingSelections = [self cat_effectiveSelectedRanges];
     if (!existingSelections)
     {
         existingSelections = @[];
@@ -368,25 +368,25 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
 
     NSRange rangeOfSelection = NSMakeRange(index, 0);
-    self.cmd_rangeInProgress = [NSValue valueWithRange:rangeOfSelection];
-    self.cmd_rangeInProgressStart = [NSValue valueWithRange:rangeOfSelection];
+    self.cat_rangeInProgress = [NSValue valueWithRange:rangeOfSelection];
+    self.cat_rangeInProgressStart = [NSValue valueWithRange:rangeOfSelection];
 
     if (commandKeyHeld)
     {
-        [self cmd_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
+        [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
     else
     {
-        [self cmd_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:YES];
-        [self cmd_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
+        [self cat_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:YES];
+        [self cat_setSelectedRanges:@[[NSValue valueWithRange:rangeOfSelection]] finalized:NO];
     }
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-    [self cmd_setSelectedRanges:[self cmd_effectiveSelectedRanges] finalized:YES];
-    self.cmd_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
-    self.cmd_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+    [self cat_setSelectedRanges:[self cat_effectiveSelectedRanges] finalized:YES];
+    self.cat_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
+    self.cat_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
@@ -491,9 +491,9 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
                       rangeToAdd.length += range2.length - relativeIncrease;
                   }
 
-                  if (NSEqualRanges(originalRangeToAdd, [self.cmd_rangeInProgress rangeValue]))
+                  if (NSEqualRanges(originalRangeToAdd, [self.cat_rangeInProgress rangeValue]))
                   {
-                      self.cmd_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
+                      self.cat_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
                   }
               }
           }];
@@ -520,30 +520,30 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
 
-- (void)cmd_setSelectedRanges:(NSArray *)ranges finalized:(BOOL)finalized
+- (void)cat_setSelectedRanges:(NSArray *)ranges finalized:(BOOL)finalized
 {
     ranges = [self derivedRanges:ranges];
 
     if (finalized)
     {
-        if ([self.cmd_selectedRanges isEqual:ranges] && self.cmd_finalizingRanges == nil)
+        if ([self.cat_selectedRanges isEqual:ranges] && self.cat_finalizingRanges == nil)
         {
             return;
         }
 
-        self.cmd_selectedRanges = ranges;
-        self.cmd_finalizingRanges = nil;
+        self.cat_selectedRanges = ranges;
+        self.cat_finalizingRanges = nil;
 
-        NSLog(@"Finalized ranges to %@.", self.cmd_selectedRanges);
+        NSLog(@"Finalized ranges to %@.", self.cat_selectedRanges);
     }
     else
     {
-        if ([ranges isEqualToArray:self.cmd_finalizingRanges])
+        if ([ranges isEqualToArray:self.cat_finalizingRanges])
         {
             return;
         }
 
-        self.cmd_finalizingRanges = ranges;
+        self.cat_finalizingRanges = ranges;
     }
 
     [ranges enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
@@ -564,7 +564,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
     [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:NSMakeRange(0, [textStorage.string length])];
 
-    [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop)
+    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *value, NSView *view, BOOL *stop)
      {
          if (view != self)
          {
@@ -572,12 +572,12 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
          }
      }];
 
-    self.cmd_selectionViews =
+    self.cat_selectionViews =
     ({
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
         NSMutableDictionary *selectionViews = [[NSMutableDictionary alloc] init];
 
-        [[self cmd_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+        [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
          {
              NSRange range = [vRange rangeValue];
 
@@ -609,7 +609,7 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
 
 - (void)layout
 {
-    [self.cmd_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect, NSView *view, BOOL *stop) {
+    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect, NSView *view, BOOL *stop) {
         CGRect rect = [vRect CGRectValue];
         
         if (view == self)
@@ -630,9 +630,9 @@ static IMP CMDDVTSourceTextViewOriginalMouseDragged = nil;
     [super layout];
 }
 
-- (NSArray *)cmd_effectiveSelectedRanges
+- (NSArray *)cat_effectiveSelectedRanges
 {
-    return self.cmd_finalizingRanges ? self.cmd_finalizingRanges : self.cmd_selectedRanges;
+    return self.cat_finalizingRanges ? self.cat_finalizingRanges : self.cat_selectedRanges;
 }
 
 @end
