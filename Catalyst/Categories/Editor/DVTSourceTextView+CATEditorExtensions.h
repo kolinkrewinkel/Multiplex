@@ -11,6 +11,9 @@
 
 @interface DVTSourceTextView (CATEditorExtensions)
 
+
+@property (nonatomic) NSUInteger lineCursorIndexMaximum;
+
 @property (nonatomic) CATNextNavigator *cat_nextNavigator;
 
 @property (nonatomic) NSArray *cat_selectedRanges;

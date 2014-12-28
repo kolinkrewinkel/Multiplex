@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		33100A061A4F92400062D0D0 /* CATSelectionRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* CATSelectionRange.m */; };
 		332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332D428C19D5466F00CE1BC2 /* DVTKit.framework */; };
 		3338E1A518EF740E00C76084 /* PLYView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3338E1A418EF740E00C76084 /* PLYView.m */; };
 		33627A8C1A2066B600F07684 /* CATNextNavigator.m in Sources */ = {isa = PBXBuildFile; fileRef = 33627A8B1A2066B600F07684 /* CATNextNavigator.m */; };
@@ -25,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		33100A041A4F92400062D0D0 /* CATSelectionRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATSelectionRange.h; sourceTree = "<group>"; };
+		33100A051A4F92400062D0D0 /* CATSelectionRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATSelectionRange.m; sourceTree = "<group>"; };
 		332D428C19D5466F00CE1BC2 /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
 		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
 		3338E1A318EF740E00C76084 /* PLYView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYView.h; sourceTree = "<group>"; };
@@ -35,8 +38,8 @@
 		336F5A451A22BBA200221CE9 /* CATNavigatorTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CATNavigatorTarget.m; path = Controllers/CATNavigatorTarget.m; sourceTree = "<group>"; };
 		336F5A471A23172000221CE9 /* CATActionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CATActionViewController.h; path = Controllers/CATActionViewController.h; sourceTree = "<group>"; };
 		336F5A481A23172000221CE9 /* CATActionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CATActionViewController.m; path = Controllers/CATActionViewController.m; sourceTree = "<group>"; };
-		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "DVTSourceTextView+CATEditorExtensions.h"; path = "Categories/DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
-		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "DVTSourceTextView+CATEditorExtensions.m"; path = "Categories/DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
+		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
+		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
 		33B3A3EA18CD36BE00AA64C8 /* Catalyst.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Catalyst.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -83,6 +86,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		33100A071A4F92490062D0D0 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				33100A041A4F92400062D0D0 /* CATSelectionRange.h */,
+				33100A051A4F92400062D0D0 /* CATSelectionRange.m */,
+				3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */,
+				3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */,
+			);
+			name = Editor;
+			path = Categories/Editor;
+			sourceTree = "<group>";
+		};
 		3338E1A018EF740300C76084 /* Developer Kits */ = {
 			isa = PBXGroup;
 			children = (
@@ -192,8 +207,7 @@
 		33F94F3018CFC4DE0092E74C /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */,
-				3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */,
+				33100A071A4F92490062D0D0 /* Editor */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -305,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3338E1A518EF740E00C76084 /* PLYView.m in Sources */,
+				33100A061A4F92400062D0D0 /* CATSelectionRange.m in Sources */,
 				336F5A491A23172000221CE9 /* CATActionViewController.m in Sources */,
 				33627A8C1A2066B600F07684 /* CATNextNavigator.m in Sources */,
 				33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */,
