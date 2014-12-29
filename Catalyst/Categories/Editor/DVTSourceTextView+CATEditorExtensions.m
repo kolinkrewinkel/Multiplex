@@ -364,8 +364,8 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)cat_mouseDragged:(NSEvent *)theEvent
 {
-    NSRange rangeInProgress = [self.cat_rangeInProgress rangeValue];
-    NSRange rangeInProgressOrigin = [self.cat_rangeInProgressStart rangeValue];
+    NSRange rangeInProgress = self.cat_rangeInProgress.range;
+    NSRange rangeInProgressOrigin = self.cat_rangeInProgressStart.range;
 
     if (rangeInProgress.location == NSNotFound || rangeInProgressOrigin.location == NSNotFound)
     {
@@ -537,9 +537,9 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
                       rangeToAdd.length += range2.length - relativeIncrease;
                   }
 
-                  if (NSEqualRanges(originalRangeToAdd, [self.cat_rangeInProgress rangeValue]))
+                  if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
                   {
-                      self.cat_rangeInProgress = [NSValue valueWithRange:rangeToAdd];
+                      self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:rangeToAdd];
                   }
               }
           }];
