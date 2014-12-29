@@ -17,6 +17,7 @@
 
 #import "CATNextNavigator.h"
 #import "CATNavigatorTarget.h"
+#import "CATSelectionRange.h"
 #import "PLYSwizzling.h"
 
 static IMP CAT_DVTSourceTextView_Original_Init = nil;
@@ -47,50 +48,65 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)cat_commonInitDVTSourceTextView
 {
-    self.cat_rangeInProgress = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
-    self.cat_rangeInProgressStart = [NSValue valueWithRange:NSMakeRange(NSNotFound, 0)];
-
-    self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5 target:self selector:@selector(cat_blinkCursors:) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer forMode:NSRunLoopCommonModes];
+    self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    self.cat_rangeInProgressStart = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
     [NSEvent addLocalMonitorForEventsMatchingMask:NSKeyDownMask handler:^NSEvent *(NSEvent *event)
      {
-         if ([[self window] firstResponder] == self)
+         if (![self cat_validateKeyDownEventForNavigator:event])
          {
-             if (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "])
-             {
-
-                 NSMutableArray *items = [[NSMutableArray alloc] init];
-                 DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-
-                 [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
-                  {
-                      NSRange range = [vRange rangeValue];
-
-                      DVTSourceModelItem *modelItem = [textStorage.sourceModelService sourceModelItemAtCharacterIndex:range.location];
-
-                      NSUInteger count = 0;
-                      NSRectArray rects = [self.layoutManager rectArrayForCharacterRange:modelItem.range withinSelectedCharacterRange:modelItem.range inTextContainer:self.textContainer rectCount:&count];
-
-                      CATNavigatorTarget *target = [[CATNavigatorTarget alloc] initWithRect:rects[count - 1]
-                                                                                  modelItem:modelItem];
-                      [items addObject:target];
-                  }];
-
-                 self.cat_nextNavigator = [[CATNextNavigator alloc] initWithView:self.superview
-                                                                     targetItems:items
-                                                                   layoutManager:self.layoutManager];
-                 [self.cat_nextNavigator showItems:items];
-
-
-                 return nil;
-             }
+             return event;
          }
 
-         return event;
+         NSMutableArray *items = [[NSMutableArray alloc] init];
+         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+
+         [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(NSValue *vRange, NSUInteger idx, BOOL *stop)
+          {
+              NSRange range = [vRange rangeValue];
+
+              DVTSourceModelItem *modelItem = [textStorage.sourceModelService sourceModelItemAtCharacterIndex:range.location];
+
+              NSUInteger count = 0;
+              NSRectArray rects = [self.layoutManager rectArrayForCharacterRange:modelItem.range withinSelectedCharacterRange:modelItem.range inTextContainer:self.textContainer rectCount:&count];
+
+              CATNavigatorTarget *target = [[CATNavigatorTarget alloc] initWithRect:rects[count - 1]
+                                                                          modelItem:modelItem];
+              [items addObject:target];
+          }];
+
+         self.cat_nextNavigator = [[CATNextNavigator alloc] initWithView:self.superview
+                                                             targetItems:items
+                                                           layoutManager:self.layoutManager];
+         [self.cat_nextNavigator showItems:items];
+
+
+         return nil;
      }];
 
     CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
+}
+
+- (void)cat_startBlinking
+{
+    self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5
+                                                  target:self
+                                                selector:@selector(cat_blinkCursors:)
+                                                userInfo:nil
+                                                 repeats:YES];
+
+    [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer
+                              forMode:NSRunLoopCommonModes];
+}
+
+- (BOOL)cat_validateKeyDownEventForNavigator:(NSEvent *)event
+{
+    if ([[self window] firstResponder] != self)
+    {
+        return NO;
+    }
+
+    return (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "]);
 }
 
 #pragma mark -
