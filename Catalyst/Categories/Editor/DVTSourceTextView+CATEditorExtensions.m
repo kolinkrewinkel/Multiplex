@@ -57,7 +57,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      {
          if ([[self window] firstResponder] == self)
          {
-
              if (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "])
              {
 
