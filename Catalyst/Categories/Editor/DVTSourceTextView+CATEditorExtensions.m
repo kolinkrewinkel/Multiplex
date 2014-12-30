@@ -644,6 +644,13 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
              if (range.length > 0)
              {
                  rangeToDraw = NSMakeRange(range.location + range.length, 0);
+
+                 NSRange range = [vRect rangeValue];
+
+                 DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+                 NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+
+                 [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
              }
 
              CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:rangeToDraw.location effectiveRange:NULL];
@@ -671,19 +678,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
                                                                  BOOL *stop)
      {
          CGRect rect = [vRect CGRectValue];
-         
-         if (view == self)
-         {
-             NSRange range = [vRect rangeValue];
-             
-             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-             
-             [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
-             
-             return;
-         }
-         
          view.frame = rect;
      }];
     
