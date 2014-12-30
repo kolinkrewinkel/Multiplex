@@ -89,6 +89,8 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      }];
 
     CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
+
+    [self cat_startBlinking];
 }
 
 - (void)cat_startBlinking
@@ -273,17 +275,17 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
     BOOL previous = self.cat_blinkState;
 
-    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(id key, NSView *view, BOOL *stop) {
-        if (view != self)
+    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(id key,
+                                                                 NSView *view,
+                                                                 BOOL *stop)
+    {
+        if (self.window.isKeyWindow)
         {
-            if (self.window.isKeyWindow)
-            {
-                view.hidden = !previous;
-            }
-            else
-            {
-                view.hidden = YES;
-            }
+            view.hidden = !previous;
+        }
+        else
+        {
+            view.hidden = YES;
         }
     }];
 
@@ -644,8 +646,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
              if (range.length > 0)
              {
                  rangeToDraw = NSMakeRange(range.location + range.length, 0);
-
-                 NSRange range = [vRect rangeValue];
 
                  DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
                  NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
