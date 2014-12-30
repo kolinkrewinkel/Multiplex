@@ -179,24 +179,24 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
                                                                      NSUInteger idx,
                                                                      BOOL *stop)
-    {
-        NSRange range = selectionRange.range;
-        NSRange newRange = range;
+     {
+         NSRange range = selectionRange.range;
+         NSRange newRange = range;
 
-        if (range.length == 0)
-        {
-            if (range.location > 0)
-            {
-                newRange.location = range.location - 1;
-            }
-        }
-        else
-        {
-            newRange.length = 0;
-        }
+         if (range.length == 0)
+         {
+             if (range.location > 0)
+             {
+                 newRange.location = range.location - 1;
+             }
+         }
+         else
+         {
+             newRange.length = 0;
+         }
 
-        [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-    }];
+         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
+     }];
 
     [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
 }
@@ -207,25 +207,25 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
                                                                      NSUInteger idx,
                                                                      BOOL *stop)
-    {
-        NSRange range = selectionRange.range;
-        NSRange newRange = range;
+     {
+         NSRange range = selectionRange.range;
+         NSRange newRange = range;
 
-        if (range.length == 0)
-        {
-            if (range.location < self.textStorage.length)
-            {
-                newRange.location = range.location + 1;
-            }
-        }
-        else
-        {
-            newRange.location = range.location + range.length;
-            newRange.length = 0;
-        }
+         if (range.length == 0)
+         {
+             if (range.location < self.textStorage.length)
+             {
+                 newRange.location = range.location + 1;
+             }
+         }
+         else
+         {
+             newRange.location = range.location + range.length;
+             newRange.length = 0;
+         }
 
-        [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-    }];
+         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
+     }];
 
     [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
 }
@@ -236,25 +236,25 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
                                                                      NSUInteger idx,
                                                                      BOOL *stop)
-    {
-        NSRange range = selectionRange.range;
-        NSRange newRange = range;
+     {
+         NSRange range = selectionRange.range;
+         NSRange newRange = range;
 
-        if (range.length == 0)
-        {
-            if (range.location < self.textStorage.length)
-            {
-                newRange.location = range.location + 1;
-            }
-        }
-        else
-        {
-            newRange.location = range.location + range.length;
-            newRange.length = 0;
-        }
+         if (range.length == 0)
+         {
+             if (range.location < self.textStorage.length)
+             {
+                 newRange.location = range.location + 1;
+             }
+         }
+         else
+         {
+             newRange.location = range.location + range.length;
+             newRange.length = 0;
+         }
 
-        [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-    }];
+         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
+     }];
 
     [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
 }
@@ -479,24 +479,24 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     // Do not include the length so that iteration can do sequential iteration thereafter and do reducing.
     return [ranges sortedArrayUsingComparator:^NSComparisonResult(CATSelectionRange *selectionRange1,
                                                                   CATSelectionRange *selectionRange2)
-    {
-        NSRange range1 = [selectionRange1 range];
-        NSInteger range1Loc = range1.location;
+            {
+                NSRange range1 = [selectionRange1 range];
+                NSInteger range1Loc = range1.location;
 
-        NSRange range2 = [selectionRange2 range];
-        NSInteger range2Loc = range2.location;
+                NSRange range2 = [selectionRange2 range];
+                NSInteger range2Loc = range2.location;
 
-        if (range2Loc > range1Loc)
-        {
-            return NSOrderedAscending;
-        }
-        else if (range2Loc < range1Loc)
-        {
-            return NSOrderedDescending;
-        }
+                if (range2Loc > range1Loc)
+                {
+                    return NSOrderedAscending;
+                }
+                else if (range2Loc < range1Loc)
+                {
+                    return NSOrderedDescending;
+                }
 
-        return NSOrderedSame;
-    }];
+                return NSOrderedSame;
+            }];
 }
 
 - (NSArray *)reduceRanges:(NSArray *)sortedRanges
@@ -507,9 +507,9 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [sortedRanges enumerateObjectsUsingBlock:^(id obj,
                                                NSUInteger idx,
                                                BOOL *stop)
-    {
-        [shouldCompare addObject:@YES];
-    }];
+     {
+         [shouldCompare addObject:@YES];
+     }];
 
     [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(CATSelectionRange *selectionRange1,
                                                              NSUInteger idx,
@@ -623,12 +623,11 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
     [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:NSMakeRange(0, [textStorage.string length])];
 
-    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(CATSelectionRange *value, NSView *view, BOOL *stop)
+    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(CATSelectionRange *value,
+                                                                 NSView *view,
+                                                                 BOOL *stop)
      {
-         if (view != self)
-         {
-             [view removeFromSuperview];
-         }
+         [view removeFromSuperview];
      }];
 
     self.cat_selectionViews =
@@ -644,7 +643,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
              if (range.length > 0)
              {
-                 selectionViews[[CATSelectionRange selectionWithRange:range]] = self;
                  rangeToDraw = NSMakeRange(range.location + range.length, 0);
              }
 
@@ -671,23 +669,23 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect,
                                                                  NSView *view,
                                                                  BOOL *stop)
-    {
-        CGRect rect = [vRect CGRectValue];
-        
-        if (view == self)
-        {
-            NSRange range = [vRect rangeValue];
-            
-            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-            
-            [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
-            
-            return;
-        }
-        
-        view.frame = rect;
-    }];
+     {
+         CGRect rect = [vRect CGRectValue];
+         
+         if (view == self)
+         {
+             NSRange range = [vRect rangeValue];
+             
+             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+             
+             [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
+             
+             return;
+         }
+         
+         view.frame = rect;
+     }];
     
     [super layout];
 }

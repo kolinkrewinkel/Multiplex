@@ -20,6 +20,6 @@
 #pragma mark Attributes
 
 @property (nonatomic, readonly) NSRange range;
-@property (nonatomic) NSUInteger desiredLineIndex;
+@property (nonatomic, readonly) NSUInteger intralineDesiredIndex;
 
 @end
