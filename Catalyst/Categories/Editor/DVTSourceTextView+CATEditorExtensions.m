@@ -95,6 +95,11 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)cat_startBlinking
 {
+    if (self.cat_blinkTimer.valid)
+    {
+        return;
+    }
+
     self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5
                                                   target:self
                                                 selector:@selector(cat_blinkCursors:)
@@ -103,6 +108,11 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
     [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer
                               forMode:NSRunLoopCommonModes];
+}
+
+- (void)cat_stopBlinking
+{
+    [self.cat_blinkTimer invalidate];
 }
 
 - (BOOL)cat_validateKeyDownEventForNavigator:(NSEvent *)event
@@ -378,6 +388,8 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)cat_mouseDragged:(NSEvent *)theEvent
 {
+    [self cat_stopBlinking];
+
     NSRange rangeInProgress = self.cat_rangeInProgress.range;
     NSRange rangeInProgressOrigin = self.cat_rangeInProgressStart.range;
 
@@ -439,6 +451,8 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [self cat_setSelectedRanges:[self cat_effectiveSelectedRanges] finalize:YES];
     self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.cat_rangeInProgressStart = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
+
+    [self cat_startBlinking];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
@@ -660,7 +674,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
              view.wantsLayer = YES;
              view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-             CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - location.y, 1.f, 18.f);
+             CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
 
              [self addSubview:view];
 
