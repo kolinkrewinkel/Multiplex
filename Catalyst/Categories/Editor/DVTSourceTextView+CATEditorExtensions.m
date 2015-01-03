@@ -508,7 +508,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     else if (clickCount == 2)
     {
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-        NSRange wordRange = [textStorage rangeOfWordAtIndex:index allowNonWords:YES];
+        NSRange wordRange = [textStorage doubleClickAtIndex:index];
 
         selection = [CATSelectionRange selectionWithRange:wordRange];
     }
@@ -518,7 +518,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
         selection = [CATSelectionRange selectionWithRange:[self.textStorage.string lineRangeForRange:NSMakeRange(index, 0)]];
     }
 
-    if (selection)
+    if (selection && selection.range.location != NSIntegerMax)
     {
         self.cat_rangeInProgress = selection;
         self.cat_rangeInProgressStart = selection;
