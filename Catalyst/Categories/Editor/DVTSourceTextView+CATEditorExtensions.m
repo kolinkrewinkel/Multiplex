@@ -475,7 +475,8 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 - (void)mouseDown:(NSEvent *)theEvent
 {
     NSInteger clickCount = [theEvent clickCount];
-    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
+                                      fromView:nil];
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
 
     NSArray *existingSelections = ({
@@ -489,18 +490,43 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     });
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
 
-    NSRange rangeOfSelection = NSMakeRange(index, 0);
-    self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:rangeOfSelection];
-    self.cat_rangeInProgressStart = [CATSelectionRange selectionWithRange:rangeOfSelection];
+    CATSelectionRange *selection = nil;
 
-    if (commandKeyHeld)
+    // Selects only the single point at the approximate location of the cursor
+    if (clickCount == 1)
     {
-        
-        [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:[CATSelectionRange selectionWithRange:rangeOfSelection]] finalize:NO];
+        NSRange cursorLocationRange = NSMakeRange(index, 0);
+        CATSelectionRange *cursorSelection = [CATSelectionRange selectionWithRange:cursorLocationRange];
+
+        self.cat_rangeInProgress = cursorSelection;
+        self.cat_rangeInProgressStart = cursorSelection;
+
+        selection = cursorSelection;
     }
-    else
+    // Selects the local expression
+    else if (clickCount == 2)
     {
-        [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:rangeOfSelection]] finalize:NO];
+
+    }
+    // Selects the entire line
+    else if (clickCount == 3)
+    {
+
+    }
+
+    if (selection)
+    {
+        if (commandKeyHeld)
+        {
+
+            [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:selection]
+                               finalize:NO];
+        }
+        else
+        {
+            [self cat_setSelectedRanges:@[selection]
+                               finalize:NO];
+        }
     }
 }
 
