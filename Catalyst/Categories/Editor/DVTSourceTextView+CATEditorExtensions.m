@@ -552,12 +552,14 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 {
     NSMutableArray *reducedRanges = [[NSMutableArray alloc] init];
     NSMutableArray *shouldCompare = [[NSMutableArray alloc] init];
+    NSMutableArray *modifiedSelections = [[NSMutableArray alloc] init];
 
     [sortedRanges enumerateObjectsUsingBlock:^(id obj,
                                                NSUInteger idx,
                                                BOOL *stop)
      {
          [shouldCompare addObject:@YES];
+         [modifiedSelections addObject:@NO];
      }];
 
     [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(CATSelectionRange *selectionRange1,
@@ -597,6 +599,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
                   if (relativeIncrease < range2.length)
                   {
                       rangeToAdd.length += range2.length - relativeIncrease;
+                      modifiedSelections[idx2] = @YES;
                   }
 
                   if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
@@ -620,9 +623,15 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
           }];
 
 
-         if (shouldAdd)
+         BOOL modifiedSelection = [modifiedSelections[idx] boolValue];
+         if (shouldAdd && modifiedSelection)
          {
              [reducedRanges addObject:[CATSelectionRange selectionWithRange:rangeToAdd]];
+         }
+         else if (shouldAdd && !modifiedSelection)
+         {
+             [reducedRanges addObject:[[CATSelectionRange alloc] initWithSelectionRange:rangeToAdd
+                                                                  intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
          }
      }];
 
