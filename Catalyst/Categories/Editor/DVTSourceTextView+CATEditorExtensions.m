@@ -244,31 +244,64 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)moveUp:(id)sender
 {
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
+    NSLayoutManager *layoutManager = self.layoutManager;
+
+    NSMutableArray *candidateRanges = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selection,
                                                                      NSUInteger idx,
                                                                      BOOL *stop)
      {
-         NSRange range = selectionRange.range;
-         NSRange newRange = range;
+         // "Previous" refers exclusively to time, not location.
+         NSRange previousAbsoluteRange = selection.range;
 
-         if (range.length == 0)
+         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
+         NSRange previousLineRange = ({
+             NSRange range;
+             [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
+                                             effectiveRange:&range];
+             range;
+         });
+
+         // The index of the selection relative to the start of the line in the entire string
+         NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
+
+         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
+         if (selection.intralineDesiredIndex != previousRelativeIndex && selection.intralineDesiredIndex != NSNotFound)
          {
-             if (range.location < self.textStorage.length)
-             {
-                 newRange.location = range.location + 1;
-             }
+             previousRelativeIndex = selection.intralineDesiredIndex;
+         }
+
+         // The selection is in the first/zero-th line, so there is no above line to find.
+         // Sublime Text and OS X behavior is to jump to the start of the document.
+         if (previousLineRange.location == 0)
+         {
+             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]];
+             return;
+         }
+
+
+         NSRange newLineRange = ({
+             NSRange range;
+             [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                             effectiveRange:&range];
+             range;
+         });
+
+         // The line is long enough to show at the original relative-index
+         if (newLineRange.length > previousRelativeIndex)
+         {
+             NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
+             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(desiredPosition, 0)]];
          }
          else
          {
-             newRange.location = range.location + range.length;
-             newRange.length = 0;
+             // This will place it at the end of the line, aiming to be placed at the original position.
+             [candidateRanges addObject:[[CATSelectionRange alloc] initWithSelectionRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)
+                                                                    intralineDesiredIndex:previousRelativeIndex]];
          }
-
-         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
      }];
 
-    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
+    [self cat_setSelectedRanges:candidateRanges finalize:(self.cat_finalizingRanges == nil)];
 }
 
 - (void)moveDown:(id)sender
@@ -288,16 +321,16 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(id key,
                                                                  NSView *view,
                                                                  BOOL *stop)
-    {
-        if (self.window.isKeyWindow)
-        {
-            view.hidden = !previous;
-        }
-        else
-        {
-            view.hidden = YES;
-        }
-    }];
+     {
+         if (self.window.isKeyWindow)
+         {
+             view.hidden = !previous;
+         }
+         else
+         {
+             view.hidden = YES;
+         }
+     }];
 
     self.cat_blinkState = !self.cat_blinkState;
 }
@@ -568,6 +601,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
                   if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
                   {
+#warning Logic here does not transfer intraline index
                       self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:rangeToAdd];
                   }
               }
@@ -675,12 +709,12 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
              view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
-
+             
              [self addSubview:view];
-
+             
              selectionViews[[NSValue valueWithRect:rect]] = view;
          }];
-
+        
         selectionViews;
     });
 }

@@ -11,7 +11,12 @@
 @interface CATSelectionRange : NSObject
 
 #pragma mark -
-#pragma mark Initialization
+#pragma mark Designated Initializer
+
+- (instancetype)initWithSelectionRange:(NSRange)range intralineDesiredIndex:(NSUInteger)intralineDesiredIndex;
+
+#pragma mark -
+#pragma mark New Range-Convenience Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range;
 + (instancetype)selectionWithRange:(NSRange)range;
