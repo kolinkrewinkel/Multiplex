@@ -497,25 +497,27 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     {
         NSRange cursorLocationRange = NSMakeRange(index, 0);
         CATSelectionRange *cursorSelection = [CATSelectionRange selectionWithRange:cursorLocationRange];
-
-        self.cat_rangeInProgress = cursorSelection;
-        self.cat_rangeInProgressStart = cursorSelection;
-
         selection = cursorSelection;
     }
     // Selects the local expression
     else if (clickCount == 2)
     {
+        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+        NSRange wordRange = [textStorage rangeOfWordAtIndex:index allowNonWords:YES];
 
+        selection = [CATSelectionRange selectionWithRange:wordRange];
     }
     // Selects the entire line
     else if (clickCount == 3)
     {
-
+        selection = [CATSelectionRange selectionWithRange:[self.textStorage.string lineRangeForRange:NSMakeRange(index, 0)]];
     }
 
     if (selection)
     {
+        self.cat_rangeInProgress = selection;
+        self.cat_rangeInProgressStart = selection;
+
         if (commandKeyHeld)
         {
 
