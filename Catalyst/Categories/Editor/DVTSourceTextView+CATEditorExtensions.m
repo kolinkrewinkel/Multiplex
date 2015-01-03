@@ -244,6 +244,16 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)moveUp:(id)sender
 {
+    [self cat_verticalShiftUp:YES];
+}
+
+- (void)moveDown:(id)sender
+{
+    [self cat_verticalShiftUp:NO];
+}
+
+- (void)cat_verticalShiftUp:(BOOL)up
+{
     NSLayoutManager *layoutManager = self.layoutManager;
 
     NSMutableArray *candidateRanges = [[NSMutableArray alloc] init];
@@ -273,17 +283,33 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
          // The selection is in the first/zero-th line, so there is no above line to find.
          // Sublime Text and OS X behavior is to jump to the start of the document.
-         if (previousLineRange.location == 0)
+         if (previousLineRange.location == 0 && up == YES)
          {
              [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]];
+             return;
+         }
+         else if (NSMaxRange(previousLineRange) == self.textStorage.length && up == NO)
+         {
+             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(self.textStorage.length, 0)]];
              return;
          }
 
 
          NSRange newLineRange = ({
              NSRange range;
-             [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
-                                             effectiveRange:&range];
+
+             if (up)
+             {
+                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                 effectiveRange:&range];
+             }
+             else
+             {
+                 [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                                                 effectiveRange:&range];
+             }
+
+
              range;
          });
 
@@ -302,11 +328,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      }];
 
     [self cat_setSelectedRanges:candidateRanges finalize:(self.cat_finalizingRanges == nil)];
-}
-
-- (void)moveDown:(id)sender
-{
-
 }
 
 - (void)cat_blinkCursors:(NSTimer *)sender
