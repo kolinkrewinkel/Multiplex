@@ -490,6 +490,11 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     });
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
 
+    if (index == NSNotFound)
+    {
+        return;
+    }
+
     CATSelectionRange *selection = nil;
 
     // Selects only the single point at the approximate location of the cursor
