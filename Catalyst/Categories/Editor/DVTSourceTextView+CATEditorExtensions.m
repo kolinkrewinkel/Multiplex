@@ -474,15 +474,19 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
+    NSInteger clickCount = [theEvent clickCount];
+    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
 
-    NSArray *existingSelections = [self cat_effectiveSelectedRanges];
-    if (!existingSelections)
-    {
-        existingSelections = @[];
-    }
+    NSArray *existingSelections = ({
+        NSArray *selections = [self cat_effectiveSelectedRanges];
+        if (!selections)
+        {
+            selections = @[];
+        }
 
-    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+        selections;
+    });
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
 
     NSRange rangeOfSelection = NSMakeRange(index, 0);
@@ -491,11 +495,11 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
     if (commandKeyHeld)
     {
+        
         [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:[CATSelectionRange selectionWithRange:rangeOfSelection]] finalize:NO];
     }
     else
     {
-        [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:rangeOfSelection]] finalize:YES];
         [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:rangeOfSelection]] finalize:NO];
     }
 }
