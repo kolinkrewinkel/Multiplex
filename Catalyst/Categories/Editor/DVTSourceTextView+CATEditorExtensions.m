@@ -93,242 +93,8 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [self cat_startBlinking];
 }
 
-- (void)cat_startBlinking
-{
-    if (self.cat_blinkTimer.valid)
-    {
-        return;
-    }
-
-    self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5
-                                                  target:self
-                                                selector:@selector(cat_blinkCursors:)
-                                                userInfo:nil
-                                                 repeats:YES];
-
-    [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer
-                              forMode:NSRunLoopCommonModes];
-}
-
-- (void)cat_stopBlinking
-{
-    [self.cat_blinkTimer invalidate];
-}
-
-- (BOOL)cat_validateKeyDownEventForNavigator:(NSEvent *)event
-{
-    if ([[self window] firstResponder] != self)
-    {
-        return NO;
-    }
-
-    return (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "]);
-}
-
 #pragma mark -
-#pragma mark Setters
-
-- (BOOL)isSelectable
-{
-    return NO;
-}
-
-#pragma mark -
-#pragma mark Events
-
-- (void)moveToBeginningOfDocument:(id)sender
-{
-    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]]
-                       finalize:YES];
-}
-
-- (void)moveToEndOfDocument:(id)sender
-{
-    NSUInteger documentLength = [self.textStorage.string length];
-    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(documentLength - 1, 0)]]
-                       finalize:YES];
-}
-
-- (void)moveCursorsToLineRelativeRangeIncludingLength:(BOOL)includeLength
-{
-    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange range = selectionRange.range;
-
-         // The cursors are being pushed to the line's relative location of 0 or .length.
-         NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
-         NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
-
-         if (includeLength)
-         {
-             cursorRange.location += rangeOfContainingLine.length - 1;
-         }
-
-         // Add the range with length of 0 at the position on the line.
-         [newRanges addObject:[CATSelectionRange selectionWithRange:cursorRange]];
-     }];
-
-    [self cat_setSelectedRanges:newRanges
-                       finalize:YES];
-}
-
-- (void)moveToLeftEndOfLine:(id)sender
-{
-    [self moveCursorsToLineRelativeRangeIncludingLength:NO];
-}
-
-- (void)moveToRightEndOfLine:(id)sender
-{
-    [self moveCursorsToLineRelativeRangeIncludingLength:YES];
-}
-
-- (void)moveLeft:(id)sender
-{
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange range = selectionRange.range;
-         NSRange newRange = range;
-
-         if (range.length == 0)
-         {
-             if (range.location > 0)
-             {
-                 newRange.location = range.location - 1;
-             }
-         }
-         else
-         {
-             newRange.length = 0;
-         }
-
-         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-     }];
-
-    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
-}
-
-- (void)moveRight:(id)sender
-{
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange range = selectionRange.range;
-         NSRange newRange = range;
-
-         if (range.length == 0)
-         {
-             if (range.location < self.textStorage.length)
-             {
-                 newRange.location = range.location + 1;
-             }
-         }
-         else
-         {
-             newRange.location = range.location + range.length;
-             newRange.length = 0;
-         }
-
-         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-     }];
-
-    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
-}
-
-- (void)moveUp:(id)sender
-{
-    [self cat_verticalShiftUp:YES];
-}
-
-- (void)moveDown:(id)sender
-{
-    [self cat_verticalShiftUp:NO];
-}
-
-- (void)cat_verticalShiftUp:(BOOL)up
-{
-    NSLayoutManager *layoutManager = self.layoutManager;
-
-    NSMutableArray *candidateRanges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selection,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         // "Previous" refers exclusively to time, not location.
-         NSRange previousAbsoluteRange = selection.range;
-
-         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
-         NSRange previousLineRange = ({
-             NSRange range;
-             [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
-                                             effectiveRange:&range];
-             range;
-         });
-
-         // The index of the selection relative to the start of the line in the entire string
-         NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
-
-         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
-         if (selection.intralineDesiredIndex != previousRelativeIndex && selection.intralineDesiredIndex != NSNotFound)
-         {
-             previousRelativeIndex = selection.intralineDesiredIndex;
-         }
-
-         // The selection is in the first/zero-th line, so there is no above line to find.
-         // Sublime Text and OS X behavior is to jump to the start of the document.
-         if (previousLineRange.location == 0 && up == YES)
-         {
-             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]];
-             return;
-         }
-         else if (NSMaxRange(previousLineRange) == self.textStorage.length && up == NO)
-         {
-             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(self.textStorage.length, 0)]];
-             return;
-         }
-
-
-         NSRange newLineRange = ({
-             NSRange range;
-
-             if (up)
-             {
-                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
-                                                 effectiveRange:&range];
-             }
-             else
-             {
-                 [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
-                                                 effectiveRange:&range];
-             }
-
-
-             range;
-         });
-
-         // The line is long enough to show at the original relative-index
-         if (newLineRange.length > previousRelativeIndex)
-         {
-             NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
-             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(desiredPosition, 0)]];
-         }
-         else
-         {
-             // This will place it at the end of the line, aiming to be placed at the original position.
-             [candidateRanges addObject:[[CATSelectionRange alloc] initWithSelectionRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)
-                                                                    intralineDesiredIndex:previousRelativeIndex]];
-         }
-     }];
-
-    [self cat_setSelectedRanges:candidateRanges finalize:(self.cat_finalizingRanges == nil)];
-}
+#pragma mark Cursors
 
 - (void)cat_blinkCursors:(NSTimer *)sender
 {
@@ -355,6 +121,62 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
     self.cat_blinkState = !self.cat_blinkState;
 }
+
+- (void)cat_startBlinking
+{
+    if (self.cat_blinkTimer.valid)
+    {
+        return;
+    }
+
+    self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5
+                                                  target:self
+                                                selector:@selector(cat_blinkCursors:)
+                                                userInfo:nil
+                                                 repeats:YES];
+
+    [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer
+                              forMode:NSRunLoopCommonModes];
+}
+
+- (void)cat_stopBlinking
+{
+    [self.cat_blinkTimer invalidate];
+}
+
+#pragma mark -
+#pragma mark Navigator
+
+- (BOOL)cat_validateKeyDownEventForNavigator:(NSEvent *)event
+{
+    if ([[self window] firstResponder] != self)
+    {
+        return NO;
+    }
+
+    return (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "]);
+}
+
+#pragma mark -
+#pragma mark Setters/Getters
+
+- (BOOL)isSelectable
+{
+    return NO;
+}
+
+- (NSArray *)cat_effectiveSelectedRanges
+{
+    if (self.cat_finalizingRanges)
+    {
+        return self.cat_finalizingRanges;
+    }
+
+    return self.cat_selectedRanges;
+}
+
+#pragma mark -
+#pragma mark Keyboard Events
 
 - (void)insertText:(id)insertObject
 {
@@ -439,6 +261,228 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     // Update the ranges, and force finalization.
     [self cat_setSelectedRanges:newRanges finalize:YES];
 }
+
+- (void)moveToBeginningOfDocument:(id)sender
+{
+    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]]
+                       finalize:YES];
+}
+
+- (void)moveToEndOfDocument:(id)sender
+{
+    NSUInteger documentLength = [self.textStorage.string length];
+    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(documentLength - 1, 0)]]
+                       finalize:YES];
+}
+
+- (void)cat_moveSelectionsToBeginningOrEndOfLine:(BOOL)endOfLine
+{
+    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+     {
+         NSRange range = selectionRange.range;
+
+         // The cursors are being pushed to the line's relative location of 0 or .length.
+         NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
+         NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
+
+         if (endOfLine)
+         {
+             cursorRange.location += rangeOfContainingLine.length - 1;
+         }
+
+         // Add the range with length of 0 at the position on the line.
+         [newRanges addObject:[CATSelectionRange selectionWithRange:cursorRange]];
+     }];
+
+    [self cat_setSelectedRanges:newRanges
+                       finalize:YES];
+}
+
+- (void)moveToLeftEndOfLine:(id)sender
+{
+    [self cat_moveSelectionsToBeginningOrEndOfLine:NO];
+}
+
+- (void)moveToRightEndOfLine:(id)sender
+{
+    [self cat_moveSelectionsToBeginningOrEndOfLine:YES];
+}
+
+- (void)moveToLeftEndOfLineAndModifySelection:(id)sender
+{
+#warning not complete
+}
+
+- (void)moveToRightEndOfLineAndModifySelection:(id)sender
+{
+#warning not complete
+}
+
+- (void)cat_moveWordLeft:(BOOL)moveLeft
+{
+#warning not complete
+}
+
+- (void)moveWordLeft:(id)sender
+{
+    [self cat_moveWordLeft:YES];
+}
+
+- (void)moveWordRight:(id)sender
+{
+    [self cat_moveWordLeft:NO];
+}
+
+- (void)moveLeft:(id)sender
+{
+    NSMutableArray *ranges = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+     {
+         NSRange range = selectionRange.range;
+         NSRange newRange = range;
+
+         if (range.length == 0)
+         {
+             if (range.location > 0)
+             {
+                 newRange.location = range.location - 1;
+             }
+         }
+         else
+         {
+             newRange.length = 0;
+         }
+
+         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
+     }];
+
+    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
+}
+
+- (void)moveRight:(id)sender
+{
+    NSMutableArray *ranges = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+     {
+         NSRange range = selectionRange.range;
+         NSRange newRange = range;
+
+         if (range.length == 0)
+         {
+             if (range.location < self.textStorage.length)
+             {
+                 newRange.location = range.location + 1;
+             }
+         }
+         else
+         {
+             newRange.location = range.location + range.length;
+             newRange.length = 0;
+         }
+
+         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
+     }];
+
+    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
+}
+
+- (void)cat_verticalShiftUp:(BOOL)up
+{
+    NSLayoutManager *layoutManager = self.layoutManager;
+
+    NSMutableArray *candidateRanges = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selection,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+     {
+         // "Previous" refers exclusively to time, not location.
+         NSRange previousAbsoluteRange = selection.range;
+
+         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
+         NSRange previousLineRange = ({
+             NSRange range;
+             [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
+                                             effectiveRange:&range];
+             range;
+         });
+
+         // The index of the selection relative to the start of the line in the entire string
+         NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
+
+         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
+         if (selection.intralineDesiredIndex != previousRelativeIndex && selection.intralineDesiredIndex != NSNotFound)
+         {
+             previousRelativeIndex = selection.intralineDesiredIndex;
+         }
+
+         // The selection is in the first/zero-th line, so there is no above line to find.
+         // Sublime Text and OS X behavior is to jump to the start of the document.
+         if (previousLineRange.location == 0 && up == YES)
+         {
+             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]];
+             return;
+         }
+         else if (NSMaxRange(previousLineRange) == self.textStorage.length && up == NO)
+         {
+             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(self.textStorage.length, 0)]];
+             return;
+         }
+
+
+         NSRange newLineRange = ({
+             NSRange range;
+
+             if (up)
+             {
+                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                 effectiveRange:&range];
+             }
+             else
+             {
+                 [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                                                 effectiveRange:&range];
+             }
+
+
+             range;
+         });
+
+         // The line is long enough to show at the original relative-index
+         if (newLineRange.length > previousRelativeIndex)
+         {
+             NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
+             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(desiredPosition, 0)]];
+         }
+         else
+         {
+             // This will place it at the end of the line, aiming to be placed at the original position.
+             [candidateRanges addObject:[[CATSelectionRange alloc] initWithSelectionRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)
+                                                                    intralineDesiredIndex:previousRelativeIndex]];
+         }
+     }];
+    
+    [self cat_setSelectedRanges:candidateRanges finalize:(self.cat_finalizingRanges == nil)];
+}
+
+- (void)moveUp:(id)sender
+{
+    [self cat_verticalShiftUp:YES];
+}
+
+- (void)moveDown:(id)sender
+{
+    [self cat_verticalShiftUp:NO];
+}
+
+#pragma mark -
+#pragma mark Mouse Events
 
 - (void)cat_mouseDragged:(NSEvent *)theEvent
 {
@@ -572,15 +616,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 #pragma mark -
 #pragma mark Range Manipulation
 
-- (NSArray *)prepareRanges:(NSArray *)ranges
-{
-    NSArray *sortedRanges = [self sortRanges:ranges];
-    NSArray *reducedRanges = [self reduceRanges:sortedRanges];
-
-    return reducedRanges;
-}
-
-- (NSArray *)sortRanges:(NSArray *)ranges
+- (NSArray *)cat_sortRanges:(NSArray *)ranges
 {
     // Standard sorting logic.
     // Do not include the length so that iteration can do sequential iteration thereafter and do reducing.
@@ -606,7 +642,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
             }];
 }
 
-- (NSArray *)reduceRanges:(NSArray *)sortedRanges
+- (NSArray *)cat_reduceSortedRanges:(NSArray *)sortedRanges
 {
     NSMutableArray *reducedRanges = [[NSMutableArray alloc] init];
     NSMutableArray *shouldCompare = [[NSMutableArray alloc] init];
@@ -692,8 +728,16 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
                                                                   intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
          }
      }];
-
+    
     return [[NSArray alloc] initWithArray:reducedRanges];
+}
+
+- (NSArray *)prepareRanges:(NSArray *)ranges
+{
+    NSArray *sortedRanges = [self cat_sortRanges:ranges];
+    NSArray *reducedRanges = [self cat_reduceSortedRanges:sortedRanges];
+
+    return reducedRanges;
 }
 
 - (void)cat_setSelectedRanges:(NSArray *)ranges finalize:(BOOL)finalized
@@ -786,6 +830,9 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     });
 }
 
+#pragma mark -
+#pragma mark NSView
+
 - (void)layout
 {
     [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect,
@@ -797,11 +844,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
      }];
     
     [super layout];
-}
-
-- (NSArray *)cat_effectiveSelectedRanges
-{
-    return self.cat_finalizingRanges ? self.cat_finalizingRanges : self.cat_selectedRanges;
 }
 
 @end
