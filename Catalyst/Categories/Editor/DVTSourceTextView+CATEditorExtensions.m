@@ -301,6 +301,11 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
                        finalize:YES];
 }
 
+- (void)moveToBeginningOfLine:(id)sender
+{
+    [self moveToLeftEndOfLine:sender];
+}
+
 - (void)moveToLeftEndOfLine:(id)sender
 {
     [self cat_moveSelectionsToBeginningOrEndOfLine:NO];
