@@ -321,6 +321,47 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [self moveToRightEndOfLine:sender];
 }
 
+- (void)moveToBeginningOfParagraph:(id)sender
+{
+    NSLayoutManager *layoutManager = self.layoutManager;
+
+    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+     {
+         NSRange previousAbsoluteRange = selectionRange.range;
+
+         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
+         NSRange previousLineRange = ({
+             NSRange range;
+             [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
+                                             effectiveRange:&range];
+             range;
+         });
+
+         // It's at the beginning of the line and needs to be moved up
+         if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
+         {
+             NSRange newLineRange = ({
+                 NSRange range;
+                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                 effectiveRange:&range];
+                 range;
+             });
+
+             [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(newLineRange.location, 0)]];
+         }
+         else
+         {
+             [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(previousLineRange.location, 0)]];
+         }
+     }];
+
+    [self cat_setSelectedRanges:newRanges
+                       finalize:YES];
+}
+
 - (void)moveToLeftEndOfLineAndModifySelection:(id)sender
 {
 #warning not complete
