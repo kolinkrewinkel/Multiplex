@@ -321,7 +321,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
     [self moveToRightEndOfLine:sender];
 }
 
-- (void)moveToBeginningOfParagraph:(id)sender
+- (void)cat_jumpToLinePositionMovingVerticallyIncludingLength:(BOOL)includeLength
 {
     NSLayoutManager *layoutManager = self.layoutManager;
 
@@ -340,26 +340,58 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
              range;
          });
 
-         // It's at the beginning of the line and needs to be moved up
-         if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
+         if (includeLength)
          {
-             NSRange newLineRange = ({
-                 NSRange range;
-                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
-                                                 effectiveRange:&range];
-                 range;
-             });
+             // It's at the end of the line and needs to be moved down
+             if (previousAbsoluteRange.location == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
+             {
+                 NSRange newLineRange = ({
+                     NSRange range;
+                     [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                                                     effectiveRange:&range];
+                     range;
+                 });
 
-             [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(newLineRange.location, 0)]];
+                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)]];
+             }
+             else
+             {
+                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(previousLineRange) - 1, 0)]];
+             }
          }
          else
          {
-             [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(previousLineRange.location, 0)]];
+             // It's at the beginning of the line and needs to be moved up
+             if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
+             {
+                 NSRange newLineRange = ({
+                     NSRange range;
+                     [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                     effectiveRange:&range];
+                     range;
+                 });
+
+                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(newLineRange.location, 0)]];
+             }
+             else
+             {
+                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(previousLineRange.location, 0)]];
+             }
          }
      }];
 
     [self cat_setSelectedRanges:newRanges
                        finalize:YES];
+}
+
+- (void)moveToBeginningOfParagraph:(id)sender
+{
+    [self cat_jumpToLinePositionMovingVerticallyIncludingLength:NO];
+}
+
+- (void)moveToEndOfParagraph:(id)sender
+{
+    [self cat_jumpToLinePositionMovingVerticallyIncludingLength:YES];
 }
 
 - (void)moveToLeftEndOfLineAndModifySelection:(id)sender
