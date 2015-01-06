@@ -301,11 +301,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
                        finalize:YES];
 }
 
-- (void)moveToBeginningOfLine:(id)sender
-{
-    [self moveToLeftEndOfLine:sender];
-}
-
 - (void)moveToLeftEndOfLine:(id)sender
 {
     [self cat_moveSelectionsToBeginningOrEndOfLine:NO];
@@ -314,6 +309,16 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 - (void)moveToRightEndOfLine:(id)sender
 {
     [self cat_moveSelectionsToBeginningOrEndOfLine:YES];
+}
+
+- (void)moveToBeginningOfLine:(id)sender
+{
+    [self moveToLeftEndOfLine:sender];
+}
+
+- (void)moveToEndOfLine:(id)sender
+{
+    [self moveToRightEndOfLine:sender];
 }
 
 - (void)moveToLeftEndOfLineAndModifySelection:(id)sender
