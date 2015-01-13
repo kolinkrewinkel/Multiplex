@@ -406,7 +406,19 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)cat_moveWordLeft:(BOOL)moveLeft
 {
-#warning not complete
+    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+    NSMutableArray *newSelections = [[NSMutableArray alloc] init];
+    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selection,
+                                                                     NSUInteger idx,
+                                                                     BOOL *stop)
+    {
+        NSRange selectionRange = selection.range;
+
+        unsigned long long nextIndex = [textStorage nextWordFromIndex:NSMaxRange(selectionRange) forward:!moveLeft];
+        [newSelections addObject:[CATSelectionRange selectionWithRange:NSMakeRange(nextIndex, 0)]];
+    }];
+
+    [self cat_setSelectedRanges:newSelections finalize:YES];
 }
 
 - (void)moveWordLeft:(id)sender
