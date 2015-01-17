@@ -440,6 +440,14 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self cat_moveWordLeft:NO];
 }
 
+#pragma mark Scrolling
+
+- (void)centerSelectionInVisibleArea:(id)sender
+{
+#warning Unimplemented method '-centerSelectionInVisibleArea:'
+    NSLog(@"Center selection requested from %@", sender);
+}
+
 #pragma mark Basic Directional Arrows
 
 - (void)cat_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
