@@ -426,7 +426,14 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     {
         NSRange selectionRange = selection.range;
 
-        NSUInteger nextIndex = [textStorage nextWordFromIndex:NSMaxRange(selectionRange)
+        NSUInteger seekingFromIndex = NSMaxRange(selectionRange);
+
+        if (!forward)
+        {
+            seekingFromIndex = selectionRange.location;
+        }
+
+        NSUInteger nextIndex = [textStorage nextWordFromIndex:seekingFromIndex
                                                       forward:forward];
         NSRange newRange = NSMakeRange(nextIndex, 0);
 
