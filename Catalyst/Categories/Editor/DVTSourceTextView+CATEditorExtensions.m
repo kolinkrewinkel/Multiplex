@@ -40,6 +40,9 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
     return joinedRange;
 }
 
+static const NSInteger CAT_LeftArrowSelectionOffset = -1;
+static const NSInteger CAT_RightArrowSelectionOffset = 1;
+
 @implementation DVTSourceTextView (CATEditorExtensions)
 
 @synthesizeAssociation(DVTSourceTextView, cat_blinkTimer);
@@ -439,7 +442,7 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
 
 #pragma mark Basic Directional Arrows
 
-- (void)cat_offsetSelectionsWithAmountPreferringZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
+- (void)cat_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
 {
     [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
      {
@@ -491,7 +494,7 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
 
 - (void)cat_moveLeftModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsWithAmountPreferringZero:-1 modifySelection:modifySelection];
+    [self cat_offsetSelectionsDefaultingLengthsToZero:-1 modifySelection:modifySelection];
 }
 
 - (void)moveRight:(id)sender
@@ -506,7 +509,7 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
 
 - (void)cat_moveRightModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsWithAmountPreferringZero:1 modifySelection:modifySelection];
+    [self cat_offsetSelectionsDefaultingLengthsToZero:1 modifySelection:modifySelection];
 }
 
 - (void)cat_verticalShiftUp:(BOOL)up
