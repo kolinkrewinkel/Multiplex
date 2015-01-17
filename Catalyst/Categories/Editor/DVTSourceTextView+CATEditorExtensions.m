@@ -494,7 +494,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_moveLeftModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsDefaultingLengthsToZero:-1 modifySelection:modifySelection];
+    [self cat_offsetSelectionsDefaultingLengthsToZero:CAT_LeftArrowSelectionOffset
+                                      modifySelection:modifySelection];
 }
 
 - (void)moveRight:(id)sender
@@ -509,7 +510,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_moveRightModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsDefaultingLengthsToZero:1 modifySelection:modifySelection];
+    [self cat_offsetSelectionsDefaultingLengthsToZero:CAT_RightArrowSelectionOffset
+                                      modifySelection:modifySelection];
 }
 
 - (void)cat_verticalShiftUp:(BOOL)up
