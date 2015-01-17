@@ -711,6 +711,13 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 #pragma mark -
 #pragma mark Range Manipulation
 
+- (void)cat_mapAndFinalizeSelectedRanges:(id (^)(id))mapBlock
+{
+    NSArray *mappedValues = [[[[self cat_effectiveSelectedRanges] rac_sequence] map:mapBlock] array];
+    [self cat_setSelectedRanges:mappedValues
+                       finalize:YES];
+}
+
 - (NSArray *)cat_sortRanges:(NSArray *)ranges
 {
     // Standard sorting logic.
