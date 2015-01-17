@@ -413,6 +413,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 #warning not complete
 }
 
+#pragma mark Word Movement
+
 - (void)cat_moveSelectionsToWordWithRelativePosition:(CATRelativePosition)relativePosition
                                      modifySelection:(BOOL)modifySelection
 {
@@ -455,6 +457,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     }];
 }
 
+#pragma mark Word Movement Forwarding (Directional)
+
 - (void)cat_moveWordLeftModifyingSelection:(BOOL)modifySelection
 {
     [self cat_moveSelectionsToWordWithRelativePosition:CATRelativePositionLeft
@@ -485,6 +489,28 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 - (void)moveWordRightAndModifySelection:(id)sender
 {
     [self cat_moveWordRightModifyingSelection:YES];
+}
+
+#pragma mark Word Movement Forwarding (Semantic)
+
+- (void)moveWordBackward:(id)sender
+{
+    [self moveWordLeft:sender];
+}
+
+- (void)moveWordBackwardAndModifySelection:(id)sender
+{
+    [self moveWordLeftAndModifySelection:sender];
+}
+
+- (void)moveWordForward:(id)sender
+{
+    [self moveWordRight:sender];
+}
+
+- (void)moveWordForwardAndModifySelection:(id)sender
+{
+    [self moveWordRightAndModifySelection:sender];
 }
 
 #pragma mark Scrolling
