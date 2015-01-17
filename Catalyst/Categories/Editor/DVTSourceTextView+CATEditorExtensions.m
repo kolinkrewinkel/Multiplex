@@ -27,14 +27,14 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
 {
     NSRange joinedRange = newRange;
 
-    if (originalRange.location < newRange.location)
+    if (newRange.location < originalRange.location)
     {
-        joinedRange.length = newRange.location - originalRange.location;
-        joinedRange.location = originalRange.location;
+        joinedRange.length = NSMaxRange(originalRange) - newRange.location;
     }
     else
     {
-        joinedRange.length = NSMaxRange(originalRange) - newRange.location;
+        joinedRange.length = NSMaxRange(newRange) - originalRange.location;
+        joinedRange.location = originalRange.location;
     }
 
     return joinedRange;
@@ -437,6 +437,48 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
     [self cat_moveWordLeft:NO];
 }
 
+#pragma mark Basic Directional Arrows
+
+- (void)cat_offsetSelectionsWithAmountPreferringZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
+{
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+     {
+         NSRange existingRange = selection.range;
+
+         // Start the new range from the existing point, resetting the length to 0.
+         NSRange newRange = existingRange;
+         newRange.length = 0;
+
+         // Push the range forward or move it backwards.
+         if (amount > 0)
+         {
+             newRange.location = NSMaxRange(existingRange) + amount;
+         }
+         else
+         {
+             newRange.location = existingRange.location + amount;
+         }
+
+         // Validate the range at the edges
+         if (newRange.location == NSUIntegerMax)
+         {
+             newRange.location = 0;
+         }
+         else if (newRange.location > [self.textStorage length])
+         {
+             newRange.location = self.textStorage.length - 1;
+         }
+
+         // The selection should reach out and touch where it originated from.
+         if (modifySelection)
+         {
+             newRange = CAT_SelectionJoinRanges(existingRange, newRange);
+         }
+
+         return [CATSelectionRange selectionWithRange:newRange];
+     }];
+}
+
 - (void)moveLeft:(id)sender
 {
     [self cat_moveLeftModifyingSelection:NO];
@@ -449,57 +491,22 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
 
 - (void)cat_moveLeftModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
-    {
-        NSRange existingRange = selection.range;
-
-        // Start the new range from the existing point, resetting the length to 0.
-        NSRange newRange = existingRange;
-        newRange.length = 0;
-
-        // As long as it's not at the very start, decrement it.
-        if (existingRange.location > 0)
-        {
-            newRange.location = existingRange.location - 1;
-        }
-
-        // The selection should reach out and touch where it originated from.
-        if (modifySelection)
-        {
-            newRange = CAT_SelectionJoinRanges(existingRange, newRange);
-        }
-
-        return [CATSelectionRange selectionWithRange:newRange];
-    }];
+    [self cat_offsetSelectionsWithAmountPreferringZero:-1 modifySelection:modifySelection];
 }
 
 - (void)moveRight:(id)sender
 {
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange range = selectionRange.range;
-         NSRange newRange = range;
+    [self cat_moveRightModifyingSelection:NO];
+}
 
-         if (range.length == 0)
-         {
-             if (range.location < self.textStorage.length)
-             {
-                 newRange.location = range.location + 1;
-             }
-         }
-         else
-         {
-             newRange.location = range.location + range.length;
-             newRange.length = 0;
-         }
+- (void)moveRightAndModifySelection:(id)sender
+{
+    [self cat_moveRightModifyingSelection:YES];
+}
 
-         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-     }];
-
-    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
+- (void)cat_moveRightModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_offsetSelectionsWithAmountPreferringZero:1 modifySelection:modifySelection];
 }
 
 - (void)cat_verticalShiftUp:(BOOL)up
