@@ -413,31 +413,63 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 #warning not complete
 }
 
-- (void)cat_moveWordLeft:(BOOL)moveLeft
+- (void)cat_moveSelectionsToWordWithRelativePosition:(CATRelativePosition)relativePosition
+                                     modifySelection:(BOOL)modifySelection
 {
+    NSCAssert(relativePosition != CATRelativePositionTop, @"Selections may not be moved up with reference to words.");
+    NSCAssert(relativePosition != CATRelativePositionBottom, @"Selections may not be moved down with reference to words.");
+
+    BOOL forward = relativePosition == CATRelativePositionRight;
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-    NSMutableArray *newSelections = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selection,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
+
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
     {
         NSRange selectionRange = selection.range;
 
-        unsigned long long nextIndex = [textStorage nextWordFromIndex:NSMaxRange(selectionRange) forward:!moveLeft];
-        [newSelections addObject:[CATSelectionRange selectionWithRange:NSMakeRange(nextIndex, 0)]];
-    }];
+        NSUInteger nextIndex = [textStorage nextWordFromIndex:NSMaxRange(selectionRange)
+                                                      forward:forward];
+        NSRange newRange = NSMakeRange(nextIndex, 0);
 
-    [self cat_setSelectedRanges:newSelections finalize:YES];
+        if (modifySelection)
+        {
+            NSRange joinedRange = CAT_SelectionJoinRanges(selectionRange, newRange);
+            return [CATSelectionRange selectionWithRange:joinedRange];
+        }
+
+        return [CATSelectionRange selectionWithRange:newRange];
+    }];
+}
+
+- (void)cat_moveWordLeftModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_moveSelectionsToWordWithRelativePosition:CATRelativePositionLeft
+                                       modifySelection:modifySelection];
+}
+
+- (void)cat_moveWordRightModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_moveSelectionsToWordWithRelativePosition:CATRelativePositionRight
+                                       modifySelection:modifySelection];
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    [self cat_moveWordLeft:YES];
+    [self cat_moveWordLeftModifyingSelection:NO];
+}
+
+- (void)moveWordLeftAndModifySelection:(id)sender
+{
+    [self cat_moveWordLeftModifyingSelection:YES];
 }
 
 - (void)moveWordRight:(id)sender
 {
-    [self cat_moveWordLeft:NO];
+    [self cat_moveWordRightModifyingSelection:NO];
+}
+
+- (void)moveWordRightAndModifySelection:(id)sender
+{
+    [self cat_moveWordRightModifyingSelection:YES];
 }
 
 #pragma mark Scrolling
