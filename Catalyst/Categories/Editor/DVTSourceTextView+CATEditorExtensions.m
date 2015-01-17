@@ -422,30 +422,38 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)moveLeft:(id)sender
 {
-    NSMutableArray *ranges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange range = selectionRange.range;
-         NSRange newRange = range;
+    [self cat_moveLeftModifyingSelection:NO];
+}
 
-         if (range.length == 0)
-         {
-             if (range.location > 0)
-             {
-                 newRange.location = range.location - 1;
-             }
-         }
-         else
-         {
-             newRange.length = 0;
-         }
+- (void)moveLeftAndModifySelection:(id)sender
+{
+    [self cat_moveLeftModifyingSelection:YES];
+}
 
-         [ranges addObject:[CATSelectionRange selectionWithRange:newRange]];
-     }];
+- (void)cat_moveLeftModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+    {
+        NSRange existingRange = selection.range;
 
-    [self cat_setSelectedRanges:ranges finalize:(self.cat_finalizingRanges == nil)];
+        // Start the new range from the existing point, resetting the length to 0.
+        NSRange newRange = existingRange;
+        newRange.length = 0;
+
+        if (existingRange.location > 0)
+        {
+            newRange.location = existingRange.location - 1;
+        }
+
+        // The selection should reach out and touch where it originated from.
+        if (modifySelection)
+        {
+            // Get the gap between the new decremented position and the old one, so it's selected.
+            newRange.length = existingRange.location - newRange.location;
+        }
+
+        return [CATSelectionRange selectionWithRange:newRange];
+    }];
 }
 
 - (void)moveRight:(id)sender
