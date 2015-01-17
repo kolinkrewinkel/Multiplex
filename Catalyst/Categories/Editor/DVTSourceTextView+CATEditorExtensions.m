@@ -416,31 +416,39 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 - (void)cat_moveSelectionsToWordWithRelativePosition:(CATRelativePosition)relativePosition
                                      modifySelection:(BOOL)modifySelection
 {
+    // Sanity checks. The up/down ones should call the paragraph ones, instead.
     NSCAssert(relativePosition != CATRelativePositionTop, @"Selections may not be moved up with reference to words.");
     NSCAssert(relativePosition != CATRelativePositionBottom, @"Selections may not be moved down with reference to words.");
 
-    BOOL forward = relativePosition == CATRelativePositionRight;
-    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+    // The built in method is relative to back/forwards. Right means forward.
+    BOOL wordForward = relativePosition == CATRelativePositionRight;
 
     [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
     {
         NSRange selectionRange = selection.range;
 
+        // Going forward, we should seek the next word from the end of the range.
         NSUInteger seekingFromIndex = NSMaxRange(selectionRange);
 
-        if (!forward)
+        if (wordForward == NO)
         {
+            // However, when traversing in reverse, we should use the minimum
+            // of the range as the guidepost.
             seekingFromIndex = selectionRange.location;
         }
 
-        NSUInteger nextIndex = [textStorage nextWordFromIndex:seekingFromIndex
-                                                      forward:forward];
-        NSRange newRange = NSMakeRange(nextIndex, 0);
+        // Get the new word index from the text storage.
+        // The "nextWord..." method is specific to the DVTTextStorage class.
+        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+        NSUInteger wordIndex = [textStorage nextWordFromIndex:seekingFromIndex
+                                                      forward:wordForward];
 
+        NSRange newRange = NSMakeRange(wordIndex, 0);
+
+        // Unionize the ranges if we're expanding the selection.
         if (modifySelection)
         {
-            NSRange joinedRange = CAT_SelectionJoinRanges(selectionRange, newRange);
-            return [CATSelectionRange selectionWithRange:joinedRange];
+            newRange = CAT_SelectionJoinRanges(selectionRange, newRange);
         }
 
         return [CATSelectionRange selectionWithRange:newRange];
