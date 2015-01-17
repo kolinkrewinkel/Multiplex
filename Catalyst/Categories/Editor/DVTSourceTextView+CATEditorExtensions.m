@@ -23,6 +23,23 @@
 static IMP CAT_DVTSourceTextView_Original_Init = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
+NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRange)
+{
+    NSRange joinedRange = newRange;
+
+    if (originalRange.location < newRange.location)
+    {
+        joinedRange.length = newRange.location - originalRange.location;
+        joinedRange.location = originalRange.location;
+    }
+    else
+    {
+        joinedRange.length = NSMaxRange(originalRange) - newRange.location;
+    }
+
+    return joinedRange;
+}
+
 @implementation DVTSourceTextView (CATEditorExtensions)
 
 @synthesizeAssociation(DVTSourceTextView, cat_blinkTimer);
@@ -440,6 +457,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
         NSRange newRange = existingRange;
         newRange.length = 0;
 
+        // As long as it's not at the very start, decrement it.
         if (existingRange.location > 0)
         {
             newRange.location = existingRange.location - 1;
@@ -448,8 +466,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
         // The selection should reach out and touch where it originated from.
         if (modifySelection)
         {
-            // Get the gap between the new decremented position and the old one, so it's selected.
-            newRange.length = existingRange.location - newRange.location;
+            newRange = CAT_SelectionJoinRanges(existingRange, newRange);
         }
 
         return [CATSelectionRange selectionWithRange:newRange];
