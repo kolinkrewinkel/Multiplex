@@ -180,40 +180,33 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
 - (void)insertText:(id)insertObject
 {
-    NSString *insertString = (NSString *)insertObject;
-
     // Prevents random stuff being thrown in.
-    if (![insertString isKindOfClass:[NSString class]])
+    if (![insertObject isKindOfClass:[NSString class]])
     {
         return;
     }
 
+    NSString *insertString = (NSString *)insertObject;
+
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+    {
+        NSRange range = selection.range;
+        NSUInteger insertStringLength = [insertString length];
 
-    // The updated-0 length, and offseted, ranges to replace the old ones after insertion.
-    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
-    [self.cat_selectedRanges enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                          NSUInteger idx,
-                                                          BOOL *stop)
-     {
-         NSRange range = [selectionRange range];
+        // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point correspond to the relative offset made by inserting a # of chars.)
+        NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
+        [self insertText:insertString replacementRange:offsetRange];
 
-         // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point correspond to the relative offset made by inserting a # of chars.)
-         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
-         [self insertText:insertString replacementRange:offsetRange];
+        // Offset the following ones by noting the original length and updating for the replacement's length, moving cursors following forward/backward.
+        NSInteger delta = range.length - insertStringLength;
+        totalDelta -= delta;
 
-         // Move cursor (or range-selection) to the end of what was just added with 0-length.
-         NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + [insertString length], 0);
-         [newRanges addObject:[CATSelectionRange selectionWithRange:newInsertionPointRange]];
-
-         // Offset the following ones by noting the original length and updating for the replacement's length, moving cursors following forward/backward.
-         NSInteger delta = range.length - [insertString length];
-         totalDelta -= delta;
-     }];
-
-    // Update the ranges, and force finalization.
-    [self cat_setSelectedRanges:newRanges finalize:YES];
+        // Move cursor (or range-selection) to the end of what was just added with 0-length.
+        NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
+        return [CATSelectionRange selectionWithRange:newInsertionPointRange];
+    }];
 }
 
 - (void)deleteBackward:(id)sender
@@ -711,7 +704,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 #pragma mark -
 #pragma mark Range Manipulation
 
-- (void)cat_mapAndFinalizeSelectedRanges:(id (^)(id))mapBlock
+- (void)cat_mapAndFinalizeSelectedRanges:(CATSelectionRange * (^)(CATSelectionRange *selection))mapBlock
 {
     NSArray *mappedValues = [[[[self cat_effectiveSelectedRanges] rac_sequence] map:mapBlock] array];
     [self cat_setSelectedRanges:mappedValues
