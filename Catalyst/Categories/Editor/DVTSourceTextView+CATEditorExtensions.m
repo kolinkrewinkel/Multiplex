@@ -226,8 +226,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
          NSRange range = [selectionRange range];
          NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
 
-         NSLog(@"Offset range: %@", NSStringFromRange(offsetRange));
-
          NSRange deletingRange = NSMakeRange(0, 0);
          if (offsetRange.length == 0)
          {
@@ -237,8 +235,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
          {
              deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
          }
-
-         NSLog(@"Range deleting: %@", NSStringFromRange(deletingRange));
 
          // Delete the characters
          [self insertText:@"" replacementRange:deletingRange];
@@ -848,8 +844,6 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 
         self.cat_selectedRanges = ranges;
         self.cat_finalizingRanges = nil;
-
-        NSLog(@"Finalized ranges to %@.", self.cat_selectedRanges);
     }
     else
     {
