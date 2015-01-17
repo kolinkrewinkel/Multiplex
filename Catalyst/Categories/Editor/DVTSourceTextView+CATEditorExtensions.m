@@ -514,6 +514,28 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                                       modifySelection:modifySelection];
 }
 
+#pragma mark Semantic Directional Movements (alias to explicit ones)
+
+- (void)moveBackward:(id)sender
+{
+    [self moveLeft:sender];
+}
+
+- (void)moveBackwardAndModifySelection:(id)sender
+{
+    [self moveLeftAndModifySelection:sender];
+}
+
+- (void)moveForward:(id)sender
+{
+    [self moveRight:sender];
+}
+
+- (void)moveForwardAndModifySelection:(id)sender
+{
+    [self moveRightAndModifySelection:sender];
+}
+
 - (void)cat_verticalShiftUp:(BOOL)up
 {
     NSLayoutManager *layoutManager = self.layoutManager;
