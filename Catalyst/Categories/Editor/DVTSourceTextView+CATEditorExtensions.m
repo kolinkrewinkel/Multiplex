@@ -617,13 +617,13 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
         NSRange previousLineRange = ({
             NSRange range;
-            [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
+            [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousAbsoluteRange)
                                             effectiveRange:&range];
             range;
         });
 
         // The index of the selection relative to the start of the line in the entire string
-        NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
+        NSUInteger previousRelativeIndex = NSMaxRange(previousAbsoluteRange) - previousLineRange.location;
 
         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
         if (selection.intralineDesiredIndex != previousRelativeIndex &&
@@ -664,17 +664,28 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             range;
         });
 
-#warning Needs to support modifying-selection with the unionize inline func.
-
         // The line is long enough to show at the original relative-index
         if (newLineRange.length > previousRelativeIndex)
         {
             NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
-            return [CATSelectionRange selectionWithRange:NSMakeRange(desiredPosition, 0)];
+
+            NSRange newAbsoluteRange = NSMakeRange(desiredPosition, 0);
+            if (modifySelection)
+            {
+                newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+            }
+
+            return [CATSelectionRange selectionWithRange:newAbsoluteRange];
+        }
+
+        NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
+        if (modifySelection)
+        {
+            newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
         }
 
         // This will place it at the end of the line, aiming to be placed at the original position.
-        return [[CATSelectionRange alloc] initWithSelectionRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)
+        return [[CATSelectionRange alloc] initWithSelectionRange:newAbsoluteRange
                                            intralineDesiredIndex:previousRelativeIndex];
     }];
 }
