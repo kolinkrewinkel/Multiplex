@@ -271,10 +271,35 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self cat_setSelectedRanges:newRanges finalize:YES];
 }
 
+#pragma mark Document Navigation
+
+- (void)cat_moveToBeginningOfDocumentModifyingSelection:(BOOL)modifySelection
+{
+    // It would be possible to just take the longest range and unionize from there, but this is the most uniform approach.
+    // Iterate over, join them to the start, and let the filter take care of joining them all into one.
+    // In cases where the selection isn't being modified, they'll all just be set to 0,0 and they'll be de-duplicated.
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+    {
+        NSRange previousAbsoluteRange = selection.range;
+        NSRange newAbsoluteRange = NSMakeRange(0, 0);
+
+        if (modifySelection)
+        {
+            newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+        }
+
+        return [CATSelectionRange selectionWithRange:newAbsoluteRange];
+    }];
+}
+
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]]
-                       finalize:YES];
+    [self cat_moveToBeginningOfDocumentModifyingSelection:NO];
+}
+
+- (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
+{
+    [self cat_moveToBeginningOfDocumentModifyingSelection:YES];
 }
 
 - (void)moveToEndOfDocument:(id)sender
