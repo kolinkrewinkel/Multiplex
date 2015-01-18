@@ -521,7 +521,11 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     NSLog(@"Center selection requested from %@", sender);
 }
 
+#pragma mark -
 #pragma mark Basic Directional Arrows
+#pragma mark -
+
+#pragma mark Simple Index-Movement
 
 - (void)cat_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
 {
@@ -595,6 +599,115 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                                       modifySelection:modifySelection];
 }
 
+#pragma mark Up and Down/Line-Movements
+
+- (void)cat_shiftSelectionLineWithRelativePosition:(CATRelativePosition)position
+                                modifyingSelection:(BOOL)modifySelection
+{
+    NSCAssert(position != CATRelativePositionLeft, @"Use beginning/end of line methods.");
+    NSCAssert(position != CATRelativePositionRight, @"Use beginning/end of line methods.");
+
+    NSLayoutManager *layoutManager = self.layoutManager;
+
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+    {
+        // "Previous" refers exclusively to time, not location.
+        NSRange previousAbsoluteRange = selection.range;
+
+        // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
+        NSRange previousLineRange = ({
+            NSRange range;
+            [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
+                                            effectiveRange:&range];
+            range;
+        });
+
+        // The index of the selection relative to the start of the line in the entire string
+        NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
+
+        // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
+        if (selection.intralineDesiredIndex != previousRelativeIndex && selection.intralineDesiredIndex != NSNotFound)
+        {
+            previousRelativeIndex = selection.intralineDesiredIndex;
+        }
+
+        // The selection is in the first/zero-th line, so there is no above line to find.
+        // Sublime Text and OS X behavior is to jump to the start of the document.
+        if (previousLineRange.location == 0 && up == YES)
+        {
+            return [CATSelectionRange selectionWithRange:NSMakeRange(0, 0)];
+        }
+        else if (NSMaxRange(previousLineRange) == self.textStorage.length && up == NO)
+        {
+            return [CATSelectionRange selectionWithRange:NSMakeRange(self.textStorage.length, 0)];
+        }
+
+
+        NSRange newLineRange = ({
+            NSRange range;
+
+            if (up)
+            {
+                [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                effectiveRange:&range];
+            }
+            else
+            {
+                [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                                                effectiveRange:&range];
+            }
+
+
+            range;
+        });
+
+        // The line is long enough to show at the original relative-index
+        if (newLineRange.length > previousRelativeIndex)
+        {
+            NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
+            return [CATSelectionRange selectionWithRange:NSMakeRange(desiredPosition, 0)];
+        }
+
+        // This will place it at the end of the line, aiming to be placed at the original position.
+        return [[CATSelectionRange alloc] initWithSelectionRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)
+                                           intralineDesiredIndex:previousRelativeIndex];
+    }];
+}
+
+- (void)cat_moveSelectionsUpModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_shiftSelectionLineWithRelativePosition:CATRelativePositionTop
+                                  modifyingSelection:modifySelection];
+}
+
+- (void)cat_moveSelectionsDownModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_shiftSelectionLineWithRelativePosition:CATRelativePositionBottom
+                                  modifyingSelection:modifySelection];
+}
+
+#pragma mark Up/Down Forwarding Methods
+
+- (void)moveUp:(id)sender
+{
+    [self cat_moveSelectionsUpModifyingSelection:NO];
+}
+
+- (void)moveUpAndModifySelection:(id)sender
+{
+    [self cat_moveSelectionsUpModifyingSelection:YES];
+}
+
+- (void)moveDown:(id)sender
+{
+    [self cat_moveSelectionsDownModifyingSelection:NO];
+}
+
+- (void)moveDownAndModifySelection:(id)sender
+{
+    [self cat_moveSelectionsDownModifyingSelection:YES];
+}
+
 #pragma mark Semantic Directional Movements (alias to explicit ones)
 
 - (void)moveBackward:(id)sender
@@ -617,93 +730,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self moveRightAndModifySelection:sender];
 }
 
-- (void)cat_verticalShiftUp:(BOOL)up
-{
-    NSLayoutManager *layoutManager = self.layoutManager;
-
-    NSMutableArray *candidateRanges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selection,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         // "Previous" refers exclusively to time, not location.
-         NSRange previousAbsoluteRange = selection.range;
-
-         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
-         NSRange previousLineRange = ({
-             NSRange range;
-             [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
-                                             effectiveRange:&range];
-             range;
-         });
-
-         // The index of the selection relative to the start of the line in the entire string
-         NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
-
-         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
-         if (selection.intralineDesiredIndex != previousRelativeIndex && selection.intralineDesiredIndex != NSNotFound)
-         {
-             previousRelativeIndex = selection.intralineDesiredIndex;
-         }
-
-         // The selection is in the first/zero-th line, so there is no above line to find.
-         // Sublime Text and OS X behavior is to jump to the start of the document.
-         if (previousLineRange.location == 0 && up == YES)
-         {
-             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(0, 0)]];
-             return;
-         }
-         else if (NSMaxRange(previousLineRange) == self.textStorage.length && up == NO)
-         {
-             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(self.textStorage.length, 0)]];
-             return;
-         }
-
-
-         NSRange newLineRange = ({
-             NSRange range;
-
-             if (up)
-             {
-                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
-                                                 effectiveRange:&range];
-             }
-             else
-             {
-                 [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
-                                                 effectiveRange:&range];
-             }
-
-
-             range;
-         });
-
-         // The line is long enough to show at the original relative-index
-         if (newLineRange.length > previousRelativeIndex)
-         {
-             NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
-             [candidateRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(desiredPosition, 0)]];
-         }
-         else
-         {
-             // This will place it at the end of the line, aiming to be placed at the original position.
-             [candidateRanges addObject:[[CATSelectionRange alloc] initWithSelectionRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)
-                                                                    intralineDesiredIndex:previousRelativeIndex]];
-         }
-     }];
-    
-    [self cat_setSelectedRanges:candidateRanges finalize:(self.cat_finalizingRanges == nil)];
-}
-
-- (void)moveUp:(id)sender
-{
-    [self cat_verticalShiftUp:YES];
-}
-
-- (void)moveDown:(id)sender
-{
-    [self cat_verticalShiftUp:NO];
-}
+#pragma mark -
 
 #pragma mark -
 #pragma mark Mouse Events
