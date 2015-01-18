@@ -626,18 +626,21 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         NSUInteger previousRelativeIndex = previousAbsoluteRange.location - previousLineRange.location;
 
         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
-        if (selection.intralineDesiredIndex != previousRelativeIndex && selection.intralineDesiredIndex != NSNotFound)
+        if (selection.intralineDesiredIndex != previousRelativeIndex &&
+            selection.intralineDesiredIndex != NSNotFound)
         {
             previousRelativeIndex = selection.intralineDesiredIndex;
         }
 
         // The selection is in the first/zero-th line, so there is no above line to find.
         // Sublime Text and OS X behavior is to jump to the start of the document.
-        if (previousLineRange.location == 0 && up == YES)
+        if (previousLineRange.location == 0 &&
+            position == CATRelativePositionTop)
         {
             return [CATSelectionRange selectionWithRange:NSMakeRange(0, 0)];
         }
-        else if (NSMaxRange(previousLineRange) == self.textStorage.length && up == NO)
+        else if (NSMaxRange(previousLineRange) == self.textStorage.length &&
+                 position == CATRelativePositionBottom)
         {
             return [CATSelectionRange selectionWithRange:NSMakeRange(self.textStorage.length, 0)];
         }
@@ -646,7 +649,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         NSRange newLineRange = ({
             NSRange range;
 
-            if (up)
+            if (position == CATRelativePositionTop)
             {
                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
                                                 effectiveRange:&range];
@@ -660,6 +663,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
             range;
         });
+
+#warning Needs to support modifying-selection with the unionize inline func.
 
         // The line is long enough to show at the original relative-index
         if (newLineRange.length > previousRelativeIndex)
