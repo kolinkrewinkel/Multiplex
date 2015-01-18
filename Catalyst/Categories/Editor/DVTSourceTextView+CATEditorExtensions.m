@@ -324,51 +324,91 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 #pragma mark Line Movements
 
-- (void)cat_moveSelectionsToBeginningOrEndOfLine:(BOOL)endOfLine
+- (void)cat_moveSelectionsToRelativePositionWithinLine:(CATRelativePosition)relativePosition
+                                    modifyingSelection:(BOOL)modifySelection
 {
-    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange range = selectionRange.range;
+    NSCAssert(relativePosition != CATRelativePositionTop, @"Paragraph methods should be used to move up lines.");
+    NSCAssert(relativePosition != CATRelativePositionBottom, @"Paragraph methods should be used to move down lines.");
 
-         // The cursors are being pushed to the line's relative location of 0 or .length.
-         NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
-         NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+    {
+        NSRange range = selection.range;
 
-         if (endOfLine)
-         {
-             cursorRange.location += rangeOfContainingLine.length - 1;
-         }
+        // The cursors are being pushed to the line's relative location of 0 or .length.
+        NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
+        NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
 
-         // Add the range with length of 0 at the position on the line.
-         [newRanges addObject:[CATSelectionRange selectionWithRange:cursorRange]];
-     }];
+        if (relativePosition == CATRelativePositionRight)
+        {
+            cursorRange.location += rangeOfContainingLine.length - 1;
+        }
 
-    [self cat_setSelectedRanges:newRanges
-                       finalize:YES];
+        if (modifySelection)
+        {
+            cursorRange = CAT_SelectionJoinRanges(range, cursorRange);
+        }
+
+        return [CATSelectionRange selectionWithRange:cursorRange];
+    }];
 }
+
+- (void)cat_moveToLeftEndOfLineModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_moveSelectionsToRelativePositionWithinLine:CATRelativePositionLeft
+                                      modifyingSelection:modifySelection];
+}
+
+- (void)cat_moveToRightEndOfLineModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_moveSelectionsToRelativePositionWithinLine:CATRelativePositionRight
+                                      modifyingSelection:modifySelection];
+}
+
+#pragma mark Line Movement Forwarding (Directional)
 
 - (void)moveToLeftEndOfLine:(id)sender
 {
-    [self cat_moveSelectionsToBeginningOrEndOfLine:NO];
+    [self cat_moveToLeftEndOfLineModifyingSelection:NO];
+}
+
+- (void)moveToLeftEndOfLineAndModifySelection:(id)sender
+{
+    [self cat_moveToLeftEndOfLineModifyingSelection:YES];
 }
 
 - (void)moveToRightEndOfLine:(id)sender
 {
-    [self cat_moveSelectionsToBeginningOrEndOfLine:YES];
+    [self cat_moveToRightEndOfLineModifyingSelection:NO];
 }
+
+- (void)moveToRightEndOfLineAndModifySelection:(id)sender
+{
+    [self cat_moveToRightEndOfLineModifyingSelection:YES];
+}
+
+#pragma mark Line Movement Forwarding (Semantic)
 
 - (void)moveToBeginningOfLine:(id)sender
 {
     [self moveToLeftEndOfLine:sender];
 }
 
+- (void)moveToBeginningOfLineAndModifySelection:(id)sender
+{
+    [self moveToLeftEndOfLineAndModifySelection:sender];
+}
+
 - (void)moveToEndOfLine:(id)sender
 {
     [self moveToRightEndOfLine:sender];
 }
+
+- (void)moveToEndOfLineAndModifySelection:(id)sender
+{
+    [self moveToRightEndOfLineAndModifySelection:sender];
+}
+
+#pragma mark -
 
 - (void)cat_jumpToLinePositionMovingVerticallyIncludingLength:(BOOL)includeLength
 {
@@ -441,16 +481,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 - (void)moveToEndOfParagraph:(id)sender
 {
     [self cat_jumpToLinePositionMovingVerticallyIncludingLength:YES];
-}
-
-- (void)moveToLeftEndOfLineAndModifySelection:(id)sender
-{
-#warning not complete
-}
-
-- (void)moveToRightEndOfLineAndModifySelection:(id)sender
-{
-#warning not complete
 }
 
 #pragma mark Word Movement
