@@ -273,23 +273,33 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 #pragma mark Document Navigation
 
-- (void)cat_moveToBeginningOfDocumentModifyingSelection:(BOOL)modifySelection
+- (void)cat_moveToRange:(NSRange)newRange modifyingSelection:(BOOL)modifySelection
 {
     // It would be possible to just take the longest range and unionize from there, but this is the most uniform approach.
     // Iterate over, join them to the start, and let the filter take care of joining them all into one.
     // In cases where the selection isn't being modified, they'll all just be set to 0,0 and they'll be de-duplicated.
     [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
-    {
-        NSRange previousAbsoluteRange = selection.range;
-        NSRange newAbsoluteRange = NSMakeRange(0, 0);
+     {
+         NSRange previousAbsoluteRange = selection.range;
+         NSRange newAbsoluteRange = newRange;
 
-        if (modifySelection)
-        {
-            newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
-        }
+         if (modifySelection)
+         {
+             newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+         }
 
-        return [CATSelectionRange selectionWithRange:newAbsoluteRange];
-    }];
+         return [CATSelectionRange selectionWithRange:newAbsoluteRange];
+     }];
+}
+
+- (void)cat_moveToBeginningOfDocumentModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_moveToRange:NSMakeRange(0, 0) modifyingSelection:modifySelection];
+}
+
+- (void)cat_moveToEndOfDocumentModifyingSelection:(BOOL)modifySelection
+{
+    [self cat_moveToRange:NSMakeRange([self.textStorage length] - 1, 0) modifyingSelection:modifySelection];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
@@ -304,10 +314,15 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    NSUInteger documentLength = [self.textStorage.string length];
-    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(documentLength - 1, 0)]]
-                       finalize:YES];
+    [self cat_moveToEndOfDocumentModifyingSelection:NO];
 }
+
+- (void)moveToEndOfDocumentAndModifySelection:(id)sender
+{
+    [self cat_moveToEndOfDocumentModifyingSelection:YES];
+}
+
+#pragma mark Line Movements
 
 - (void)cat_moveSelectionsToBeginningOrEndOfLine:(BOOL)endOfLine
 {
