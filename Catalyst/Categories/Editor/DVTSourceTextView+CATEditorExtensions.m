@@ -332,10 +332,23 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
     {
-        NSRange range = selection.range;
+        NSRange previousAbsoluteRange = selection.range;
 
         // The cursors are being pushed to the line's relative location of 0 or .length.
-        NSRange rangeOfContainingLine = [self.textStorage.string lineRangeForRange:range];
+        NSRange rangeOfContainingLine = ({
+            NSRange range;
+            NSUInteger locationToBaseFrom = previousAbsoluteRange.location;
+
+            if (relativePosition == CATRelativePositionRight)
+            {
+                locationToBaseFrom = NSMaxRange(previousAbsoluteRange);
+            }
+
+            [self.layoutManager lineFragmentRectForGlyphAtIndex:locationToBaseFrom
+                                                 effectiveRange:&range];
+            range;
+        });
+
         NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
 
         if (relativePosition == CATRelativePositionRight)
@@ -345,7 +358,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         if (modifySelection)
         {
-            cursorRange = CAT_SelectionJoinRanges(range, cursorRange);
+            cursorRange = CAT_SelectionJoinRanges(previousAbsoluteRange, cursorRange);
         }
 
         return [CATSelectionRange selectionWithRange:cursorRange];
