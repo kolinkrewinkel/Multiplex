@@ -70,44 +70,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 {
     self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.cat_rangeInProgressStart = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
-
-    [NSEvent addLocalMonitorForEventsMatchingMask:NSKeyDownMask handler:^NSEvent *(NSEvent *event)
-     {
-         if (![self cat_validateKeyDownEventForNavigator:event])
-         {
-             return event;
-         }
-
-         NSMutableArray *items = [[NSMutableArray alloc] init];
-         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-
-         [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                          NSUInteger idx,
-                                                                          BOOL *stop)
-          {
-              NSRange range = selectionRange.range;
-
-              DVTSourceModelItem *modelItem = [textStorage.sourceModelService sourceModelItemAtCharacterIndex:range.location];
-
-              NSUInteger count = 0;
-              NSRectArray rects = [self.layoutManager rectArrayForCharacterRange:modelItem.range
-                                                    withinSelectedCharacterRange:modelItem.range inTextContainer:self.textContainer
-                                                                       rectCount:&count];
-
-              CATNavigatorTarget *target = [[CATNavigatorTarget alloc] initWithRect:rects[count - 1]
-                                                                          modelItem:modelItem];
-              [items addObject:target];
-          }];
-
-         self.cat_nextNavigator = [[CATNextNavigator alloc] initWithView:self.superview
-                                                             targetItems:items
-                                                           layoutManager:self.layoutManager];
-         [self.cat_nextNavigator showItems:items];
-
-
-         return nil;
-     }];
-
     CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
 
     [self cat_startBlinking];
@@ -162,19 +124,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 - (void)cat_stopBlinking
 {
     [self.cat_blinkTimer invalidate];
-}
-
-#pragma mark -
-#pragma mark Navigator
-
-- (BOOL)cat_validateKeyDownEventForNavigator:(NSEvent *)event
-{
-    if ([[self window] firstResponder] != self)
-    {
-        return NO;
-    }
-
-    return (event.modifierFlags & NSAlternateKeyMask && [event.charactersIgnoringModifiers isEqualToString:@" "]);
 }
 
 #pragma mark -
@@ -940,28 +889,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self cat_startBlinking];
 }
 
-- (void)mouseMoved:(NSEvent *)theEvent
-{
-    NSRect frameRelativeToWindow = [self convertRect:self.frame
-                                              toView:nil];
-    NSRect frameRelativeToScreen = [self.window convertRectToScreen:frameRelativeToWindow];
-
-    if (CGRectContainsPoint(frameRelativeToScreen, [NSEvent mouseLocation])
-        && [NSCursor currentCursor] != [NSCursor IBeamCursor])
-    {
-        [[NSCursor IBeamCursor] push];
-    }
-}
-
-- (void)mouseEntered:(NSEvent *)theEvent
-{
-    [[NSCursor IBeamCursor] push];
-}
-
-- (void)mouseExited:(NSEvent *)theEvent
-{
-    [[NSCursor IBeamCursor] pop];
-}
 
 #pragma mark -
 #pragma mark Range Manipulation
