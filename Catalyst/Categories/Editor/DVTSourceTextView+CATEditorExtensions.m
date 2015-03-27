@@ -1091,6 +1091,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                  DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
                  NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
+                 NSLog(@"%@", backgroundColor);
+
                  [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
              }
 

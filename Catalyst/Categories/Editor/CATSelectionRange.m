@@ -44,4 +44,20 @@
     return [[[self alloc] init] initWithSelectionRange:range];
 }
 
+#pragma mark -
+#pragma mark NSObject
+
+- (BOOL)isEqual:(id)object
+{
+    if (![object isKindOfClass:[self class]])
+    {
+        return NO;
+    }
+
+    CATSelectionRange *otherSelection = (CATSelectionRange *)object;
+
+    return (otherSelection.intralineDesiredIndex == self.intralineDesiredIndex
+            && NSEqualRanges(otherSelection.range, self.range));
+}
+
 @end
