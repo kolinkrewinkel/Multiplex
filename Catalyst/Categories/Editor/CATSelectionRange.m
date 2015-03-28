@@ -60,4 +60,17 @@
             && NSEqualRanges(otherSelection.range, self.range));
 }
 
+- (NSString *)description
+{
+    return [self debugDescription];
+}
+
+- (NSString *)debugDescription
+{
+    return [NSString stringWithFormat:@"<%@: intraline index: %lu, range: %@>",
+            NSStringFromClass([self class]),
+            (unsigned long)self.intralineDesiredIndex,
+            NSStringFromRange(self.range)];
+}
+
 @end
