@@ -817,9 +817,18 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    NSInteger clickCount = [theEvent clickCount];
-    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
-                                      fromView:nil];
+    NSUInteger index = ({
+        CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
+                                          fromView:nil];
+        [self characterIndexForInsertionAtPoint:clickLocation];
+    });
+
+    if (index == NSNotFound)
+    {
+        return;
+    }
+
+    NSInteger clickCount = theEvent.clickCount;
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
 
     NSArray *existingSelections = ({
@@ -831,12 +840,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         selections;
     });
-    NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
-
-    if (index == NSNotFound)
-    {
-        return;
-    }
 
     CATSelectionRange *selection = nil;
 
@@ -868,12 +871,16 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         if (commandKeyHeld)
         {
-
             [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:selection]
                                finalize:NO];
         }
         else
         {
+            /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. */
+            [self cat_setSelectedRanges:@[selection]
+                               finalize:YES];
+
+            /* In the event the user drags, however, it needs to unfinalized so that it can be extended again. */
             [self cat_setSelectedRanges:@[selection]
                                finalize:NO];
         }
@@ -1037,6 +1044,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         self.cat_selectedRanges = ranges;
         self.cat_finalizingRanges = nil;
+
+        NSLog(@"Finalized ranges to: %@", ranges);
     }
     else
     {
@@ -1045,6 +1054,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             return;
         }
 
+        NSLog(@"Set finalizing ranges to: %@\nCurrent: %@", ranges, self.cat_finalizingRanges);
         self.cat_finalizingRanges = ranges;
     }
 
@@ -1078,6 +1088,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
         NSMutableDictionary *selectionViews = [[NSMutableDictionary alloc] init];
 
+        NSLog(@"\n===================\nEffective ranges: %@\nFinalizing: %@\nSet: %@", [self cat_effectiveSelectedRanges], self.cat_finalizingRanges, self.cat_selectedRanges);
+
         [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange, NSUInteger idx, BOOL *stop)
          {
              NSRange range = [selectionRange range];
@@ -1090,8 +1102,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
                  DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
                  NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-
-                 NSLog(@"%@", backgroundColor);
 
                  [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
              }
@@ -1106,6 +1116,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
              
              [self addSubview:view];
+
+             NSLog(@"initialized view: %@", view);
              
              selectionViews[[NSValue valueWithRect:rect]] = view;
          }];
