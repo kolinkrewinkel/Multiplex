@@ -876,7 +876,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         }
         else
         {
-            /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. */
+            /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. Otherwise, they'll be re-added during dragging. */
             [self cat_setSelectedRanges:@[selection]
                                finalize:YES];
 
