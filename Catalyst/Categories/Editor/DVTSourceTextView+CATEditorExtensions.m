@@ -372,15 +372,17 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 #pragma mark -
 
-- (void)cat_jumpToLinePositionMovingVerticallyIncludingLength:(BOOL)includeLength
+- (void)cat_moveLinePositionIncludingLength:(BOOL)includeLength
+                            modifySelection:(BOOL)modifySelection
 {
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-    NSLayoutManager *layoutManager = self.layoutManager;
 
     [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
     {
         NSRange previousAbsoluteRange = selection.range;
         NSRange previousLineRange = [textStorage.string lineRangeForRange:previousAbsoluteRange];
+
+        NSRange newAbsoluteRange = previousAbsoluteRange;
 
         if (includeLength)
         {
@@ -388,11 +390,11 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             if (previousAbsoluteRange.location == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
             {
                 NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(NSMaxRange(previousLineRange), 0)];
-                return [CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)];
+                newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
             }
             else
             {
-                return [CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(previousLineRange) - 1, 0)];
+                newAbsoluteRange = NSMakeRange(NSMaxRange(previousLineRange) - 1, 0);
             }
         }
         else
@@ -401,24 +403,45 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
             {
                 NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(previousLineRange.location - 1, 0)];
-                return [CATSelectionRange selectionWithRange:NSMakeRange(newLineRange.location, 0)];
+                newAbsoluteRange = NSMakeRange(newLineRange.location, 0);
             }
             else
             {
-                return [CATSelectionRange selectionWithRange:NSMakeRange(previousLineRange.location, 0)];
+                newAbsoluteRange = NSMakeRange(previousLineRange.location, 0);
             }
         }
+
+        if (modifySelection)
+        {
+            return [CATSelectionRange selectionWithRange:CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange)];
+        }
+
+        return [CATSelectionRange selectionWithRange:newAbsoluteRange];
     }];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    [self cat_jumpToLinePositionMovingVerticallyIncludingLength:NO];
+    [self cat_moveLinePositionIncludingLength:NO
+                              modifySelection:NO];
+}
+
+- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
+{
+    [self cat_moveLinePositionIncludingLength:NO
+                              modifySelection:YES];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    [self cat_jumpToLinePositionMovingVerticallyIncludingLength:YES];
+    [self cat_moveLinePositionIncludingLength:YES
+                              modifySelection:NO];
+}
+
+- (void)moveToEndOfParagraphAndModifySelection:(id)sender
+{
+    [self cat_moveLinePositionIncludingLength:YES
+                              modifySelection:YES];
 }
 
 #pragma mark Word Movement
