@@ -409,7 +409,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         if (includeLength)
         {
             // It's at the end of the line and needs to be moved down
-            if (previousAbsoluteRange.location == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
+            if (NSMaxRange(previousAbsoluteRange) == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
             {
                 NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(NSMaxRange(previousLineRange), 0)];
                 newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
