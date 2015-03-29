@@ -841,49 +841,47 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         selections;
     });
 
-    CATSelectionRange *selection = nil;
+    NSRange resultRange = NSMakeRange(NSNotFound, 0);
+    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
-    // Selects only the single point at the approximate location of the cursor
-    if (clickCount == 1)
-    {
-        NSRange cursorLocationRange = NSMakeRange(index, 0);
-        CATSelectionRange *cursorSelection = [CATSelectionRange selectionWithRange:cursorLocationRange];
-        selection = cursorSelection;
-    }
-    // Selects the local expression
-    else if (clickCount == 2)
-    {
-        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-        NSRange wordRange = [textStorage doubleClickAtIndex:index];
-
-        selection = [CATSelectionRange selectionWithRange:wordRange];
-    }
-    // Selects the entire line
-    else if (clickCount == 3)
-    {
-        selection = [CATSelectionRange selectionWithRange:[self.textStorage.string lineRangeForRange:NSMakeRange(index, 0)]];
+    switch (clickCount) {
+        // Selects only the single point at the approximate location of the cursor
+        case 1:
+            resultRange = NSMakeRange(index, 0);
+            break;
+        case 2:
+            resultRange = [textStorage doubleClickAtIndex:index];
+            break;
+        case 3:
+            resultRange = [textStorage.string lineRangeForRange:NSMakeRange(index, 0)];
+            break;
+        default:
+            return;
     }
 
-    if (selection && selection.range.location != NSIntegerMax)
+    if (resultRange.location == NSNotFound)
     {
-        self.cat_rangeInProgress = selection;
-        self.cat_rangeInProgressStart = selection;
+        return;
+    }
 
-        if (commandKeyHeld)
-        {
-            [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:selection]
-                               finalize:NO];
-        }
-        else
-        {
-            /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. Otherwise, they'll be re-added during dragging. */
-            [self cat_setSelectedRanges:@[selection]
-                               finalize:YES];
+    CATSelectionRange *selection = [CATSelectionRange selectionWithRange:resultRange];
+    self.cat_rangeInProgress = selection;
+    self.cat_rangeInProgressStart = selection;
 
-            /* In the event the user drags, however, it needs to unfinalized so that it can be extended again. */
-            [self cat_setSelectedRanges:@[selection]
-                               finalize:NO];
-        }
+    if (commandKeyHeld)
+    {
+        [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:selection]
+                           finalize:NO];
+    }
+    else
+    {
+        /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. Otherwise, they'll be re-added during dragging. */
+        [self cat_setSelectedRanges:@[selection]
+                           finalize:YES];
+
+        /* In the event the user drags, however, it needs to unfinalized so that it can be extended again. */
+        [self cat_setSelectedRanges:@[selection]
+                           finalize:NO];
     }
 }
 
