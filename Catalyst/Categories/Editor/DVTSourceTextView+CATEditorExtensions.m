@@ -376,63 +376,57 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 {
     NSLayoutManager *layoutManager = self.layoutManager;
 
-    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
-    [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange,
-                                                                     NSUInteger idx,
-                                                                     BOOL *stop)
-     {
-         NSRange previousAbsoluteRange = selectionRange.range;
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection)
+    {
+        NSRange previousAbsoluteRange = selection.range;
 
-         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
-         NSRange previousLineRange = ({
-             NSRange range;
-             [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
-                                             effectiveRange:&range];
-             range;
-         });
+        // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
+        NSRange previousLineRange = ({
+            NSRange range;
+            [layoutManager lineFragmentRectForGlyphAtIndex:previousAbsoluteRange.location
+                                            effectiveRange:&range];
+            range;
+        });
 
-         if (includeLength)
-         {
-             // It's at the end of the line and needs to be moved down
-             if (previousAbsoluteRange.location == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
-             {
-                 NSRange newLineRange = ({
-                     NSRange range;
-                     [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
-                                                     effectiveRange:&range];
-                     range;
-                 });
+        if (includeLength)
+        {
+            // It's at the end of the line and needs to be moved down
+            if (previousAbsoluteRange.location == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
+            {
+                NSRange newLineRange = ({
+                    NSRange range;
+                    [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                                                    effectiveRange:&range];
+                    range;
+                });
 
-                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)]];
-             }
-             else
-             {
-                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(previousLineRange) - 1, 0)]];
-             }
-         }
-         else
-         {
-             // It's at the beginning of the line and needs to be moved up
-             if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
-             {
-                 NSRange newLineRange = ({
-                     NSRange range;
-                     [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
-                                                     effectiveRange:&range];
-                     range;
-                 });
+                return [CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(newLineRange) - 1, 0)];
+            }
+            else
+            {
+                return [CATSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(previousLineRange) - 1, 0)];
+            }
+        }
+        else
+        {
+            // It's at the beginning of the line and needs to be moved up
+            if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
+            {
+                NSRange newLineRange = ({
+                    NSRange range;
+                    [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                    effectiveRange:&range];
+                    range;
+                });
 
-                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(newLineRange.location, 0)]];
-             }
-             else
-             {
-                 [newRanges addObject:[CATSelectionRange selectionWithRange:NSMakeRange(previousLineRange.location, 0)]];
-             }
-         }
-     }];
-
-    [self cat_setSelectedRanges:newRanges
-                       finalize:YES];
+                return [CATSelectionRange selectionWithRange:NSMakeRange(newLineRange.location, 0)];
+            }
+            else
+            {
+                return [CATSelectionRange selectionWithRange:NSMakeRange(previousLineRange.location, 0)];
+            }
+        }
+    }];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
