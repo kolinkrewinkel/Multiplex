@@ -271,6 +271,28 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self cat_moveToEndOfDocumentModifyingSelection:YES];
 }
 
+#pragma mark Page Movements
+
+- (void)pageDown:(id)sender
+{
+#warning Appears to be unimplemented/uncalled.
+}
+
+- (void)pageDownAndModifySelection:(id)sender
+{
+#warning Appears to be unimplemented/uncalled.
+}
+
+- (void)pageUp:(id)sender
+{
+#warning Appears to be unimplemented/uncalled.
+}
+
+- (void)pageUpAndModifySelection:(id)sender
+{
+#warning Appears to be unimplemented/uncalled.
+}
+
 #pragma mark Line Movements
 
 - (void)cat_moveSelectionsToRelativePositionWithinLine:(CATRelativePosition)relativePosition
@@ -1041,8 +1063,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         self.cat_selectedRanges = ranges;
         self.cat_finalizingRanges = nil;
-
-        NSLog(@"Finalized ranges to: %@", ranges);
     }
     else
     {
@@ -1051,7 +1071,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             return;
         }
 
-        NSLog(@"Set finalizing ranges to: %@\nCurrent: %@", ranges, self.cat_finalizingRanges);
         self.cat_finalizingRanges = ranges;
     }
 
@@ -1085,7 +1104,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
         NSMutableDictionary *selectionViews = [[NSMutableDictionary alloc] init];
 
-        NSLog(@"\n===================\nEffective ranges: %@\nFinalizing: %@\nSet: %@", [self cat_effectiveSelectedRanges], self.cat_finalizingRanges, self.cat_selectedRanges);
+//        NSLog(@"\n===================\nEffective ranges: %@\nFinalizing: %@\nSet: %@", [self cat_effectiveSelectedRanges], self.cat_finalizingRanges, self.cat_selectedRanges);
 
         [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange, NSUInteger idx, BOOL *stop)
          {
