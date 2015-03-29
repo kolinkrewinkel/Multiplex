@@ -466,6 +466,18 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                               modifySelection:YES];
 }
 
+- (void)moveParagraphBackwardAndModifySelection:(id)sender
+{
+    [self cat_moveLinePositionIncludingLength:NO
+                              modifySelection:YES];
+}
+
+- (void)moveParagraphForwardAndModifySelection:(id)sender
+{
+    [self cat_moveLinePositionIncludingLength:YES
+                              modifySelection:YES];
+}
+
 #pragma mark Word Movement
 
 - (void)cat_moveSelectionsToWordWithRelativePosition:(CATRelativePosition)relativePosition
