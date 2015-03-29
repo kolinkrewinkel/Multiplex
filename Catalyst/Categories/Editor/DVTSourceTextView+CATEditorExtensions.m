@@ -271,28 +271,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self cat_moveToEndOfDocumentModifyingSelection:YES];
 }
 
-#pragma mark Page Movements
-
-- (void)pageDown:(id)sender
-{
-#warning Appears to be unimplemented/uncalled.
-}
-
-- (void)pageDownAndModifySelection:(id)sender
-{
-#warning Appears to be unimplemented/uncalled.
-}
-
-- (void)pageUp:(id)sender
-{
-#warning Appears to be unimplemented/uncalled.
-}
-
-- (void)pageUpAndModifySelection:(id)sender
-{
-#warning Appears to be unimplemented/uncalled.
-}
-
 #pragma mark Line Movements
 
 - (void)cat_moveSelectionsToRelativePositionWithinLine:(CATRelativePosition)relativePosition
