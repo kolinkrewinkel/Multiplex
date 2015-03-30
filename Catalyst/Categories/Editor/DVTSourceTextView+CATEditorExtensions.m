@@ -175,9 +175,21 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         NSInteger delta = range.length - insertStringLength;
         totalDelta -= delta;
 
+        NSRange lineRange;
+        (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange)
+                                                   effectiveRange:&lineRange];
+
+        NSUInteger relativeLinePosition = selection.intralineDesiredIndex;
+
+        if (relativeLinePosition == NSNotFound)
+        {
+            relativeLinePosition = NSMaxRange(offsetRange) - lineRange.location;
+        }
+
         // Move cursor (or range-selection) to the end of what was just added with 0-length.
         NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
-        return [CATSelectionRange selectionWithRange:newInsertionPointRange];
+        return [[CATSelectionRange alloc] initWithSelectionRange:newInsertionPointRange
+                                           intralineDesiredIndex:relativeLinePosition];
     }];
 }
 
@@ -221,6 +233,52 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     // Update the ranges, and force finalization.
     [self cat_setSelectedRanges:newRanges finalize:YES];
+}
+
+#pragma mark Indentations/Other insertions
+
+- (void)insertNewline:(id)sender
+{
+    NSUndoManager *undoManager = self.undoManager;
+    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+
+    [self insertText:@"\n"];
+
+    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(CATSelectionRange *selection) {
+        NSRange range = selection.range;
+
+        if ([textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager])
+        {
+            NSLayoutManager *layoutManager = [self layoutManager];
+            NSRange lineRange;
+            NSUInteger desiredIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(range)];
+            NSUInteger lineNumber = 0;
+            NSUInteger numberOfLines = 0;
+
+            for (NSUInteger index = 0; index < [layoutManager numberOfGlyphs]; numberOfLines++)
+            {
+                (void) [layoutManager lineFragmentRectForGlyphAtIndex:index
+                                                       effectiveRange:&lineRange];
+
+                if (desiredIndex >= lineRange.location && desiredIndex <= NSMaxRange(lineRange))
+                {
+                    lineNumber = numberOfLines;
+                    break;
+                }
+
+                index = NSMaxRange(lineRange);
+            }
+
+            NSUInteger firstNonBlank = [textStorage firstNonblankForLine:lineNumber - 3 convertTabs:YES];
+
+            NSRange effectiveRange;
+            (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(range)
+                                                       effectiveRange:&effectiveRange];
+            return [CATSelectionRange selectionWithRange:NSMakeRange(effectiveRange.location + firstNonBlank, 0)];
+        }
+
+        return selection;
+    }];
 }
 
 #pragma mark Document Navigation
