@@ -68,15 +68,23 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_commonInitDVTSourceTextView
 {
+    CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
+
     self.cat_rangeInProgress = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.cat_rangeInProgressStart = [CATSelectionRange selectionWithRange:NSMakeRange(NSNotFound, 0)];
-    CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
+
+    self.selectedTextAttributes = nil;
 
     [self cat_startBlinking];
 }
 
 #pragma mark -
 #pragma mark Cursors
+
+- (BOOL)isSelectable
+{
+    return NO;
+}
 
 - (void)cat_blinkCursors:(NSTimer *)sender
 {
@@ -1065,6 +1073,11 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         self.cat_finalizingRanges = ranges;
     }
 
+    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
+
+    [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:NSMakeRange(0, self.string.length)];
+
     [ranges enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange, NSUInteger idx, BOOL *stop)
      {
          if (idx == 0)
@@ -1077,11 +1090,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
              *stop = YES;
          }
      }];
-
-    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
-
-    [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:NSMakeRange(0, [textStorage.string length])];
 
     [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(CATSelectionRange *value,
                                                                  NSView *view,
@@ -1110,7 +1118,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                  DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
                  NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
-                 [self.layoutManager addTemporaryAttribute:NSBackgroundColorAttributeName value:backgroundColor forCharacterRange:range];
+                 [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:range];
              }
 
              CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:rangeToDraw.location effectiveRange:NULL];
