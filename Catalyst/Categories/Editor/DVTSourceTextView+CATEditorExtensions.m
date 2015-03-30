@@ -1106,15 +1106,17 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
-            [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:range];
+            [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
+                                     forCharacterRange:range];
         }
 
-        NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range actualCharacterRange:nil];
+        NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
+                                                        actualCharacterRange:nil];
 
-        NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:self.textContainer];
-        NSRect lineRect = [self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:NULL];
+        NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
+                                                         inTextContainer:self.textContainer];
 
-        CGRect caretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, boundingRect.origin.y, 1.f, CGRectGetHeight(boundingRect)),
+        CGRect caretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f, CGRectGetHeight(glyphRect)),
                                         self.textContainerOrigin.x,
                                         self.textContainerOrigin.y);
 
