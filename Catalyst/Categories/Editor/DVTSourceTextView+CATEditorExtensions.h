@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 @property (nonatomic) NSTimer *cat_blinkTimer;
 @property (nonatomic) BOOL cat_blinkState;
-@property (nonatomic) NSDictionary *cat_selectionViews;
+@property (nonatomic) NSArray *cat_selectionViews;
 
 #pragma mark Mutation States
 

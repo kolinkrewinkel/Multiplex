@@ -95,10 +95,10 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     BOOL previous = self.cat_blinkState;
 
-    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(id key,
-                                                                 NSView *view,
-                                                                 BOOL *stop)
-     {
+    [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *view,
+                                                          NSUInteger idx,
+                                                          BOOL *stop)
+    {
          if (self.window.isKeyWindow)
          {
              view.hidden = !previous;
@@ -1093,65 +1093,44 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     }
 
     /* Remove any onscreen cursors */
-    [self.cat_selectionViews.allValues makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.cat_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
-    self.cat_selectionViews =
-    ({
-        NSMutableDictionary *selectionViews = [[NSMutableDictionary alloc] init];
+    self.cat_selectionViews = [[[[self cat_effectiveSelectedRanges] rac_sequence] map:^NSView *(CATSelectionRange *selection)
+    {
+        NSRange range = [selection range];
 
-        [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange, NSUInteger idx, BOOL *stop)
-         {
-             NSRange range = [selectionRange range];
+        NSRange rangeToDraw = range;
 
-             NSRange rangeToDraw = range;
+        if (range.length > 0)
+        {
+            rangeToDraw = NSMakeRange(range.location + range.length, 0);
 
-             if (range.length > 0)
-             {
-                 rangeToDraw = NSMakeRange(range.location + range.length, 0);
+            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
-                 DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-                 NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+            [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:range];
+        }
 
-                 [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:range];
-             }
+        CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:rangeToDraw.location effectiveRange:NULL];
+        CGPoint location = [self.layoutManager locationForGlyphAtIndex:rangeToDraw.location];
 
-             CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:rangeToDraw.location effectiveRange:NULL];
-             CGPoint location = [self.layoutManager locationForGlyphAtIndex:rangeToDraw.location];
+        NSView *view = [[NSView alloc] init];
+        view.wantsLayer = YES;
+        view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-             NSView *view = [[NSView alloc] init];
-             view.wantsLayer = YES;
-             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
-             [self addSubview:view];
+        CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
 
-             CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
-                          
-             selectionViews[[NSValue valueWithRect:rect]] = view;
-         }];
-        
-        selectionViews;
-    });
+        view.frame = rect;
 
+        [self addSubview:view];
+
+        return view;
+    }] array];
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
 {
 
-}
-
-#pragma mark -
-#pragma mark NSView
-
-- (void)layout
-{
-    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(NSValue *vRect,
-                                                                 NSView *view,
-                                                                 BOOL *stop)
-     {
-         CGRect rect = [vRect CGRectValue];
-         view.frame = rect;
-     }];
-    
-    [super layout];
 }
 
 @end
