@@ -129,11 +129,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 #pragma mark -
 #pragma mark Setters/Getters
 
-- (BOOL)isSelectable
-{
-    return NO;
-}
-
 - (NSArray *)cat_effectiveSelectedRanges
 {
     if (self.cat_finalizingRanges)
@@ -908,6 +903,12 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 #pragma mark -
 #pragma mark Range Manipulation
+
+- (void)selectAll:(id)sender
+{
+    [self cat_setSelectedRanges:@[[CATSelectionRange selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]]
+                       finalize:YES];
+}
 
 - (void)cat_mapAndFinalizeSelectedRanges:(CATSelectionRange * (^)(CATSelectionRange *selection))mapBlock
 {
