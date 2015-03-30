@@ -109,7 +109,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
          }
      }];
 
-    self.cat_blinkState = !self.cat_blinkState;
+    self.cat_blinkState = !previous;
 }
 
 - (void)cat_startBlinking
