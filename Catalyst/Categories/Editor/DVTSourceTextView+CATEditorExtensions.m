@@ -83,7 +83,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (BOOL)isSelectable
 {
-    return NO;
+    return YES;
 }
 
 - (void)cat_blinkCursors:(NSTimer *)sender
@@ -1126,7 +1126,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
              NSView *view = [[NSView alloc] init];
              view.wantsLayer = YES;
-             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+//             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+             view.layer.backgroundColor = [[NSColor redColor] CGColor];
 
              CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
              
@@ -1139,6 +1140,11 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         
         selectionViews;
     });
+}
+
+- (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
+{
+
 }
 
 #pragma mark -
