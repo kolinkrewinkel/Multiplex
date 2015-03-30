@@ -1049,9 +1049,10 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     return reducedRanges;
 }
 
-- (void)cat_setSelectedRanges:(NSArray *)ranges finalize:(BOOL)finalized
+- (void)cat_setSelectedRanges:(NSArray *)selectedRanges finalize:(BOOL)finalized
 {
-    ranges = [self prepareRanges:ranges];
+    /* Sort and reduce the ranges passed in */
+    NSArray *ranges = [self prepareRanges:selectedRanges];
 
     if (finalized)
     {
@@ -1074,36 +1075,29 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     }
 
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+
+    /* Reset the background color of all the source text. */
     NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
+    [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
+                             forCharacterRange:NSMakeRange(0, self.string.length)];
 
-    [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:NSMakeRange(0, self.string.length)];
+    /* Set the selected range for the breadcrumb bar. */
+    if ([ranges count] > 0)
+    {
+        CATSelectionRange *firstSelection = (CATSelectionRange *)[ranges firstObject];
+        self.selectedRange = firstSelection.range;
+    }
+    else
+    {
+        self.selectedRange = NSMakeRange(NSNotFound, 0);
+    }
 
-    [ranges enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange, NSUInteger idx, BOOL *stop)
-     {
-         if (idx == 0)
-         {
-             NSRange range = [selectionRange range];
-             self.selectedRange = range;
-         }
-         else
-         {
-             *stop = YES;
-         }
-     }];
-
-    [self.cat_selectionViews enumerateKeysAndObjectsUsingBlock:^(CATSelectionRange *value,
-                                                                 NSView *view,
-                                                                 BOOL *stop)
-     {
-         [view removeFromSuperview];
-     }];
+    /* Remove any onscreen cursors */
+    [self.cat_selectionViews.allValues makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     self.cat_selectionViews =
     ({
-        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
         NSMutableDictionary *selectionViews = [[NSMutableDictionary alloc] init];
-
-//        NSLog(@"\n===================\nEffective ranges: %@\nFinalizing: %@\nSet: %@", [self cat_effectiveSelectedRanges], self.cat_finalizingRanges, self.cat_selectedRanges);
 
         [[self cat_effectiveSelectedRanges] enumerateObjectsUsingBlock:^(CATSelectionRange *selectionRange, NSUInteger idx, BOOL *stop)
          {
@@ -1126,20 +1120,17 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
              NSView *view = [[NSView alloc] init];
              view.wantsLayer = YES;
-//             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
-             view.layer.backgroundColor = [[NSColor redColor] CGColor];
-
-             CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
-             
+             view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
              [self addSubview:view];
 
-             NSLog(@"initialized view: %@", view);
-             
+             CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
+                          
              selectionViews[[NSValue valueWithRect:rect]] = view;
          }];
         
         selectionViews;
     });
+
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
