@@ -1081,6 +1081,8 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
                              forCharacterRange:NSMakeRange(0, self.string.length)];
 
+    self.selectedTextAttributes = nil;
+
     /* Set the selected range for the breadcrumb bar. */
     if ([ranges count] > 0)
     {
@@ -1099,32 +1101,30 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     {
         NSRange range = [selection range];
 
-        NSRange rangeToDraw = range;
-
         if (range.length > 0)
         {
-            rangeToDraw = NSMakeRange(range.location + range.length, 0);
-
             DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
             [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor} forCharacterRange:range];
         }
 
-        CGRect lineLocation = [self.layoutManager lineFragmentRectForGlyphAtIndex:rangeToDraw.location effectiveRange:NULL];
-        CGPoint location = [self.layoutManager locationForGlyphAtIndex:rangeToDraw.location];
+        NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range actualCharacterRange:nil];
 
-        NSView *view = [[NSView alloc] init];
-        view.wantsLayer = YES;
-        view.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+        NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:self.textContainer];
+        NSRect lineRect = [self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:NULL];
 
-        CGRect rect = CGRectMake(CGRectGetMinX(lineLocation) + location.x, CGRectGetMaxY(lineLocation) - CGRectGetHeight(lineLocation), 1.f, CGRectGetHeight(lineLocation));
+        CGRect caretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, boundingRect.origin.y, 1.f, CGRectGetHeight(boundingRect)),
+                                        self.textContainerOrigin.x,
+                                        self.textContainerOrigin.y);
 
-        view.frame = rect;
+        NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
+        caretView.wantsLayer = YES;
+        caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-        [self addSubview:view];
+        [self addSubview:caretView];
 
-        return view;
+        return caretView;
     }] array];
 }
 
