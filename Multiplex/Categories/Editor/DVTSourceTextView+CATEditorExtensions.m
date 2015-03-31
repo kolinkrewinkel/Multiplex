@@ -8,10 +8,6 @@
 
 @import QuartzCore;
 
-#import <libextobjc/extobjc.h>
-#import <pop/POP.h>
-#import <ReactiveCocoa/ReactiveCocoa.h>
-
 #import "DVTSourceTextView+CATEditorExtensions.h"
 
 #import "CATSelectionRange.h"
