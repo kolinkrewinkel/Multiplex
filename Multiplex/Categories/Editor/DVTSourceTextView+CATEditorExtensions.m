@@ -8,15 +8,12 @@
 
 @import QuartzCore;
 
-#import <INPopoverController/INPopoverController.h>
 #import <libextobjc/extobjc.h>
 #import <pop/POP.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
 #import "DVTSourceTextView+CATEditorExtensions.h"
 
-#import "CATNextNavigator.h"
-#import "CATNavigatorTarget.h"
 #import "CATSelectionRange.h"
 #import "PLYSwizzling.h"
 

@@ -7,12 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		33100A061A4F92400062D0D0 /* CATSelectionRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* CATSelectionRange.m */; };
 		332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332D428C19D5466F00CE1BC2 /* DVTKit.framework */; };
 		3338E1A518EF740E00C76084 /* PLYView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3338E1A418EF740E00C76084 /* PLYView.m */; };
-		33627A8C1A2066B600F07684 /* CATNextNavigator.m in Sources */ = {isa = PBXBuildFile; fileRef = 33627A8B1A2066B600F07684 /* CATNextNavigator.m */; };
-		336F5A461A22BBA200221CE9 /* CATNavigatorTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 336F5A451A22BBA200221CE9 /* CATNavigatorTarget.m */; };
-		336F5A491A23172000221CE9 /* CATActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 336F5A481A23172000221CE9 /* CATActionViewController.m */; };
 		3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */; };
 		33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */; };
 		33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */; };
@@ -22,7 +20,6 @@
 		33E032A019D4FBBC003A655E /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E0329E19D4FBBC003A655E /* IDEFoundation.framework */; };
 		33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E0329F19D4FBBC003A655E /* IDEKit.framework */; };
 		33E032A319D506B7003A655E /* IDESourceEditor in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E032A219D506B7003A655E /* IDESourceEditor */; };
-		E3CE14A9F6994F318E10896B /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 901133F6A5444AC5A872D178 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,12 +29,6 @@
 		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
 		3338E1A318EF740E00C76084 /* PLYView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYView.h; sourceTree = "<group>"; };
 		3338E1A418EF740E00C76084 /* PLYView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLYView.m; sourceTree = "<group>"; };
-		33627A8A1A2066B600F07684 /* CATNextNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CATNextNavigator.h; path = Controllers/CATNextNavigator.h; sourceTree = "<group>"; };
-		33627A8B1A2066B600F07684 /* CATNextNavigator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CATNextNavigator.m; path = Controllers/CATNextNavigator.m; sourceTree = "<group>"; };
-		336F5A441A22BBA200221CE9 /* CATNavigatorTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CATNavigatorTarget.h; path = Controllers/CATNavigatorTarget.h; sourceTree = "<group>"; };
-		336F5A451A22BBA200221CE9 /* CATNavigatorTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CATNavigatorTarget.m; path = Controllers/CATNavigatorTarget.m; sourceTree = "<group>"; };
-		336F5A471A23172000221CE9 /* CATActionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CATActionViewController.h; path = Controllers/CATActionViewController.h; sourceTree = "<group>"; };
-		336F5A481A23172000221CE9 /* CATActionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CATActionViewController.m; path = Controllers/CATActionViewController.m; sourceTree = "<group>"; };
 		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
 		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
 		33B3A3EA18CD36BE00AA64C8 /* Multiplex.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Multiplex.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,7 +55,7 @@
 		33F94F2218CED77A0092E74C /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../../Applications/Xcode51-Beta5.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
 		33F94F2518CED78B0092E74C /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../../Applications/Xcode51-Beta5.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
 		741626E234D8521A05F9E61C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		901133F6A5444AC5A872D178 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B522172E4B68B9D17AA320A5 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CED95905E2ACE0A16D009A9A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,7 +70,7 @@
 				33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */,
 				33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */,
 				33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */,
-				E3CE14A9F6994F318E10896B /* libPods.a in Frameworks */,
+				17963587F420FC6C9D934711 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,19 +104,6 @@
 				3338E1A418EF740E00C76084 /* PLYView.m */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		33627A8D1A2066BC00F07684 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				33627A8A1A2066B600F07684 /* CATNextNavigator.h */,
-				33627A8B1A2066B600F07684 /* CATNextNavigator.m */,
-				336F5A441A22BBA200221CE9 /* CATNavigatorTarget.h */,
-				336F5A451A22BBA200221CE9 /* CATNavigatorTarget.m */,
-				336F5A471A23172000221CE9 /* CATActionViewController.h */,
-				336F5A481A23172000221CE9 /* CATActionViewController.m */,
-			);
-			name = Controllers;
 			sourceTree = "<group>";
 		};
 		33B3A3E118CD36BE00AA64C8 = {
@@ -165,7 +143,7 @@
 				33F94F1F18CED7650092E74C /* DVTFoundation.framework */,
 				33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */,
 				33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */,
-				901133F6A5444AC5A872D178 /* libPods.a */,
+				B522172E4B68B9D17AA320A5 /* Pods.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -175,7 +153,6 @@
 			children = (
 				33B3A3F718CD36BE00AA64C8 /* MultiplexPlugin.h */,
 				33B3A3F818CD36BE00AA64C8 /* MultiplexPlugin.m */,
-				33627A8D1A2066BC00F07684 /* Controllers */,
 				33F94F3018CFC4DE0092E74C /* Categories */,
 				3338E1A018EF740300C76084 /* Developer Kits */,
 				33B3A3F218CD36BE00AA64C8 /* Supporting Files */,
@@ -234,6 +211,7 @@
 				33B3A3E718CD36BE00AA64C8 /* Frameworks */,
 				33B3A3E818CD36BE00AA64C8 /* Resources */,
 				303CED84CD8D47809E5313FB /* Copy Pods Resources */,
+				304B6276742BCA837B85B48E /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -297,6 +275,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		304B6276742BCA837B85B48E /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		C03EF8C1E0814521B8BD1948 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -321,12 +314,9 @@
 			files = (
 				3338E1A518EF740E00C76084 /* PLYView.m in Sources */,
 				33100A061A4F92400062D0D0 /* CATSelectionRange.m in Sources */,
-				336F5A491A23172000221CE9 /* CATActionViewController.m in Sources */,
-				33627A8C1A2066B600F07684 /* CATNextNavigator.m in Sources */,
 				33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */,
 				33B3A3F918CD36BF00AA64C8 /* MultiplexPlugin.m in Sources */,
 				3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */,
-				336F5A461A22BBA200221CE9 /* CATNavigatorTarget.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
