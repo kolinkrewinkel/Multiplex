@@ -1205,4 +1205,76 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 }
 
+#pragma mark -
+#pragma mark Autocompletion
+
+- (void)didInsertCompletionTextAtRange:(NSRange)completedTextRange
+{
+    /* The first range is the one which needs to be outright replaced from the start.
+     What's passed back with `completedTextRange` is the first range's replacement. */
+    
+    NSArray *selections =
+    ({
+        NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self cat_effectiveSelectedRanges]];
+        selections[0] = [MPXSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(completedTextRange), 0)];
+
+        selections;
+    });
+
+    [self cat_setSelectedRanges:selections
+                       finalize:YES];
+
+    NSString *completionText = [self.string substringWithRange:completedTextRange];
+
+    /* Now, the remaining ranges need to be adjusted to include the text (and adjust the selection.) */
+
+    [selections enumerateObjectsUsingBlock:^(MPXSelectionRange *selection,
+                                             NSUInteger idx,
+                                             BOOL *stop)
+    {
+        if (idx == 0)
+        {
+            return;
+        }
+        
+        NSRange range = selection.range;
+
+        /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
+         */
+        NSInteger completionStringIndex = [completionText length] - 1;
+
+        /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
+         
+            (Completing for the word `category`)
+
+            cate| vs. nate|
+
+            Only chcking the first char before the selection would not be accurate.
+         */
+
+        NSInteger selectionRelativeIndex = 0;
+
+        while (completionStringIndex >= 0)
+        {
+            unichar completionChar = [completionText characterAtIndex:completionStringIndex];
+            unichar compareStorageChar = [self.string characterAtIndex:NSMaxRange(range) + selectionRelativeIndex];
+
+            if (completionChar == compareStorageChar)
+            {
+                selectionRelativeIndex--;
+            }
+
+            /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back. 
+             */
+            completionStringIndex--;
+        }
+
+        NSInteger completionStringStartIndex = -selectionRelativeIndex;
+        NSInteger insertedStringLength = [completionText length] - completionStringStartIndex;
+
+        [self insertText:[completionText substringFromIndex:completionStringStartIndex]
+        replacementRange:NSMakeRange(NSMaxRange(range) + selectionRelativeIndex, insertedStringLength)];
+    }];
+}
+
 @end
