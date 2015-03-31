@@ -1210,12 +1210,18 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)didInsertCompletionTextAtRange:(NSRange)completedTextRange
 {
+    __block NSInteger offset = 0;
+
     /* The first range is the one which needs to be outright replaced from the start.
      What's passed back with `completedTextRange` is the first range's replacement. */
-    
+
     NSArray *selections =
     ({
         NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self cat_effectiveSelectedRanges]];
+
+        MPXSelectionRange *existingSelection = selections[0];
+        offset += NSMaxRange(completedTextRange) - NSMaxRange(existingSelection.range);
+
         selections[0] = [MPXSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(completedTextRange), 0)];
 
         selections;
@@ -1228,16 +1234,19 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     /* Now, the remaining ranges need to be adjusted to include the text (and adjust the selection.) */
 
+    NSMutableArray *newSelections = [[NSMutableArray alloc] init];
     [selections enumerateObjectsUsingBlock:^(MPXSelectionRange *selection,
                                              NSUInteger idx,
                                              BOOL *stop)
     {
         if (idx == 0)
         {
+            [newSelections addObject:selection];
             return;
         }
-        
+
         NSRange range = selection.range;
+        range.location += offset;
 
         /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
          */
@@ -1257,7 +1266,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         while (completionStringIndex >= 0)
         {
             unichar completionChar = [completionText characterAtIndex:completionStringIndex];
-            unichar compareStorageChar = [self.string characterAtIndex:NSMaxRange(range) + selectionRelativeIndex];
+            unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(range) - 1) + selectionRelativeIndex];
 
             if (completionChar == compareStorageChar)
             {
@@ -1270,11 +1279,20 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         }
 
         NSInteger completionStringStartIndex = -selectionRelativeIndex;
-        NSInteger insertedStringLength = [completionText length] - completionStringStartIndex;
+        NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
 
         [self insertText:[completionText substringFromIndex:completionStringStartIndex]
-        replacementRange:NSMakeRange(NSMaxRange(range) + selectionRelativeIndex, insertedStringLength)];
+        replacementRange:NSMakeRange(NSMaxRange(range), 0)];
+
+        range.location = NSMaxRange(range) + insertedStringLength;
+
+        [newSelections addObject:[MPXSelectionRange selectionWithRange:range]];
+
+        offset += insertedStringLength;
     }];
+
+    [self cat_setSelectedRanges:newSelections
+                       finalize:YES];
 }
 
 @end
