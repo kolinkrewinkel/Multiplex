@@ -1,12 +1,12 @@
 //
-//  CATSelectionRange.h
+//  MPXSelectionRange.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 12/27/14.
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-@interface CATSelectionRange : NSObject
+@interface MPXSelectionRange : NSObject
 
 #pragma mark -
 #pragma mark Designated Initializer

@@ -15,28 +15,28 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
     CATRelativePositionBottom
 };
 
-@class CATSelectionRange;
+@class MPXSelectionRange;
 
 @interface DVTSourceTextView (CATEditorExtensions)
 
 #pragma mark -
 #pragma mark Multiple Selection
 
-@property (nonatomic, readonly) NSArray *cat_selectedRanges;
+@property (nonatomic) NSArray *cat_selectedRanges;
 
 #pragma mark -
 #pragma mark Vertical-bar Drawing
 
-@property (nonatomic, readonly) NSTimer *cat_blinkTimer;
-@property (nonatomic, readonly) BOOL cat_blinkState;
-@property (nonatomic, readonly) NSArray *cat_selectionViews;
+@property (nonatomic) NSTimer *cat_blinkTimer;
+@property (nonatomic) BOOL cat_blinkState;
+@property (nonatomic) NSArray *cat_selectionViews;
 
 #pragma mark -
 #pragma mark Mutation States
 
-@property (nonatomic, readonly) NSArray *cat_finalizingRanges;
+@property (nonatomic) NSArray *cat_finalizingRanges;
 
-@property (nonatomic, readonly) CATSelectionRange *cat_rangeInProgress;
-@property (nonatomic, readonly) CATSelectionRange *cat_rangeInProgressStart;
+@property (nonatomic) MPXSelectionRange *cat_rangeInProgress;
+@property (nonatomic) MPXSelectionRange *cat_rangeInProgressStart;
 
 @end

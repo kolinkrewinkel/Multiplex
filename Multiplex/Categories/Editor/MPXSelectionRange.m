@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import "CATSelectionRange.h"
+#import "MPXSelectionRange.h"
 
-@interface CATSelectionRange ()
+@interface MPXSelectionRange ()
 
 @property (nonatomic) NSRange range;
 @property (nonatomic) NSUInteger intralineDesiredIndex;
 
 @end
 
-@implementation CATSelectionRange
+@implementation MPXSelectionRange
 
 #pragma mark -
 #pragma mark Designated Initializer
@@ -54,7 +54,7 @@
         return NO;
     }
 
-    CATSelectionRange *otherSelection = (CATSelectionRange *)object;
+    MPXSelectionRange *otherSelection = (MPXSelectionRange *)object;
 
     return (otherSelection.intralineDesiredIndex == self.intralineDesiredIndex
             && NSEqualRanges(otherSelection.range, self.range));
