@@ -45,7 +45,6 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 @synthesizeAssociation(DVTSourceTextView, cat_finalizingRanges);
 @synthesizeAssociation(DVTSourceTextView, cat_selectedRanges);
 @synthesizeAssociation(DVTSourceTextView, cat_selectionViews);
-@synthesizeAssociation(DVTSourceTextView, cat_nextNavigator);
 
 #pragma mark -
 #pragma mark NSObject
@@ -155,7 +154,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
     {
         NSRange range = selection.range;
         NSUInteger insertStringLength = [insertString length];
@@ -237,7 +236,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     [self insertText:@"\n"];
 
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection) {
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection) {
         NSRange range = selection.range;
 
         if ([textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager])
@@ -281,7 +280,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     // It would be possible to just take the longest range and unionize from there, but this is the most uniform approach.
     // Iterate over, join them to the start, and let the filter take care of joining them all into one.
     // In cases where the selection isn't being modified, they'll all just be set to 0,0 and they'll be de-duplicated.
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
      {
          NSRange previousAbsoluteRange = selection.range;
          NSRange newAbsoluteRange = newRange;
@@ -333,7 +332,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     NSCAssert(relativePosition != CATRelativePositionTop, @"Paragraph methods should be used to move up lines.");
     NSCAssert(relativePosition != CATRelativePositionBottom, @"Paragraph methods should be used to move down lines.");
 
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
     {
         NSRange previousAbsoluteRange = selection.range;
 
@@ -431,7 +430,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 {
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
     {
         NSRange previousAbsoluteRange = selection.range;
         NSRange previousLineRange = [textStorage.string lineRangeForRange:previousAbsoluteRange];
@@ -522,7 +521,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     // The built in method is relative to back/forwards. Right means forward.
     BOOL wordForward = relativePosition == CATRelativePositionRight;
 
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
     {
         NSRange selectionRange = selection.range;
 
@@ -626,7 +625,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
 {
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
      {
          NSRange existingRange = selection.range;
 
@@ -706,7 +705,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     NSLayoutManager *layoutManager = self.layoutManager;
 
-    [self cat_mapAndFinalizeSelectedRanges:^CATSelectionRange *(MPXSelectionRange *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
     {
         // "Previous" refers exclusively to time, not location.
         NSRange previousAbsoluteRange = selection.range;
