@@ -273,6 +273,17 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     }];
 }
 
+- (void)paste:(id)sender
+{
+    NSString *clipboardContents = [[NSPasteboard generalPasteboard] stringForType:NSPasteboardTypeString];
+    if (!clipboardContents)
+    {
+        return;
+    }
+
+    [self insertText:clipboardContents];
+}
+
 #pragma mark Document Navigation
 
 - (void)cat_moveToRange:(NSRange)newRange modifyingSelection:(BOOL)modifySelection
