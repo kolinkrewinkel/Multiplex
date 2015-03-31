@@ -15,6 +15,7 @@
 
 static IMP CAT_DVTSourceTextView_Original_Init = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
+static IMP CAT_DVTSourceTextView_Original_MouseDown = nil;
 
 NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRange)
 {
@@ -53,6 +54,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 {
     CAT_DVTSourceTextView_Original_Init = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), YES);
     CAT_DVTSourceTextView_Original_MouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
+    CAT_DVTSourceTextView_Original_MouseDown = PLYPoseSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), YES);
 }
 
 #pragma mark -
@@ -890,7 +892,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                        finalize:NO];
 }
 
-- (void)mouseDown:(NSEvent *)theEvent
+- (void)cat_mouseDown:(NSEvent *)theEvent
 {
     NSUInteger index = ({
         CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
@@ -905,6 +907,13 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     NSInteger clickCount = theEvent.clickCount;
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
+    BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
+
+    if (altKeyHeld)
+    {
+        CAT_DVTSourceTextView_Original_MouseDown(self, @selector(mouseDown:), theEvent);
+        return;
+    }
 
     NSArray *existingSelections = ({
         NSArray *selections = [self cat_effectiveSelectedRanges];
