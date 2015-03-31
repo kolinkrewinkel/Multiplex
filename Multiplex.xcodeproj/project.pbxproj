@@ -40,14 +40,14 @@
 		336F5A481A23172000221CE9 /* CATActionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CATActionViewController.m; path = Controllers/CATActionViewController.m; sourceTree = "<group>"; };
 		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
 		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
-		33B3A3EA18CD36BE00AA64C8 /* Catalyst.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Catalyst.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		33B3A3EA18CD36BE00AA64C8 /* Multiplex.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Multiplex.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		33B3A3F318CD36BE00AA64C8 /* Catalyst-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Catalyst-Info.plist"; sourceTree = "<group>"; };
+		33B3A3F318CD36BE00AA64C8 /* Multiplex-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Multiplex-Info.plist"; sourceTree = "<group>"; };
 		33B3A3F518CD36BE00AA64C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		33B3A3F718CD36BE00AA64C8 /* CatalystPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CatalystPlugin.h; sourceTree = "<group>"; };
 		33B3A3F818CD36BE00AA64C8 /* CatalystPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CatalystPlugin.m; sourceTree = "<group>"; };
-		33B3A3FA18CD36BF00AA64C8 /* Catalyst-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Catalyst-Prefix.pch"; sourceTree = "<group>"; };
+		33B3A3FA18CD36BF00AA64C8 /* Multiplex-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Multiplex-Prefix.pch"; sourceTree = "<group>"; };
 		33B3A40C18CD38DF00AA64C8 /* PLYSwizzling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PLYSwizzling.c; sourceTree = "<group>"; };
 		33B3A40D18CD38DF00AA64C8 /* PLYSwizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLYSwizzling.h; sourceTree = "<group>"; };
 		33E0329E19D4FBBC003A655E /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../Applications/Xcode-Beta.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
@@ -141,7 +141,7 @@
 		33B3A3EB18CD36BE00AA64C8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				33B3A3EA18CD36BE00AA64C8 /* Catalyst.xcplugin */,
+				33B3A3EA18CD36BE00AA64C8 /* Multiplex.xcplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -189,8 +189,8 @@
 			isa = PBXGroup;
 			children = (
 				33B3A3F418CD36BE00AA64C8 /* InfoPlist.strings */,
-				33B3A3F318CD36BE00AA64C8 /* Catalyst-Info.plist */,
-				33B3A3FA18CD36BF00AA64C8 /* Catalyst-Prefix.pch */,
+				33B3A3F318CD36BE00AA64C8 /* Multiplex-Info.plist */,
+				33B3A3FA18CD36BF00AA64C8 /* Multiplex-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -224,9 +224,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		33B3A3E918CD36BE00AA64C8 /* Catalyst */ = {
+		33B3A3E918CD36BE00AA64C8 /* Multiplex */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "Catalyst" */;
+			buildConfigurationList = 33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "Multiplex" */;
 			buildPhases = (
 				C03EF8C1E0814521B8BD1948 /* Check Pods Manifest.lock */,
 				33B3A3E618CD36BE00AA64C8 /* Sources */,
@@ -238,9 +238,9 @@
 			);
 			dependencies = (
 			);
-			name = Catalyst;
+			name = Multiplex;
 			productName = Semantique;
-			productReference = 33B3A3EA18CD36BE00AA64C8 /* Catalyst.xcplugin */;
+			productReference = 33B3A3EA18CD36BE00AA64C8 /* Multiplex.xcplugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -252,7 +252,7 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Kolin Krewinkel";
 			};
-			buildConfigurationList = 33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "Catalyst" */;
+			buildConfigurationList = 33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "Multiplex" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -264,7 +264,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				33B3A3E918CD36BE00AA64C8 /* Catalyst */,
+				33B3A3E918CD36BE00AA64C8 /* Multiplex */,
 			);
 		};
 /* End PBXProject section */
@@ -430,8 +430,8 @@
 					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Catalyst/Catalyst-Prefix.pch";
-				INFOPLIST_FILE = "Catalyst/Catalyst-Info.plist";
+				GCC_PREFIX_HEADER = "Catalyst/Multiplex-Prefix.pch";
+				INFOPLIST_FILE = "Catalyst/Multiplex-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
 				LIBRARY_SEARCH_PATHS = (
@@ -440,7 +440,7 @@
 					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
 					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
-				PRODUCT_NAME = Catalyst;
+				PRODUCT_NAME = Multiplex;
 				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = xcplugin;
@@ -462,8 +462,8 @@
 					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Catalyst/Catalyst-Prefix.pch";
-				INFOPLIST_FILE = "Catalyst/Catalyst-Info.plist";
+				GCC_PREFIX_HEADER = "Catalyst/Multiplex-Prefix.pch";
+				INFOPLIST_FILE = "Catalyst/Multiplex-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
 				LIBRARY_SEARCH_PATHS = (
@@ -472,7 +472,7 @@
 					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
 					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
-				PRODUCT_NAME = Catalyst;
+				PRODUCT_NAME = Multiplex;
 				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
 				WRAPPER_EXTENSION = xcplugin;
 			};
@@ -481,7 +481,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "Catalyst" */ = {
+		33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "Multiplex" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33B3A3FB18CD36BF00AA64C8 /* Debug */,
@@ -490,7 +490,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "Catalyst" */ = {
+		33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "Multiplex" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33B3A3FE18CD36BF00AA64C8 /* Debug */,
