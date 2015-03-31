@@ -1,6 +1,6 @@
 //
 //  CATNextNavigator.m
-//  Catalyst
+//  Multiplex
 //
 //  Created by Kolin Krewinkel on 11/21/14.
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.

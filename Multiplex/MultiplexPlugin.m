@@ -1,22 +1,22 @@
 //
-//  Catalyst.m
-//  Catalyst
+//  Multiplex.m
+//  Multiplex
 //
 //  Created by Kolin Krewinkel on 3/9/14.
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import "CatalystPlugin.h"
+#import "MultiplexPlugin.h"
 
 static NSString *kCATApplicationName = @"Xcode";
 
-@interface CatalystPlugin ()
+@interface MultiplexPlugin ()
 
 @property (nonatomic) NSBundle *bundle;
 
 @end
 
-@implementation CatalystPlugin
+@implementation MultiplexPlugin
 
 #pragma mark -
 #pragma mark Instantiation
