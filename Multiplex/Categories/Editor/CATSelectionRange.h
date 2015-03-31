@@ -6,14 +6,13 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 @interface CATSelectionRange : NSObject
 
 #pragma mark -
 #pragma mark Designated Initializer
 
-- (instancetype)initWithSelectionRange:(NSRange)range intralineDesiredIndex:(NSUInteger)intralineDesiredIndex;
+- (instancetype)initWithSelectionRange:(NSRange)range
+                 intralineDesiredIndex:(NSUInteger)intralineDesiredIndex;
 
 #pragma mark -
 #pragma mark New Range-Convenience Initializer

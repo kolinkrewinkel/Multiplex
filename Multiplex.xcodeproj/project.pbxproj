@@ -109,7 +109,7 @@
 		33B3A3E118CD36BE00AA64C8 = {
 			isa = PBXGroup;
 			children = (
-				33B3A3F118CD36BE00AA64C8 /* Catalyst */,
+				33B3A3F118CD36BE00AA64C8 /* Multiplex */,
 				33B3A3EC18CD36BE00AA64C8 /* Frameworks */,
 				33B3A3EB18CD36BE00AA64C8 /* Products */,
 				357F8AF843B94FDF3417124E /* Pods */,
@@ -148,7 +148,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		33B3A3F118CD36BE00AA64C8 /* Catalyst */ = {
+		33B3A3F118CD36BE00AA64C8 /* Multiplex */ = {
 			isa = PBXGroup;
 			children = (
 				33B3A3F718CD36BE00AA64C8 /* MultiplexPlugin.h */,
@@ -159,7 +159,6 @@
 				33B3A40418CD375300AA64C8 /* Utilities */,
 				3338E1A218EF740E00C76084 /* Views */,
 			);
-			name = Catalyst;
 			path = Multiplex;
 			sourceTree = "<group>";
 		};
