@@ -243,11 +243,12 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection) {
         NSRange range = selection.range;
 
-        if ([textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager])
+        [textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager];
+
         {
             NSLayoutManager *layoutManager = [self layoutManager];
             NSRange lineRange;
-            NSUInteger desiredIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(range)];
+            NSUInteger desiredIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(range) + 1];
             NSUInteger lineNumber = 0;
             NSUInteger numberOfLines = 0;
 
@@ -265,10 +266,10 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
                 index = NSMaxRange(lineRange);
             }
 
-            NSUInteger firstNonBlank = [textStorage firstNonblankForLine:lineNumber - 3 convertTabs:YES];
+            NSUInteger firstNonBlank = [textStorage firstNonblankForLine:lineNumber - 1 convertTabs:YES];
 
             NSRange effectiveRange;
-            (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(range)
+            (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:desiredIndex
                                                        effectiveRange:&effectiveRange];
             return [MPXSelectionRange selectionWithRange:NSMakeRange(effectiveRange.location + firstNonBlank, 0)];
         }
