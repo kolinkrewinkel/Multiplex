@@ -16,6 +16,7 @@
 static IMP CAT_DVTSourceTextView_Original_Init = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDown = nil;
+static IMP CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
 
 NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRange)
 {
@@ -55,6 +56,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     CAT_DVTSourceTextView_Original_Init = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), YES);
     CAT_DVTSourceTextView_Original_MouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
     CAT_DVTSourceTextView_Original_MouseDown = PLYPoseSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), YES);
+    CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = PLYPoseSwizzle(self, @selector(didInsertCompletionTextAtRange:), self, @selector(cat_didInsertCompletionTextAtRange:), YES);
 }
 
 #pragma mark -
@@ -934,8 +936,16 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             resultRange = NSMakeRange(index, 0);
             break;
         case 2:
+        {
+            if ([((DVTLayoutManager *)self.layoutManager) foldCellAtCharacterIndex:index])
+            {
+                CAT_DVTSourceTextView_Original_MouseDown(self, @selector(mouseDown:), theEvent);
+                return;
+            }
+
             resultRange = [textStorage doubleClickAtIndex:index];
             break;
+        }
         case 3:
             resultRange = [textStorage.string lineRangeForRange:NSMakeRange(index, 0)];
             break;
@@ -1208,7 +1218,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 #pragma mark -
 #pragma mark Autocompletion
 
-- (void)didInsertCompletionTextAtRange:(NSRange)completedTextRange
+- (void)cat_didInsertCompletionTextAtRange:(NSRange)completedTextRange
 {
     __block NSInteger offset = 0;
 

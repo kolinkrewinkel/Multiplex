@@ -2714,3 +2714,136 @@ extern NSString *IDEEditorDocumentDidChangeNotification;
 
 @end
 
+@class DVTFoldingManager, DVTTextFoldInlineTokenAttachmentCell, DVTTextStorage, NSCell, NSString;
+
+@interface DVTFoldingLayoutManager : NSLayoutManager
+{
+    DVTFoldingManager *_foldingManager;
+    NSCell *_blockFoldCell;
+    DVTTextFoldInlineTokenAttachmentCell *_inlineFoldCell;
+}
+
++ (id)layoutLogAspect;
+- (struct _NSRange)_extendedCharRangeForInvalidation:(struct _NSRange)arg1 editedCharRange:(struct _NSRange)arg2;
+- (void)_invalidateGlyphsForExtendedCharacterRange:(struct _NSRange)arg1 changeInLength:(long long)arg2 includeBlocks:(BOOL)arg3;
+- (void)_invalidateGlyphsInCharacterRange:(struct _NSRange)arg1;
+- (struct _NSRange)_paragraphExtendedCharacterRange:(struct _NSRange)arg1;
+- (struct CGSize)attachmentSizeForGlyphAtIndex:(unsigned long long)arg1;
+@property(copy) NSCell *blockFoldCell; // @synthesize blockFoldCell=_blockFoldCell;
+- (unsigned long long)characterIndexForPoint:(struct CGPoint)arg1 inTextContainer:(id)arg2 fractionOfDistanceBetweenInsertionPoints:(double *)arg3;
+- (void)drawGlyphsForGlyphRange:(struct _NSRange)arg1 atPoint:(struct CGPoint)arg2;
+- (void)enableTextFolding:(BOOL)arg1;
+- (id)foldCellAtCharacterIndex:(unsigned long long)arg1;
+@property(readonly) DVTFoldingManager *foldingManager; // @synthesize foldingManager=_foldingManager;
+- (void)foldingManager:(id)arg1 didFoldRange:(struct _NSRange)arg2;
+- (void)foldingManager:(id)arg1 didUnfoldRange:(struct _NSRange)arg2;
+- (BOOL)foldsAreValid:(id)arg1;
+- (void)generateInlineFoldsForCharacterRange:(struct _NSRange)arg1;
+@property(copy) DVTTextFoldInlineTokenAttachmentCell *inlineFoldCell; // @synthesize inlineFoldCell=_inlineFoldCell;
+- (struct CGSize)layoutSizeForFoldAtCharacterIndex:(unsigned long long)arg1;
+- (struct _NSRange)paragraphRangeForLineRange:(struct _NSRange)arg1;
+@property DVTTextStorage *textStorage;
+- (void)textStorage:(id)arg1 edited:(unsigned long long)arg2 range:(struct _NSRange)arg3 changeInLength:(long long)arg4 invalidatedRange:(struct _NSRange)arg5;
+
+// Remaining properties
+@property(readonly, copy) NSString *debugDescription;
+@property(readonly, copy) NSString *description;
+@property(readonly) unsigned long long hash;
+@property(readonly) Class superclass;
+
+@end
+@interface DVTLayoutManager : DVTFoldingLayoutManager
+{
+    NSArray *_temporaryLinkRanges;
+    NSMutableArray *_annotations;
+    DVTPointerArray *_lastDeletedAnnotations;
+    DVTMapTable *_messageBubblesForAnnotations;
+    NSMutableSet *_accessoryAnnotations;
+    NSArray *_sortedAccessoryAnnotations;
+    NSTimer *_autoHighlightTokenTimer;
+    DVTObservingToken *_autoHighlightTextCompletionObserver;
+    DVTMutableRangeArray *_autoHighlightTokenRanges;
+    DVTMutableRangeArray *_tokenizedEditingTokenRanges;
+    unsigned long long _tokenizedEditingEditedTokenIndex;
+    unsigned long long _tokenizedEditingDeferedOffset;
+    struct _NSRange _tokenizedEditingSelectionRange;
+    NSColor *_tokenizedEditingTokenBorderColor;
+    NSColor *_tokenizedEditingTokenBackgroundColor;
+    NSColor *_tokenizedEditingSelectedTokenBorderColor;
+    NSColor *_tokenizedEditingSelectedTokenBackgroundColor;
+    BOOL _tokenizedEditingEnabled;
+}
+
++ (Class)_dvtDefaultTypesetterClass;
++ (void)initialize;
+- (void)_addBubbleViewToAnnotation:(id)arg1 annotationsInRange:(id)arg2;
+- (void)_assertAnnotationIntegrity;
+- (void)_autoHighlightTokenWithTimer:(id)arg1;
+- (void)_clearAutoHighlightTokens;
+- (void)_displayAutoHighlightTokens;
+- (void)_invalidateLayoutForMessageBubblesInCharacterRange:(struct _NSRange)arg1;
+- (void)_layoutManagerCommonInit;
+- (void)_removeAnnotationsAtIndexes:(id)arg1;
+- (void)_removeBubbleViewFromAnnotation:(id)arg1;
+- (void)_updateMessageBubbleVisibilityForAnnotation:(id)arg1;
+@property(readonly) NSSet *accessoryAnnotations; // @synthesize accessoryAnnotations=_accessoryAnnotations;
+- (id)accessoryAnnotationsInRange:(struct _NSRange)arg1;
+- (void)addAnnotation:(id)arg1;
+- (id)annotationIndexesInParagraphRange:(struct _NSRange)arg1 suggestedIndex:(unsigned long long *)arg2;
+@property(readonly) NSArray *annotations; // @synthesize annotations=_annotations;
+- (id)annotationsInRange:(struct _NSRange)arg1;
+@property(readonly, copy) NSArray *autoHighlightTokenRanges; // @synthesize autoHighlightTokenRanges=_autoHighlightTokenRanges;
+- (void)clearTemporaryLinkRanges;
+- (void)didInsertAnnotations:(id)arg1;
+- (void)didRemoveAnnotations:(id)arg1;
+- (void)drawBackgroundForGlyphRange:(struct _NSRange)arg1 atPoint:(struct CGPoint)arg2;
+- (void)drawTokensForGlyphRange:(struct _NSRange)arg1 border:(BOOL)arg2 background:(BOOL)arg3;
+- (void)drawUnderlineForGlyphRange:(struct _NSRange)arg1 underlineType:(long long)arg2 baselineOffset:(double)arg3 lineFragmentRect:(struct CGRect)arg4 lineFragmentGlyphRange:(struct _NSRange)arg5 containerOrigin:(struct CGPoint)arg6;
+- (void)fillBackgroundRectArray:(struct CGRect *)arg1 count:(unsigned long long)arg2 forCharacterRange:(struct _NSRange)arg3 color:(id)arg4;
+- (void)foldingManager:(id)arg1 didFoldRange:(struct _NSRange)arg2;
+- (void)foldingManager:(id)arg1 didUnfoldRange:(struct _NSRange)arg2;
+- (void)hideMessageBubblesInRange:(struct _NSRange)arg1;
+- (unsigned long long)indexOfTokenizedEditingTokenRange:(struct _NSRange)arg1;
+- (id)init;
+- (id)initWithCoder:(id)arg1;
+- (void)invalidateDisplayForCharacterRange:(struct _NSRange)arg1;
+@property(getter=isAnnotationAdjustmentEnabled) BOOL annotationAdjustmentEnabled;
+@property(getter=isAutoHighlightTokensEnabled) BOOL autoHighlightTokensEnabled;
+@property(getter=isTokenizedEditingEnabled) BOOL tokenizedEditingEnabled; // @synthesize tokenizedEditingEnabled=_tokenizedEditingEnabled;
+- (unsigned long long)layoutOptions;
+- (void)mergeAnnotationsAtParagraphIndex:(unsigned long long)arg1;
+- (void)messageBubbleAnnotation:(id)arg1 needsBubble:(BOOL)arg2;
+- (id)messageBubbleViewForAnnotation:(id)arg1;
+- (struct _NSRange)rangeForCharacterRange:(struct _NSRange)arg1 withContextLines:(long long)arg2 proposedHeight:(double *)arg3 contentLines:(unsigned long long *)arg4 totalLines:(unsigned long long *)arg5;
+- (void)removeAnnotation:(id)arg1;
+- (void)removeAnnotationsInRange:(struct _NSRange)arg1;
+- (void)scheduleAutoHighlightTokenWithTextView:(id)arg1;
+- (void)setDelegate:(id)arg1;
+@property(nonatomic) BOOL severeBubbleAnnotationsMiniaturized;
+@property BOOL temporaryLinkIsAlternate;
+@property(retain) NSArray *temporaryLinkRanges; // @synthesize temporaryLinkRanges=_temporaryLinkRanges;
+- (void)setTemporaryLinkRanges:(id)arg1 isAlternate:(BOOL)arg2;
+@property(copy) NSColor *tokenizedEditingSelectedTokenBackgroundColor; // @synthesize tokenizedEditingSelectedTokenBackgroundColor=_tokenizedEditingSelectedTokenBackgroundColor;
+@property(copy) NSColor *tokenizedEditingSelectedTokenBorderColor; // @synthesize tokenizedEditingSelectedTokenBorderColor=_tokenizedEditingSelectedTokenBorderColor;
+@property struct _NSRange tokenizedEditingSelectionRange; // @synthesize tokenizedEditingSelectionRange=_tokenizedEditingSelectionRange;
+@property(copy) NSColor *tokenizedEditingTokenBackgroundColor; // @synthesize tokenizedEditingTokenBackgroundColor=_tokenizedEditingTokenBackgroundColor;
+@property(copy) NSColor *tokenizedEditingTokenBorderColor; // @synthesize tokenizedEditingTokenBorderColor=_tokenizedEditingTokenBorderColor;
+- (void)showMessageBubblesInRange:(struct _NSRange)arg1;
+- (void)textStorage:(id)arg1 didEndEditRange:(struct _NSRange)arg2 changeInLength:(long long)arg3;
+- (void)textStorage:(id)arg1 didReplaceCharactersInRange:(struct _NSRange)arg2 withString:(id)arg3 changeInLength:(long long)arg4;
+- (void)textStorage:(id)arg1 didUpdateLineRange:(struct _NSRange)arg2 changeInLength:(long long)arg3 replacedCharacterRangeEndsOnLineTerminator:(BOOL)arg4 entireFirstLineReplaced:(BOOL)arg5;
+- (void)textStorage:(id)arg1 willEndEditRange:(struct _NSRange)arg2 changeInLength:(long long)arg3;
+- (void)textStorage:(id)arg1 willReplaceCharactersInRange:(struct _NSRange)arg2 withString:(id)arg3 changeInLength:(long long)arg4;
+- (void)textStorageDidEndEditing:(id)arg1;
+- (id)tokenizedEditingTokenPathsForCharacterRange:(struct _NSRange)arg1 displayOnly:(BOOL)arg2;
+@property(readonly, copy) NSArray *tokenizedEditingTokenRanges; // @synthesize tokenizedEditingTokenRanges=_tokenizedEditingTokenRanges;
+- (void)updateTokenizedEditingTokenRanges;
+
+// Remaining properties
+@property(readonly, copy) NSString *debugDescription;
+@property(readonly, copy) NSString *description;
+@property(readonly) unsigned long long hash;
+@property(readonly) Class superclass;
+
+@end
+
