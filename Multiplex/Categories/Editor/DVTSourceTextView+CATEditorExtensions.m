@@ -17,6 +17,7 @@ static IMP CAT_DVTSourceTextView_Original_Init = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDown = nil;
 static IMP CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
+static IMP CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 
 NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRange)
 {
@@ -57,6 +58,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     CAT_DVTSourceTextView_Original_MouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
     CAT_DVTSourceTextView_Original_MouseDown = PLYPoseSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), YES);
     CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = PLYPoseSwizzle(self, @selector(didInsertCompletionTextAtRange:), self, @selector(cat_didInsertCompletionTextAtRange:), YES);
+    CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = PLYPoseSwizzle(self, @selector(adjustTypeOverCompletionForEditedRange:changeInLength:), self, @selector(cat_adjustTypeOverCompletionForEditedRange:changeInLength:), YES);
 }
 
 #pragma mark -
@@ -128,6 +130,13 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 - (void)cat_stopBlinking
 {
     [self.cat_blinkTimer invalidate];
+}
+
+- (void)cat_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
+{
+    CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength(self, @selector(adjustTypeOverCompletionForEditedRange:changeInLength:), arg1, arg2);
+
+    [self cat_updateSelectionVisualizations];
 }
 
 #pragma mark -
@@ -1154,14 +1163,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         self.cat_finalizingRanges = ranges;
     }
-
-    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-
-    /* Reset the background color of all the source text. */
-    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
-    [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
-                             forCharacterRange:NSMakeRange(0, self.string.length)];
-
+    
     self.selectedTextAttributes = nil;
 
     /* Set the selected range for the breadcrumb bar. */
@@ -1175,16 +1177,30 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         self.selectedRange = NSMakeRange(NSNotFound, 0);
     }
 
+    [self cat_updateSelectionVisualizations];
+}
+
+- (void)cat_updateSelectionVisualizations
+{
+    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+    NSArray *ranges = [self cat_effectiveSelectedRanges];
+
+    /* Reset the background color of all the source text. */
+    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
+    [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
+                             forCharacterRange:NSMakeRange(0, self.string.length)];
+
+
     /* Remove any onscreen cursors */
     [self.cat_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
-    self.cat_selectionViews = [[[[self cat_effectiveSelectedRanges] rac_sequence] map:^NSView *(MPXSelectionRange *selection)
+    RACSequence *rangeSequence = [ranges rac_sequence];
+    self.cat_selectionViews = [[rangeSequence map:^NSView *(MPXSelectionRange *selection)
     {
         NSRange range = [selection range];
 
         if (range.length > 0)
         {
-            DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
             [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
