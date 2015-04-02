@@ -1221,10 +1221,15 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         caretView.wantsLayer = YES;
         caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-        [self addSubview:caretView];
-
         return caretView;
     }] array];
+
+    [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *caret,
+                                                          NSUInteger idx,
+                                                          BOOL *stop)
+    {
+        [self addSubview:caret];
+    }];
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
