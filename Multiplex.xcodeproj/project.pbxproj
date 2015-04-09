@@ -10,6 +10,7 @@
 		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		33100A061A4F92400062D0D0 /* MPXSelectionRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* MPXSelectionRange.m */; };
 		332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332D428C19D5466F00CE1BC2 /* DVTKit.framework */; };
+		33529B2D1AD6FE680075E52A /* IDESourceEditor in Frameworks */ = {isa = PBXBuildFile; fileRef = 33529B2C1AD6FE680075E52A /* IDESourceEditor */; };
 		3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */; };
 		33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */; };
 		33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */; };
@@ -18,7 +19,6 @@
 		33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */ = {isa = PBXBuildFile; fileRef = 33B3A40C18CD38DF00AA64C8 /* PLYSwizzling.c */; };
 		33E032A019D4FBBC003A655E /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E0329E19D4FBBC003A655E /* IDEFoundation.framework */; };
 		33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E0329F19D4FBBC003A655E /* IDEKit.framework */; };
-		33E032A319D506B7003A655E /* IDESourceEditor in Frameworks */ = {isa = PBXBuildFile; fileRef = 33E032A219D506B7003A655E /* IDESourceEditor */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +26,7 @@
 		33100A051A4F92400062D0D0 /* MPXSelectionRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionRange.m; sourceTree = "<group>"; };
 		332D428C19D5466F00CE1BC2 /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
 		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
+		33529B2C1AD6FE680075E52A /* IDESourceEditor */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDESourceEditor; path = ../../../Applications/Xcode.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS/IDESourceEditor; sourceTree = "<group>"; };
 		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
 		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
 		33B3A3EA18CD36BE00AA64C8 /* Multiplex.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Multiplex.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,8 +62,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33529B2D1AD6FE680075E52A /* IDESourceEditor in Frameworks */,
 				332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */,
-				33E032A319D506B7003A655E /* IDESourceEditor in Frameworks */,
 				33E032A019D4FBBC003A655E /* IDEFoundation.framework in Frameworks */,
 				33E032A119D4FBBC003A655E /* IDEKit.framework in Frameworks */,
 				33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */,
@@ -115,6 +116,7 @@
 		33B3A3EC18CD36BE00AA64C8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				33529B2C1AD6FE680075E52A /* IDESourceEditor */,
 				332D428C19D5466F00CE1BC2 /* DVTKit.framework */,
 				33E032A219D506B7003A655E /* IDESourceEditor */,
 				33E0329E19D4FBBC003A655E /* IDEFoundation.framework */,
@@ -403,7 +405,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks",
 					"$(DEVELOPER_DIR)/../SharedFrameworks",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
+					"$(DEVELOPER_DIR)/../SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "${TARGET_NAME}/${TARGET_NAME}-Prefix.pch";
@@ -414,7 +416,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
+					"$(DEVELOPER_DIR)/../PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
 				PRODUCT_NAME = Multiplex;
 				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
@@ -435,7 +437,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks",
 					"$(DEVELOPER_DIR)/../SharedFrameworks",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/SharedFrameworks",
+					"$(DEVELOPER_DIR)/../SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "${TARGET_NAME}/${TARGET_NAME}-Prefix.pch";
@@ -446,7 +448,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
-					"$(SYSTEM_APPS_DIR)/Xcode-Beta.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
+					"$(DEVELOPER_DIR)/../PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
 				PRODUCT_NAME = Multiplex;
 				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
