@@ -1,12 +1,12 @@
 //
-//  MPXSelectionRange.h
+//  MPXSelection.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 12/27/14.
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-@interface MPXSelectionRange : NSObject
+@interface MPXSelection : NSObject
 
 #pragma mark -
 #pragma mark Designated Initializer

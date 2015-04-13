@@ -15,7 +15,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
     CATRelativePositionBottom
 };
 
-@class MPXSelectionRange;
+@class MPXSelection;
 
 @interface DVTSourceTextView (CATEditorExtensions)
 
@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 @property (nonatomic) NSArray *cat_finalizingRanges;
 
-@property (nonatomic) MPXSelectionRange *cat_rangeInProgress;
-@property (nonatomic) MPXSelectionRange *cat_rangeInProgressStart;
+@property (nonatomic) MPXSelection *cat_rangeInProgress;
+@property (nonatomic) MPXSelection *cat_rangeInProgressStart;
 
 @end

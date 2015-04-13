@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		33100A061A4F92400062D0D0 /* MPXSelectionRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* MPXSelectionRange.m */; };
+		33100A061A4F92400062D0D0 /* MPXSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* MPXSelection.m */; };
 		332D428D19D5466F00CE1BC2 /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332D428C19D5466F00CE1BC2 /* DVTKit.framework */; };
 		33529B2D1AD6FE680075E52A /* IDESourceEditor in Frameworks */ = {isa = PBXBuildFile; fileRef = 33529B2C1AD6FE680075E52A /* IDESourceEditor */; };
 		3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */; };
@@ -22,8 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		33100A041A4F92400062D0D0 /* MPXSelectionRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionRange.h; sourceTree = "<group>"; };
-		33100A051A4F92400062D0D0 /* MPXSelectionRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionRange.m; sourceTree = "<group>"; };
+		33100A041A4F92400062D0D0 /* MPXSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelection.h; sourceTree = "<group>"; };
+		33100A051A4F92400062D0D0 /* MPXSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelection.m; sourceTree = "<group>"; };
 		332D428C19D5466F00CE1BC2 /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../Applications/Xcode-Beta.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
 		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
 		33529B2C1AD6FE680075E52A /* IDESourceEditor */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = IDESourceEditor; path = ../../../Applications/Xcode.app/Contents/PlugIns/IDESourceEditor.ideplugin/Contents/MacOS/IDESourceEditor; sourceTree = "<group>"; };
@@ -78,8 +78,8 @@
 		33100A071A4F92490062D0D0 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
-				33100A041A4F92400062D0D0 /* MPXSelectionRange.h */,
-				33100A051A4F92400062D0D0 /* MPXSelectionRange.m */,
+				33100A041A4F92400062D0D0 /* MPXSelection.h */,
+				33100A051A4F92400062D0D0 /* MPXSelection.m */,
 				3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */,
 				3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */,
 			);
@@ -300,7 +300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33100A061A4F92400062D0D0 /* MPXSelectionRange.m in Sources */,
+				33100A061A4F92400062D0D0 /* MPXSelection.m in Sources */,
 				33B3A41818CD3B5100AA64C8 /* PLYSwizzling.c in Sources */,
 				33B3A3F918CD36BF00AA64C8 /* MultiplexPlugin.m in Sources */,
 				3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */,

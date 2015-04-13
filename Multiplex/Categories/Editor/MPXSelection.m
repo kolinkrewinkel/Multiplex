@@ -1,21 +1,21 @@
 //
-//  CATSelectionRange.m
+//  MPXSelection.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 12/27/14.
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import "MPXSelectionRange.h"
+#import "MPXSelection.h"
 
-@interface MPXSelectionRange ()
+@interface MPXSelection ()
 
 @property (nonatomic) NSRange range;
 @property (nonatomic) NSUInteger intralineDesiredIndex;
 
 @end
 
-@implementation MPXSelectionRange
+@implementation MPXSelection
 
 #pragma mark -
 #pragma mark Designated Initializer
@@ -54,7 +54,7 @@
         return NO;
     }
 
-    MPXSelectionRange *otherSelection = (MPXSelectionRange *)object;
+    MPXSelection *otherSelection = (MPXSelection *)object;
 
     return (otherSelection.intralineDesiredIndex == self.intralineDesiredIndex
             && NSEqualRanges(otherSelection.range, self.range));
