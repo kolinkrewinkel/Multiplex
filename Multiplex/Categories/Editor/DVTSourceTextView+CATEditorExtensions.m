@@ -1273,12 +1273,13 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     {
         if (idx == 0)
         {
-            [newSelections addObject:selection];
+            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:completedTextRange];
+            [newSelections addObject:[MPXSelectionRange selectionWithRange:NSMakeRange(NSMaxRange(indentedRange), 0)]];
             return;
         }
 
-        NSRange range = selection.range;
-        range.location += offset;
+        NSRange selectionRange = selection.range;
+        selectionRange.location += offset;
 
         /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
          */
@@ -1298,7 +1299,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         while (completionStringIndex >= 0)
         {
             unichar completionChar = [completionText characterAtIndex:completionStringIndex];
-            unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(range) - 1) + selectionRelativeIndex];
+            unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
 
             if (completionChar == compareStorageChar)
             {
@@ -1314,11 +1315,13 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
 
         [self insertText:[completionText substringFromIndex:completionStringStartIndex]
-        replacementRange:NSMakeRange(NSMaxRange(range), 0)];
+        replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
 
-        range.location = NSMaxRange(range) + insertedStringLength;
+        NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:selectionRange];
 
-        [newSelections addObject:[MPXSelectionRange selectionWithRange:range]];
+        NSRange finalEndOfCompletionRange = NSMakeRange(0, 0);
+        finalEndOfCompletionRange.location = NSMaxRange(indentedRange);
+        [newSelections addObject:[MPXSelectionRange selectionWithRange:finalEndOfCompletionRange]];
 
         offset += insertedStringLength;
     }];
