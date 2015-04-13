@@ -203,41 +203,34 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
-    // Replacement insertion-pointer ranges
-    NSMutableArray *newRanges = [[NSMutableArray alloc] init];
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelectionRange *selection)
+    {
+        // Update the base range with the delta'd amount of change from previous mutations.
+        NSRange range = [selection range];
+        NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
 
-    // _Never_ concurrent. Always synchronous-in order.
-    [self.cat_selectedRanges enumerateObjectsUsingBlock:^(MPXSelectionRange *selectionRange,
-                                                          NSUInteger idx,
-                                                          BOOL *stop)
-     {
-         // Update the base range with the delta'd amount of change from previous mutations.
-         NSRange range = [selectionRange range];
-         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
+        NSRange deletingRange = NSMakeRange(0, 0);
+        if (offsetRange.length == 0)
+        {
+            deletingRange = NSMakeRange(offsetRange.location - 1, 1);
+        }
+        else
+        {
+            deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
+        }
 
-         NSRange deletingRange = NSMakeRange(0, 0);
-         if (offsetRange.length == 0)
-         {
-             deletingRange = NSMakeRange(offsetRange.location - 1, 1);
-         }
-         else
-         {
-             deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
-         }
+        // Delete the characters
+        [self insertText:@"" replacementRange:deletingRange];
 
-         // Delete the characters
-         [self insertText:@"" replacementRange:deletingRange];
+        // New range for the beam (to the beginning of the range we replaced)
+        NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
+        MPXSelectionRange *newSelection = [MPXSelectionRange selectionWithRange:newInsertionPointRange];
 
-         // New range for the beam (to the beginning of the range we replaced)
-         NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
-         [newRanges addObject:[MPXSelectionRange selectionWithRange:newInsertionPointRange]];
+        // Increment/decrement the delta by how much we trimmed.
+        totalDelta -= deletingRange.length;
 
-         // Increment/decrement the delta by how much we trimmed.
-         totalDelta -= deletingRange.length;
-     }];
-
-    // Update the ranges, and force finalization.
-    [self cat_setSelectedRanges:newRanges finalize:YES];
+        return newSelection;
+    }];
 }
 
 #pragma mark Indentations/Other insertions
@@ -965,7 +958,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     if (commandKeyHeld)
     {
-        [self cat_setSelectedRanges:[existingSelections arrayByAddingObject:selection]
+        [self cat_setSelectedRanges:[selections arrayByAddingObject:selection]
                            finalize:NO];
     }
     else
