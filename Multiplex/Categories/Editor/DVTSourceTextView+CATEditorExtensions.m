@@ -149,7 +149,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         return self.cat_finalizingRanges;
     }
 
-    return self.cat_selectedRanges;
+    return self.cat_selectedRanges ?: @[];
 }
 
 #pragma mark -
@@ -927,16 +927,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         return;
     }
 
-    NSArray *existingSelections = ({
-        NSArray *selections = [self cat_effectiveSelectedRanges];
-        if (!selections)
-        {
-            selections = @[];
-        }
-
-        selections;
-    });
-
+    NSArray *selections = [self cat_effectiveSelectedRanges];
     NSRange resultRange = NSMakeRange(NSNotFound, 0);
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
