@@ -19,7 +19,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDown = nil;
 static IMP CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
 static IMP CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 
-NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRange)
+NS_INLINE NSRange MPXSelectionJoinRanges(NSRange originalRange, NSRange newRange)
 {
     NSRange joinedRange = newRange;
 
@@ -36,8 +36,8 @@ NS_INLINE NSRange CAT_SelectionJoinRanges(NSRange originalRange, NSRange newRang
     return joinedRange;
 }
 
-static const NSInteger CAT_LeftArrowSelectionOffset = -1;
-static const NSInteger CAT_RightArrowSelectionOffset = 1;
+static const NSInteger MPXLeftArrowSelectionOffset = -1;
+static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 @implementation DVTSourceTextView (CATEditorExtensions)
 
@@ -167,7 +167,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
     {
         NSRange range = selection.range;
         NSUInteger insertStringLength = [insertString length];
@@ -203,7 +203,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
     {
         // Update the base range with the delta'd amount of change from previous mutations.
         NSRange range = [selection range];
@@ -242,7 +242,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     [self insertText:@"\n"];
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection) {
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
 
         [textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager];
@@ -298,14 +298,14 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     // It would be possible to just take the longest range and unionize from there, but this is the most uniform approach.
     // Iterate over, join them to the start, and let the filter take care of joining them all into one.
     // In cases where the selection isn't being modified, they'll all just be set to 0,0 and they'll be de-duplicated.
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
      {
          NSRange previousAbsoluteRange = selection.range;
          NSRange newAbsoluteRange = newRange;
 
          if (modifySelection)
          {
-             newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+             newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
          }
 
          return [MPXSelection selectionWithRange:newAbsoluteRange];
@@ -350,7 +350,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     NSCAssert(relativePosition != CATRelativePositionTop, @"Paragraph methods should be used to move up lines.");
     NSCAssert(relativePosition != CATRelativePositionBottom, @"Paragraph methods should be used to move down lines.");
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
     {
         NSRange previousAbsoluteRange = selection.range;
 
@@ -378,7 +378,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         if (modifySelection)
         {
-            cursorRange = CAT_SelectionJoinRanges(previousAbsoluteRange, cursorRange);
+            cursorRange = MPXSelectionJoinRanges(previousAbsoluteRange, cursorRange);
         }
 
         return [MPXSelection selectionWithRange:cursorRange];
@@ -448,7 +448,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 {
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
     {
         NSRange previousAbsoluteRange = selection.range;
         NSRange previousLineRange = [textStorage.string lineRangeForRange:previousAbsoluteRange];
@@ -484,7 +484,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
         if (modifySelection)
         {
-            return [MPXSelection selectionWithRange:CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange)];
+            return [MPXSelection selectionWithRange:MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange)];
         }
 
         return [MPXSelection selectionWithRange:newAbsoluteRange];
@@ -539,7 +539,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
     // The built in method is relative to back/forwards. Right means forward.
     BOOL wordForward = relativePosition == CATRelativePositionRight;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
     {
         NSRange selectionRange = selection.range;
 
@@ -564,7 +564,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         // Unionize the ranges if we're expanding the selection.
         if (modifySelection)
         {
-            newRange = CAT_SelectionJoinRanges(selectionRange, newRange);
+            newRange = MPXSelectionJoinRanges(selectionRange, newRange);
         }
 
         return [MPXSelection selectionWithRange:newRange];
@@ -643,7 +643,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
 {
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
      {
          NSRange existingRange = selection.range;
 
@@ -674,7 +674,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
          // The selection should reach out and touch where it originated from.
          if (modifySelection)
          {
-             newRange = CAT_SelectionJoinRanges(existingRange, newRange);
+             newRange = MPXSelectionJoinRanges(existingRange, newRange);
          }
 
          return [MPXSelection selectionWithRange:newRange];
@@ -693,7 +693,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_moveLeftModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsDefaultingLengthsToZero:CAT_LeftArrowSelectionOffset
+    [self cat_offsetSelectionsDefaultingLengthsToZero:MPXLeftArrowSelectionOffset
                                       modifySelection:modifySelection];
 }
 
@@ -709,7 +709,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
 - (void)cat_moveRightModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsDefaultingLengthsToZero:CAT_RightArrowSelectionOffset
+    [self cat_offsetSelectionsDefaultingLengthsToZero:MPXRightArrowSelectionOffset
                                       modifySelection:modifySelection];
 }
 
@@ -723,7 +723,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
 
     NSLayoutManager *layoutManager = self.layoutManager;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelectionRange *(MPXSelection *selection)
+    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
     {
         // "Previous" refers exclusively to time, not location.
         NSRange previousAbsoluteRange = selection.range;
@@ -786,7 +786,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
             NSRange newAbsoluteRange = NSMakeRange(desiredPosition, 0);
             if (modifySelection)
             {
-                newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+                newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
             }
 
             return [MPXSelection selectionWithRange:newAbsoluteRange];
@@ -795,7 +795,7 @@ static const NSInteger CAT_RightArrowSelectionOffset = 1;
         NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
         if (modifySelection)
         {
-            newAbsoluteRange = CAT_SelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+            newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
         }
 
         // This will place it at the end of the line, aiming to be placed at the original position.
