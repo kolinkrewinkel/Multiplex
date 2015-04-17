@@ -1068,11 +1068,133 @@
 - (long long)nodeTypeForItem:(id)arg1 withContext:(id)arg2;
 @end
 
+@class DVTFoldingLayoutManager, DVTFoldingManager, DVTLayoutManager, DVTSourceCodeLanguage, DVTTextCompletionController, DVTTextCompletionDataSource, DVTTextStorage, NSCharacterSet, NSColor, NSString;
 
+@interface DVTCompletingTextView : NSTextView
+{
+    DVTTextCompletionController *_completionController;
+    DVTTextCompletionDataSource *_completionsDataSource;
+    NSColor *_secondarySelectedTextBackgroundColor;
+    double _accessoryAnnotationWidth;
+    unsigned long long _modifierFlagsAtLastSingleMouseDown;
+    BOOL _tabSelectsNextPlaceholder;
+}
+
++ (id)readableTextPasteboardTypes;
++ (long long)scrollerKnobStyleForBackgroundColor:(id)arg1;
++ (id)_operatorChars;
++ (id)identifierChars;
++ (id)_identifierCharsForImportStatements;
++ (BOOL)appSupportsActionMonitoring;
+@property(copy, nonatomic) NSColor *secondarySelectedTextBackgroundColor; // @synthesize secondarySelectedTextBackgroundColor=_secondarySelectedTextBackgroundColor;
+@property BOOL tabSelectsNextPlaceholder; // @synthesize tabSelectsNextPlaceholder=_tabSelectsNextPlaceholder;
+@property(readonly) DVTTextCompletionController *completionController; // @synthesize completionController=_completionController;
+@property unsigned long long modifierFlagsAtLastSingleMouseDown; // @synthesize modifierFlagsAtLastSingleMouseDown=_modifierFlagsAtLastSingleMouseDown;
+@property double accessoryAnnotationWidth; // @synthesize accessoryAnnotationWidth=_accessoryAnnotationWidth;
+- (void)setMarkedText:(id)arg1 selectedRange:(struct _NSRange)arg2;
+- (void)becomeMainWindow;
+- (void)resignKeyWindow;
+- (void)becomeKeyWindow;
+- (BOOL)becomeFirstResponder;
+- (BOOL)resignFirstResponder;
+- (void)_invalidateDisplayForViewStatusChange;
+- (void)setBackgroundColor:(id)arg1;
+- (void)updateScrollerKnobStyle;
+- (BOOL)readSelectionFromPasteboard:(id)arg1 type:(id)arg2;
+- (id)attributedStringForCompletionPlaceholderCell:(id)arg1 atCharacterIndex:(unsigned long long)arg2 withDefaultAttributes:(id)arg3;
+- (void)doubleClickedOnCell:(id)arg1 inRect:(struct CGRect)arg2 atIndexInToken:(unsigned long long)arg3;
+- (void)clickedOnCell:(id)arg1 inRect:(struct CGRect)arg2 atIndexInToken:(unsigned long long)arg3;
+- (BOOL)isThereOnlyATokenAttachmentAtUserTextChange;
+- (void)replaceSelectedTokenWithTokenText;
+- (void)useSelectionForFind:(id)arg1;
+- (struct _NSRange)_characterRangeForRect:(struct CGRect)arg1;
+- (struct _NSRange)clipViewBoundsCharacterRange;
+- (struct _NSRange)visibleCharacterRange;
+- (void)mouseDown:(id)arg1;
+- (void)setNeedsDisplayInRect:(struct CGRect)arg1 avoidAdditionalLayout:(BOOL)arg2;
+- (void)drawRect:(struct CGRect)arg1;
+- (void)_drawRect:(struct CGRect)arg1 clip:(BOOL)arg2;
+- (void)_drawOverlayRect:(struct CGRect)arg1;
+- (void)setSelectedRange:(struct _NSRange)arg1;
+- (void)setSelectedRanges:(id)arg1 affinity:(unsigned long long)arg2 stillSelecting:(BOOL)arg3;
+- (void)_replaceFoldWithContents:(id)arg1;
+- (void)textStorage:(id)arg1 didEndEditRange:(struct _NSRange)arg2 changeInLength:(long long)arg3;
+- (void)textStorage:(id)arg1 willEndEditRange:(struct _NSRange)arg2 changeInLength:(long long)arg3;
+@property(readonly) DVTTextStorage *textStorage;
+@property(readonly) DVTLayoutManager *layoutManager;
+- (void)didInsertCompletionTextAtRange:(struct _NSRange)arg1;
+- (void)invalidateDisplayForRange:(struct _NSRange)arg1;
+- (unsigned long long)draggingEntered:(id)arg1;
+- (void)paste:(id)arg1;
+- (void)viewWillMoveToWindow:(id)arg1;
+- (void)removeFromSuperview;
+- (void)_mouseInside:(id)arg1;
+- (void)debugDumpCompletionState:(id)arg1;
+- (void)selectPreviousPlaceholder:(id)arg1;
+- (void)selectNextPlaceholder:(id)arg1;
+- (BOOL)handleInsertBackTab;
+- (BOOL)handleInsertTab;
+- (id)menuForEvent:(id)arg1;
+- (BOOL)handleCancel;
+- (void)previousCompletion:(id)arg1;
+- (void)nextCompletion:(id)arg1;
+- (void)complete:(id)arg1;
+- (BOOL)shouldChangeTextInRanges:(id)arg1 replacementStrings:(id)arg2;
+- (void)deleteForward:(id)arg1;
+- (void)deleteBackward:(id)arg1;
+- (void)insertText:(id)arg1 replacementRange:(struct _NSRange)arg2;
+- (void)doCommandBySelector:(SEL)arg1;
+- (void)layoutManager:(id)arg1 didUnfoldRange:(struct _NSRange)arg2;
+- (void)layoutManager:(id)arg1 didFoldRange:(struct _NSRange)arg2;
+- (void)_foldingLayoutManagerFoldsChanged:(id)arg1;
+- (id)layoutManager:(id)arg1 shouldUseTextBackgroundColor:(id)arg2 rectArray:(struct CGRect *)arg3 count:(unsigned long long)arg4 forCharacterRange:(struct _NSRange)arg5;
+- (id)layoutManager:(id)arg1 shouldUseTemporaryAttributes:(id)arg2 forDrawingToScreen:(BOOL)arg3 atCharacterIndex:(unsigned long long)arg4 effectiveRange:(struct _NSRange *)arg5;
+- (void)showMatchingBraceAtLocation:(id)arg1;
+- (void)autoHighlightMatchingBracketAtLocationIfNecessary:(unsigned long long)arg1;
+- (BOOL)shouldTryToCompleteOpeningBracketForStringOrAttributedStringToInsert:(id)arg1;
+- (BOOL)shouldTryToCompleteOpeningBracketForStringToInsert:(id)arg1;
+- (BOOL)shouldTryToCompleteOpeningBracketForStringToInsert:(id)arg1 usingLanguage:(id)arg2;
+- (BOOL)_moveToNextPlaceholderFromCharacterIndex:(unsigned long long)arg1 forward:(BOOL)arg2 onlyIfNearby:(BOOL)arg3;
+- (struct _NSRange)_findString:(id)arg1 inString:(id)arg2 fromRange:(struct _NSRange)arg3 limitRange:(struct _NSRange)arg4 forward:(BOOL)arg5 wrap:(BOOL)arg6;
+- (struct _NSRange)rangeOfPlaceholderFromCharacterIndex:(unsigned long long)arg1 forward:(BOOL)arg2 wrap:(BOOL)arg3 limit:(unsigned long long)arg4;
+- (BOOL)selectFirstPlaceholderInCharacterRange:(struct _NSRange)arg1;
+- (BOOL)handleSelectPreviousPlaceholder;
+- (BOOL)handleSelectNextPlaceholder;
+- (id)ghostComplementTextColor;
+- (BOOL)shouldAutoCompleteAtLocation:(unsigned long long)arg1;
+- (BOOL)shouldSuppressTextCompletion;
+@property(readonly, copy) NSCharacterSet *autoCompleteChars;
+@property(readonly) double autoCompletionDelay;
+- (id)contextForCompletionStrategiesAtWordStartLocation:(unsigned long long)arg1;
+@property(readonly) DVTTextCompletionDataSource *completionsDataSource;
+- (struct _NSRange)wordRangeAtLocation:(unsigned long long)arg1;
+@property(readonly) DVTSourceCodeLanguage *language;
+- (void)dealloc;
+- (id)initWithCoder:(id)arg1;
+- (id)initWithFrame:(struct CGRect)arg1;
+- (id)initWithFrame:(struct CGRect)arg1 textContainer:(id)arg2;
+- (void)_dvtCommonInit;
+- (id)currentTheme;
+@property(readonly) DVTFoldingManager *foldingManager;
+@property(readonly) DVTFoldingLayoutManager *foldingLayoutManager;
+- (BOOL)removeMenusNotInWhiteList:(id)arg1 fromMenu:(id)arg2 removeSeparators:(BOOL)arg3;
+- (void)dvt_shouldDeallocate;
+- (id)cell;
+- (id)selectedCell;
+- (id)accessibilityAttributeValue:(id)arg1;
+
+// Remaining properties
+@property(readonly, copy) NSString *debugDescription;
+//@property id <DVTCompletingTextViewDelegate> delegate; // @dynamic delegate;
+@property(readonly, copy) NSString *description;
+@property(readonly) unsigned long long hash;
+@property(readonly) Class superclass;
+
+@end
 
 @class DVTAnnotationManager, DVTHashTable, DVTMutableRangeArray, DVTObservingToken, DVTTextAnnotationIndicatorAnimation, DVTTextDocumentLocation, DVTTextPageGuideVisualization, NSAnimation, NSArray, NSDictionary, NSMutableArray, NSString, NSTimer, NSView, NSWindow;
 
-@interface DVTSourceTextView : NSTextView <NSAnimationDelegate, NSLayoutManagerDelegate>
+@interface DVTSourceTextView : DVTCompletingTextView <NSAnimationDelegate, NSLayoutManagerDelegate>
 {
     unsigned long long _oldFocusLocation;
     NSAnimation *_blockAnimation;
@@ -2844,6 +2966,84 @@ extern NSString *IDEEditorDocumentDidChangeNotification;
 @property(readonly, copy) NSString *description;
 @property(readonly) unsigned long long hash;
 @property(readonly) Class superclass;
+
+@end
+
+@class DVTSourceCodeLanguage, DVTStackBacktrace, NSCharacterSet, NSString;
+
+@interface DVTSourceLanguageService : NSObject
+{
+    BOOL _semanticsDisabled;
+    DVTSourceCodeLanguage *_language;
+//    id <DVTSourceLanguageServiceDelegate> _delegate;
+//    CDUnknownBlockType _contentGenerationCompletionBlock;
+    long long _status;
+}
+
++ (id)methodOrFunctionSourceLandmarkItemForSourceLandmarkItem:(id)arg1;
++ (id)originalURLForGeneratedURL:(id)arg1;
++ (id)generatedURLForOriginalURL:(id)arg1;
+//+ (void)enumerateSupportedContextScopesForLanguage:(id)arg1 block:(CDUnknownBlockType)arg2;
++ (BOOL)canGenerateContentsForURL:(id)arg1;
++ (void)initialize;
++ (Class)sourceLanguageServiceClassForLanguage:(id)arg1;
++ (id)sourceLanguageServiceForLanguage:(id)arg1 withDelegate:(id)arg2;
+@property(getter=isSemanticsDisabled) BOOL semanticsDisabled; // @synthesize semanticsDisabled=_semanticsDisabled;
+@property long long status; // @synthesize status=_status;
+//@property(copy) CDUnknownBlockType contentGenerationCompletionBlock; // @synthesize contentGenerationCompletionBlock=_contentGenerationCompletionBlock;
+//@property(nonatomic) id <DVTSourceLanguageServiceDelegate> delegate; // @synthesize delegate=_delegate;
+@property(readonly) DVTSourceCodeLanguage *language; // @synthesize language=_language;
+//- (void).cxx_destruct;
+- (long long)contextScopeAtLocation:(unsigned long long)arg1;
+- (id)expandPlaceholderInRange:(struct _NSRange)arg1 suggestedText:(id)arg2 effectiveRange:(struct _NSRange *)arg3;
+- (struct _NSRange)suggestedExpressionSelectionRangeFromRange:(struct _NSRange)arg1;
+- (id)postProcessAutoInsertClosingBraceAtLocation:(unsigned long long)arg1;
+//- (void)contextJumpForTypeOverCompletionAtLocation:(unsigned long long)arg1 withInsertionText:(id)arg2 typeOverCompletions:(id)arg3 pendingTypeOverCompletion:(id)arg4 completionBlock:(CDUnknownBlockType)arg5;
+- (id)stringByTogglingCommentsInLineRange:(struct _NSRange)arg1;
+- (id)stringByUncommentingString:(id)arg1;
+- (id)stringByCommentingString:(id)arg1;
+- (long long)commentCoverageInLineRange:(struct _NSRange)arg1;
+- (id)blockCommentCircumfixes;
+- (id)lineCommentPrefixes;
+- (id)indentLineRange:(struct _NSRange)arg1 effectiveLineRange:(struct _NSRange *)arg2;
+- (long long)foldableBlockDepthForLineAtLocation:(unsigned long long)arg1;
+- (struct _NSRange)foldableBlockInnerRangeForLineAtLocation:(unsigned long long)arg1;
+- (struct _NSRange)foldableBlockRangeForLineAtLocation:(unsigned long long)arg1;
+- (id)foldableBlockInnerRangesInRange:(struct _NSRange)arg1;
+- (id)foldableBlockRangesAtLocation:(unsigned long long)arg1;
+- (struct _NSRange)foldableBlockRangeAtLocation:(unsigned long long)arg1;
+- (unsigned long long)indentOfBlockAtLocation:(unsigned long long)arg1;
+- (unsigned long long)locationOfNextMatchedDelimiterAtLocation:(unsigned long long)arg1;
+- (unsigned long long)locationOfPreviousMatchedDelimiterAtLocation:(unsigned long long)arg1;
+- (void)doingBatchEdit:(BOOL)arg1;
+- (struct _NSRange)functionOrMethodBodyRangeAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)functionRangeAtIndex:(unsigned long long)arg1 isDefinitionOrCall:(char *)arg2;
+- (struct _NSRange)methodDefinitionRangeAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)methodCallRangeAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)methodOrFunctionRangeAtIndex:(unsigned long long)arg1;
+- (struct _NSRange)tokenizableRangeWithRange:(struct _NSRange)arg1;
+- (struct _NSRange)rangeOfWordAtIndex:(unsigned long long)arg1 allowNonWords:(BOOL)arg2;
+- (struct _NSRange)rangeForInvalidateAttributesInRange:(struct _NSRange)arg1;
+- (void)contextDidChange:(id)arg1;
+- (BOOL)shouldAutoCompleteAtLocation:(unsigned long long)arg1 autoCompleteCharacterSet:(id)arg2 proposedAutoComplete:(BOOL)arg3;
+@property(readonly, copy) NSCharacterSet *autoCompleteChars;
+- (BOOL)shouldShowTemporaryLinkForCharacterAtIndex:(unsigned long long)arg1 proposedRange:(struct _NSRange)arg2 effectiveRanges:(id *)arg3;
+- (id)symbolNameAtCharacterIndex:(unsigned long long)arg1 nameRanges:(id *)arg2;
+- (struct _NSRange)characterRangeForUSR:(id)arg1;
+- (void)updateLineRange:(struct _NSRange)arg1 changeInLength:(long long)arg2;
+- (void)replaceCharactersInRange:(struct _NSRange)arg1 withString:(id)arg2 replacedString:(id)arg3 affectedRange:(struct _NSRange *)arg4;
+- (void)observeValueForKeyPath:(id)arg1 ofObject:(id)arg2 change:(id)arg3 context:(void *)arg4;
+- (void)primitiveInvalidate;
+- (id)initWithLanguage:(id)arg1 delegate:(id)arg2;
+
+// Remaining properties
+@property(retain) DVTStackBacktrace *creationBacktrace;
+@property(readonly, copy) NSString *debugDescription;
+@property(readonly, copy) NSString *description;
+@property(readonly) unsigned long long hash;
+@property(readonly) DVTStackBacktrace *invalidationBacktrace;
+@property(readonly) Class superclass;
+@property(readonly, nonatomic, getter=isValid) BOOL valid;
 
 @end
 

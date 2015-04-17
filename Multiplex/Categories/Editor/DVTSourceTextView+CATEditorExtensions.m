@@ -1236,79 +1236,82 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self cat_effectiveSelectedRanges]];
 
         MPXSelection *existingSelection = selections[0];
+
         offset += NSMaxRange(completedTextRange) - NSMaxRange(existingSelection.range);
 
-        selections[0] = [MPXSelection selectionWithRange:NSMakeRange(NSMaxRange(completedTextRange), 0)];
-
+        selections[0] = [MPXSelection selectionWithRange:completedTextRange];
         selections;
     });
-
-    [self cat_setSelectedRanges:selections
-                       finalize:YES];
 
     NSString *completionText = [self.string substringWithRange:completedTextRange];
 
     /* Now, the remaining ranges need to be adjusted to include the text (and adjust the selection.) */
 
-    NSMutableArray *newSelections = [[NSMutableArray alloc] init];
-    [selections enumerateObjectsUsingBlock:^(MPXSelection *selection,
-                                             NSUInteger idx,
-                                             BOOL *stop)
+    __block NSUInteger idx = 0;
+    NSArray *newSelections = [[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection)
     {
-        if (idx == 0)
-        {
-            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:completedTextRange];
-            [newSelections addObject:[MPXSelection selectionWithRange:NSMakeRange(NSMaxRange(indentedRange), 0)]];
-            return;
-        }
-
         NSRange selectionRange = selection.range;
-        selectionRange.location += offset;
 
-        /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
-         */
-        NSInteger completionStringIndex = [completionText length] - 1;
-
-        /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
-         
-            (Completing for the word `category`)
-
-            cate| vs. nate|
-
-            Only chcking the first char before the selection would not be accurate.
-         */
-
-        NSInteger selectionRelativeIndex = 0;
-
-        while (completionStringIndex >= 0)
+        if (idx > 0)
         {
-            unichar completionChar = [completionText characterAtIndex:completionStringIndex];
-            unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
+            selectionRange.location += offset;
 
-            if (completionChar == compareStorageChar)
+            /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
+             */
+            NSInteger completionStringIndex = [completionText length] - 1;
+
+            /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
+
+             (Completing for the word `category`)
+
+             cate| vs. nate|
+
+             Only chcking the first char before the selection would not be accurate.
+             */
+
+            NSInteger selectionRelativeIndex = 0;
+
+            while (completionStringIndex >= 0)
             {
-                selectionRelativeIndex--;
+                unichar completionChar = [completionText characterAtIndex:completionStringIndex];
+                unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
+
+                if (completionChar == compareStorageChar)
+                {
+                    selectionRelativeIndex--;
+                }
+
+                /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back.
+                 */
+                completionStringIndex--;
             }
 
-            /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back. 
-             */
-            completionStringIndex--;
+            NSInteger completionStringStartIndex = -selectionRelativeIndex;
+            NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
+            
+            [self insertText:[completionText substringFromIndex:completionStringStartIndex]
+            replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
+
+            offset += insertedStringLength;
         }
 
-        NSInteger completionStringStartIndex = -selectionRelativeIndex;
-        NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
-
-        [self insertText:[completionText substringFromIndex:completionStringStartIndex]
-        replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
-
         NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:selectionRange];
+        
+        NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:indentedRange.location
+                                                                      forward:YES
+                                                                         wrap:YES
+                                                                        limit:indentedRange.length];
 
-        NSRange finalEndOfCompletionRange = NSMakeRange(0, 0);
-        finalEndOfCompletionRange.location = NSMaxRange(indentedRange);
-        [newSelections addObject:[MPXSelection selectionWithRange:finalEndOfCompletionRange]];
+        idx++;
 
-        offset += insertedStringLength;
-    }];
+        if (firstPlaceholder.location == NSUIntegerMax)
+        {
+            NSRange finalEndOfCompletionRange = NSMakeRange(NSMaxRange(indentedRange), 0);
+            return [MPXSelection selectionWithRange:finalEndOfCompletionRange];
+        }
+
+        return [MPXSelection selectionWithRange:firstPlaceholder];
+    }].array;
 
     [self cat_setSelectedRanges:newSelections
                        finalize:YES];
