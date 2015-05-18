@@ -1108,7 +1108,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
          else if (shouldAdd && !modifiedSelection)
          {
              [reducedRanges addObject:[[MPXSelection alloc] initWithSelectionRange:rangeToAdd
-                                                                  intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
+                                                             intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
          }
      }];
     
