@@ -1027,32 +1027,15 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (NSArray *)cat_reduceSortedRanges:(NSArray *)sortedRanges
 {
-    NSMutableArray *reducedRanges = [[NSMutableArray alloc] init];
-    NSMutableArray *shouldCompare = [[NSMutableArray alloc] init];
-    NSMutableArray *modifiedSelections = [[NSMutableArray alloc] init];
 
-    [sortedRanges enumerateObjectsUsingBlock:^(id obj,
-                                               NSUInteger idx,
-                                               BOOL *stop)
-     {
-         [shouldCompare addObject:@YES];
-         [modifiedSelections addObject:@NO];
-     }];
-
-    [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange1,
-                                                             NSUInteger idx,
-                                                             BOOL *stop)
-     {
-         if (![shouldCompare[idx] boolValue])
-         {
-             return;
-         }
-
-         NSRange range1 = [selectionRange1 range];
+    RACSequence *sortedSequence = [sortedRanges rac_sequence];
+    NSArray *reducedRanges = [sortedSequence map:^MPXSelection *(MPXSelection *selection)
+    {
+         NSRange range1 = [selection range];
 
          __block NSRange rangeToAdd = range1;
          __block BOOL shouldAdd = YES;
-
+        
          [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
           {
               NSRange range2 = [selectionRange2 range];
@@ -1110,8 +1093,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
              [reducedRanges addObject:[[MPXSelection alloc] initWithSelectionRange:rangeToAdd
                                                              intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
          }
-     }];
-    
+    }].array;
+
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
 
@@ -1158,7 +1141,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
     else
     {
-        self.selectedRange = NSMakeRange(NSNotFound, 0);
+        self.selectedRange = NSMakeRange(0, 0);
     }
 
     [self cat_updateSelectionVisualizations];
