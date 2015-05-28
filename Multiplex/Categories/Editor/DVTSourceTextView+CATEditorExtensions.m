@@ -1035,17 +1035,23 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
          __block NSRange rangeToAdd = range1;
          __block BOOL shouldAdd = YES;
+
+        /* Preprocess the range to adjust for placeholders. */
+
+        NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
+                                                                      forward:NO
+                                                                         wrap:YES
+                                                                        limit:rangeToAdd.length];
+
         
          [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
           {
-              NSRange range2 = [selectionRange2 range];
-
-              BOOL literallyTheSameRange = idx == idx2;
-
-              if (literallyTheSameRange)
+              if (selection == selectionRange2)
               {
                   return;
               }
+
+              NSRange range2 = [selectionRange2 range];
 
               BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
               BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
@@ -1053,13 +1059,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
               if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
               {
                   NSRange originalRangeToAdd = rangeToAdd;
-                  shouldCompare[idx2] = @NO;
 
                   NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
                   if (relativeIncrease < range2.length)
                   {
                       rangeToAdd.length += range2.length - relativeIncrease;
-                      modifiedSelections[idx2] = @YES;
                   }
 
                   if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
