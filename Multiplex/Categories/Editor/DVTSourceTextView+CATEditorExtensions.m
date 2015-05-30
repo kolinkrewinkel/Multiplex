@@ -1050,12 +1050,12 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         if (trailingPlaceholder.location != NSNotFound)
         {
-            
+            rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, trailingPlaceholder);
         }
 
         if (leadingPlaceholder.location != NSNotFound)
         {
-
+            rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, leadingPlaceholder);
         }
 
          [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
