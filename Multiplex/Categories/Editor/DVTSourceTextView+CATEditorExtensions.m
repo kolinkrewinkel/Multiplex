@@ -1038,12 +1038,26 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         /* Preprocess the range to adjust for placeholders. */
 
-        NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
-                                                                      forward:NO
-                                                                         wrap:YES
-                                                                        limit:rangeToAdd.length];
+        NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
+                                                                         forward:NO
+                                                                            wrap:YES
+                                                                           limit:rangeToAdd.length];
 
-        
+        NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
+                                                                        forward:YES
+                                                                           wrap:YES
+                                                                          limit:rangeToAdd.length];
+
+        if (trailingPlaceholder.location != NSNotFound)
+        {
+            
+        }
+
+        if (leadingPlaceholder.location != NSNotFound)
+        {
+
+        }
+
          [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
           {
               if (selection == selectionRange2)
@@ -1086,17 +1100,18 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
               }
           }];
 
+//         BOOL modifiedSelection = [modifiedSelections[idx] boolValue];
+//         if (shouldAdd && modifiedSelection)
+//         {
+//             [reducedRanges addObject:[MPXSelection selectionWithRange:rangeToAdd]];
+//         }
+//         else if (shouldAdd && !modifiedSelection)
+//         {
+//             [reducedRanges addObject:[[MPXSelection alloc] initWithSelectionRange:rangeToAdd
+//                                                             intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
+//         }
 
-         BOOL modifiedSelection = [modifiedSelections[idx] boolValue];
-         if (shouldAdd && modifiedSelection)
-         {
-             [reducedRanges addObject:[MPXSelection selectionWithRange:rangeToAdd]];
-         }
-         else if (shouldAdd && !modifiedSelection)
-         {
-             [reducedRanges addObject:[[MPXSelection alloc] initWithSelectionRange:rangeToAdd
-                                                             intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
-         }
+        return [MPXSelection selectionWithRange:rangeToAdd];
     }].array;
 
     return [[NSArray alloc] initWithArray:reducedRanges];
