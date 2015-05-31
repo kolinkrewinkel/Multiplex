@@ -34,7 +34,6 @@ PODS:
     - libextobjc/RuntimeExtensions
   - libextobjc/RuntimeExtensions (0.4.1)
   - libextobjc/UmbrellaHeader (0.4.1)
-  - pop (1.0.7)
   - ReactiveCocoa (2.4.7):
     - ReactiveCocoa/UI (= 2.4.7)
   - ReactiveCocoa/Core (2.4.7):
@@ -45,12 +44,10 @@ PODS:
 
 DEPENDENCIES:
   - libextobjc
-  - pop (~> 1.0)
   - ReactiveCocoa (~> 2.3)
 
 SPEC CHECKSUMS:
   libextobjc: d6146fce3ebea986b7f75fcb4c967639200b88b0
-  pop: 2f14a1ea61339767af9e66741b418c831b3844df
   ReactiveCocoa: 313fc53cc9aeb2bbbc3f5f13c7eac16478d9af8f
 
 COCOAPODS: 0.36.0
