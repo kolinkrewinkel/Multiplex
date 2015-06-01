@@ -956,7 +956,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.cat_rangeInProgress = selection;
     self.cat_rangeInProgressStart = selection;
 
-    if (!commandKeyHeld)
+    if (commandKeyHeld)
     {
         [self cat_setSelectedRanges:[selections arrayByAddingObject:selection]
                            finalize:NO];
