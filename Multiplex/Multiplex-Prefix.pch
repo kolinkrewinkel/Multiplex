@@ -8,6 +8,5 @@
     @import Foundation;
 
     @import libextobjc;
-    @import pop;
     @import ReactiveCocoa;
 #endif

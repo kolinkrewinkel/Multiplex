@@ -96,7 +96,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *view,
                                                           NSUInteger idx,
                                                           BOOL *stop)
-    {
+     {
          if (self.window.isKeyWindow)
          {
              view.hidden = !previous;
@@ -168,34 +168,34 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
-    {
-        NSRange range = selection.range;
-        NSUInteger insertStringLength = [insertString length];
+     {
+         NSRange range = selection.range;
+         NSUInteger insertStringLength = [insertString length];
 
-        // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point correspond to the relative offset made by inserting a # of chars.)
-        NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
-        [self insertText:insertString replacementRange:offsetRange];
+         // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point correspond to the relative offset made by inserting a # of chars.)
+         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
+         [self insertText:insertString replacementRange:offsetRange];
 
-        // Offset the following ones by noting the original length and updating for the replacement's length, moving cursors following forward/backward.
-        NSInteger delta = range.length - insertStringLength;
-        totalDelta -= delta;
+         // Offset the following ones by noting the original length and updating for the replacement's length, moving cursors following forward/backward.
+         NSInteger delta = range.length - insertStringLength;
+         totalDelta -= delta;
 
-        NSRange lineRange;
-        (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange)
-                                                   effectiveRange:&lineRange];
+         NSRange lineRange;
+         (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange)
+                                                    effectiveRange:&lineRange];
 
-        NSUInteger relativeLinePosition = selection.intralineDesiredIndex;
+         NSUInteger relativeLinePosition = selection.intralineDesiredIndex;
 
-        if (relativeLinePosition == NSNotFound)
-        {
-            relativeLinePosition = NSMaxRange(offsetRange) - lineRange.location;
-        }
+         if (relativeLinePosition == NSNotFound)
+         {
+             relativeLinePosition = NSMaxRange(offsetRange) - lineRange.location;
+         }
 
-        // Move cursor (or range-selection) to the end of what was just added with 0-length.
-        NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
-        return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
-                                           intralineDesiredIndex:relativeLinePosition];
-    }];
+         // Move cursor (or range-selection) to the end of what was just added with 0-length.
+         NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
+         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
+                                       intralineDesiredIndex:relativeLinePosition];
+     }];
 }
 
 - (void)deleteBackward:(id)sender
@@ -204,33 +204,33 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     __block NSInteger totalDelta = 0;
 
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
-    {
-        // Update the base range with the delta'd amount of change from previous mutations.
-        NSRange range = [selection range];
-        NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
+     {
+         // Update the base range with the delta'd amount of change from previous mutations.
+         NSRange range = [selection range];
+         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
 
-        NSRange deletingRange = NSMakeRange(0, 0);
-        if (offsetRange.length == 0)
-        {
-            deletingRange = NSMakeRange(offsetRange.location - 1, 1);
-        }
-        else
-        {
-            deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
-        }
+         NSRange deletingRange = NSMakeRange(0, 0);
+         if (offsetRange.length == 0)
+         {
+             deletingRange = NSMakeRange(offsetRange.location - 1, 1);
+         }
+         else
+         {
+             deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
+         }
 
-        // Delete the characters
-        [self insertText:@"" replacementRange:deletingRange];
+         // Delete the characters
+         [self insertText:@"" replacementRange:deletingRange];
 
-        // New range for the beam (to the beginning of the range we replaced)
-        NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
-        MPXSelection *newSelection = [MPXSelection selectionWithRange:newInsertionPointRange];
+         // New range for the beam (to the beginning of the range we replaced)
+         NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
+         MPXSelection *newSelection = [MPXSelection selectionWithRange:newInsertionPointRange];
 
-        // Increment/decrement the delta by how much we trimmed.
-        totalDelta -= deletingRange.length;
+         // Increment/decrement the delta by how much we trimmed.
+         totalDelta -= deletingRange.length;
 
-        return newSelection;
-    }];
+         return newSelection;
+     }];
 }
 
 #pragma mark Indentations/Other insertions
@@ -351,38 +351,38 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     NSCAssert(relativePosition != CATRelativePositionBottom, @"Paragraph methods should be used to move down lines.");
 
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
-    {
-        NSRange previousAbsoluteRange = selection.range;
+     {
+         NSRange previousAbsoluteRange = selection.range;
 
-        // The cursors are being pushed to the line's relative location of 0 or .length.
-        NSRange rangeOfContainingLine = ({
-            NSRange range;
-            NSUInteger locationToBaseFrom = previousAbsoluteRange.location;
+         // The cursors are being pushed to the line's relative location of 0 or .length.
+         NSRange rangeOfContainingLine = ({
+             NSRange range;
+             NSUInteger locationToBaseFrom = previousAbsoluteRange.location;
 
-            if (relativePosition == CATRelativePositionRight)
-            {
-                locationToBaseFrom = NSMaxRange(previousAbsoluteRange);
-            }
+             if (relativePosition == CATRelativePositionRight)
+             {
+                 locationToBaseFrom = NSMaxRange(previousAbsoluteRange);
+             }
 
-            [self.layoutManager lineFragmentRectForGlyphAtIndex:locationToBaseFrom
-                                                 effectiveRange:&range];
-            range;
-        });
+             [self.layoutManager lineFragmentRectForGlyphAtIndex:locationToBaseFrom
+                                                  effectiveRange:&range];
+             range;
+         });
 
-        NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
+         NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
 
-        if (relativePosition == CATRelativePositionRight)
-        {
-            cursorRange.location += rangeOfContainingLine.length - 1;
-        }
+         if (relativePosition == CATRelativePositionRight)
+         {
+             cursorRange.location += rangeOfContainingLine.length - 1;
+         }
 
-        if (modifySelection)
-        {
-            cursorRange = MPXSelectionJoinRanges(previousAbsoluteRange, cursorRange);
-        }
+         if (modifySelection)
+         {
+             cursorRange = MPXSelectionJoinRanges(previousAbsoluteRange, cursorRange);
+         }
 
-        return [MPXSelection selectionWithRange:cursorRange];
-    }];
+         return [MPXSelection selectionWithRange:cursorRange];
+     }];
 }
 
 - (void)cat_moveToLeftEndOfLineModifyingSelection:(BOOL)modifySelection
@@ -449,46 +449,46 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
-    {
-        NSRange previousAbsoluteRange = selection.range;
-        NSRange previousLineRange = [textStorage.string lineRangeForRange:previousAbsoluteRange];
+     {
+         NSRange previousAbsoluteRange = selection.range;
+         NSRange previousLineRange = [textStorage.string lineRangeForRange:previousAbsoluteRange];
 
-        NSRange newAbsoluteRange = previousAbsoluteRange;
+         NSRange newAbsoluteRange = previousAbsoluteRange;
 
-        if (includeLength)
-        {
-            // It's at the end of the line and needs to be moved down
-            if (NSMaxRange(previousAbsoluteRange) == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
-            {
-                NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(NSMaxRange(previousLineRange), 0)];
-                newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
-            }
-            else
-            {
-                newAbsoluteRange = NSMakeRange(NSMaxRange(previousLineRange) - 1, 0);
-            }
-        }
-        else
-        {
-            // It's at the beginning of the line and needs to be moved up
-            if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
-            {
-                NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(previousLineRange.location - 1, 0)];
-                newAbsoluteRange = NSMakeRange(newLineRange.location, 0);
-            }
-            else
-            {
-                newAbsoluteRange = NSMakeRange(previousLineRange.location, 0);
-            }
-        }
+         if (includeLength)
+         {
+             // It's at the end of the line and needs to be moved down
+             if (NSMaxRange(previousAbsoluteRange) == (NSMaxRange(previousLineRange) - 1) && NSMaxRange(previousLineRange) < [self.textStorage length])
+             {
+                 NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(NSMaxRange(previousLineRange), 0)];
+                 newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
+             }
+             else
+             {
+                 newAbsoluteRange = NSMakeRange(NSMaxRange(previousLineRange) - 1, 0);
+             }
+         }
+         else
+         {
+             // It's at the beginning of the line and needs to be moved up
+             if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0)
+             {
+                 NSRange newLineRange = [textStorage.string lineRangeForRange:NSMakeRange(previousLineRange.location - 1, 0)];
+                 newAbsoluteRange = NSMakeRange(newLineRange.location, 0);
+             }
+             else
+             {
+                 newAbsoluteRange = NSMakeRange(previousLineRange.location, 0);
+             }
+         }
 
-        if (modifySelection)
-        {
-            return [MPXSelection selectionWithRange:MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange)];
-        }
+         if (modifySelection)
+         {
+             return [MPXSelection selectionWithRange:MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange)];
+         }
 
-        return [MPXSelection selectionWithRange:newAbsoluteRange];
-    }];
+         return [MPXSelection selectionWithRange:newAbsoluteRange];
+     }];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
@@ -540,35 +540,35 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     BOOL wordForward = relativePosition == CATRelativePositionRight;
 
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
-    {
-        NSRange selectionRange = selection.range;
+     {
+         NSRange selectionRange = selection.range;
 
-        // Going forward, we should seek the next word from the end of the range.
-        NSUInteger seekingFromIndex = NSMaxRange(selectionRange);
+         // Going forward, we should seek the next word from the end of the range.
+         NSUInteger seekingFromIndex = NSMaxRange(selectionRange);
 
-        if (wordForward == NO)
-        {
-            // However, when traversing in reverse, we should use the minimum
-            // of the range as the guidepost.
-            seekingFromIndex = selectionRange.location;
-        }
+         if (wordForward == NO)
+         {
+             // However, when traversing in reverse, we should use the minimum
+             // of the range as the guidepost.
+             seekingFromIndex = selectionRange.location;
+         }
 
-        // Get the new word index from the text storage.
-        // The "nextWord..." method is specific to the DVTTextStorage class.
-        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-        NSUInteger wordIndex = [textStorage nextWordFromIndex:seekingFromIndex
-                                                      forward:wordForward];
+         // Get the new word index from the text storage.
+         // The "nextWord..." method is specific to the DVTTextStorage class.
+         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+         NSUInteger wordIndex = [textStorage nextWordFromIndex:seekingFromIndex
+                                                       forward:wordForward];
 
-        NSRange newRange = NSMakeRange(wordIndex, 0);
+         NSRange newRange = NSMakeRange(wordIndex, 0);
 
-        // Unionize the ranges if we're expanding the selection.
-        if (modifySelection)
-        {
-            newRange = MPXSelectionJoinRanges(selectionRange, newRange);
-        }
+         // Unionize the ranges if we're expanding the selection.
+         if (modifySelection)
+         {
+             newRange = MPXSelectionJoinRanges(selectionRange, newRange);
+         }
 
-        return [MPXSelection selectionWithRange:newRange];
-    }];
+         return [MPXSelection selectionWithRange:newRange];
+     }];
 }
 
 #pragma mark Word Movement Forwarding (Directional)
@@ -724,84 +724,84 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     NSLayoutManager *layoutManager = self.layoutManager;
 
     [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
-    {
-        // "Previous" refers exclusively to time, not location.
-        NSRange previousAbsoluteRange = selection.range;
+     {
+         // "Previous" refers exclusively to time, not location.
+         NSRange previousAbsoluteRange = selection.range;
 
-        // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
-        NSRange previousLineRange = ({
-            NSRange range;
-            [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousAbsoluteRange)
-                                            effectiveRange:&range];
-            range;
-        });
+         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
+         NSRange previousLineRange = ({
+             NSRange range;
+             [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousAbsoluteRange)
+                                             effectiveRange:&range];
+             range;
+         });
 
-        // The index of the selection relative to the start of the line in the entire string
-        NSUInteger previousRelativeIndex = NSMaxRange(previousAbsoluteRange) - previousLineRange.location;
+         // The index of the selection relative to the start of the line in the entire string
+         NSUInteger previousRelativeIndex = NSMaxRange(previousAbsoluteRange) - previousLineRange.location;
 
-        // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
-        if (selection.intralineDesiredIndex != previousRelativeIndex &&
-            selection.intralineDesiredIndex != NSNotFound)
-        {
-            previousRelativeIndex = selection.intralineDesiredIndex;
-        }
+         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
+         if (selection.intralineDesiredIndex != previousRelativeIndex &&
+             selection.intralineDesiredIndex != NSNotFound)
+         {
+             previousRelativeIndex = selection.intralineDesiredIndex;
+         }
 
-        // The selection is in the first/zero-th line, so there is no above line to find.
-        // Sublime Text and OS X behavior is to jump to the start of the document.
-        if (previousLineRange.location == 0 &&
-            position == CATRelativePositionTop)
-        {
-            return [MPXSelection selectionWithRange:NSMakeRange(0, 0)];
-        }
-        else if (NSMaxRange(previousLineRange) == self.textStorage.length &&
-                 position == CATRelativePositionBottom)
-        {
-            return [MPXSelection selectionWithRange:NSMakeRange(self.textStorage.length, 0)];
-        }
-
-
-        NSRange newLineRange = ({
-            NSRange range;
-
-            if (position == CATRelativePositionTop)
-            {
-                [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
-                                                effectiveRange:&range];
-            }
-            else
-            {
-                [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
-                                                effectiveRange:&range];
-            }
+         // The selection is in the first/zero-th line, so there is no above line to find.
+         // Sublime Text and OS X behavior is to jump to the start of the document.
+         if (previousLineRange.location == 0 &&
+             position == CATRelativePositionTop)
+         {
+             return [MPXSelection selectionWithRange:NSMakeRange(0, 0)];
+         }
+         else if (NSMaxRange(previousLineRange) == self.textStorage.length &&
+                  position == CATRelativePositionBottom)
+         {
+             return [MPXSelection selectionWithRange:NSMakeRange(self.textStorage.length, 0)];
+         }
 
 
-            range;
-        });
+         NSRange newLineRange = ({
+             NSRange range;
 
-        // The line is long enough to show at the original relative-index
-        if (newLineRange.length > previousRelativeIndex)
-        {
-            NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
+             if (position == CATRelativePositionTop)
+             {
+                 [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                                                 effectiveRange:&range];
+             }
+             else
+             {
+                 [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                                                 effectiveRange:&range];
+             }
 
-            NSRange newAbsoluteRange = NSMakeRange(desiredPosition, 0);
-            if (modifySelection)
-            {
-                newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
-            }
 
-            return [MPXSelection selectionWithRange:newAbsoluteRange];
-        }
+             range;
+         });
 
-        NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
-        if (modifySelection)
-        {
-            newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
-        }
+         // The line is long enough to show at the original relative-index
+         if (newLineRange.length > previousRelativeIndex)
+         {
+             NSUInteger desiredPosition = newLineRange.location + previousRelativeIndex;
 
-        // This will place it at the end of the line, aiming to be placed at the original position.
-        return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
-                                           intralineDesiredIndex:previousRelativeIndex];
-    }];
+             NSRange newAbsoluteRange = NSMakeRange(desiredPosition, 0);
+             if (modifySelection)
+             {
+                 newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+             }
+
+             return [MPXSelection selectionWithRange:newAbsoluteRange];
+         }
+
+         NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
+         if (modifySelection)
+         {
+             newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+         }
+
+         // This will place it at the end of the line, aiming to be placed at the original position.
+         return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
+                                       intralineDesiredIndex:previousRelativeIndex];
+     }];
 }
 
 - (void)cat_moveSelectionsUpModifyingSelection:(BOOL)modifySelection
@@ -925,7 +925,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
     switch (clickCount) {
-        // Selects only the single point at the approximate location of the cursor
+            // Selects only the single point at the approximate location of the cursor
         case 1:
             resultRange = NSMakeRange(index, 0);
             break;
@@ -1029,89 +1029,72 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 {
     RACSequence *sortedSequence = [sortedRanges rac_sequence];
     NSArray *reducedRanges = [sortedSequence map:^MPXSelection *(MPXSelection *selection)
-    {
-         NSRange range1 = [selection range];
+                              {
+                                  NSRange range1 = [selection range];
+                                  __block NSRange rangeToAdd = range1;
 
-         __block NSRange rangeToAdd = range1;
-         __block BOOL shouldAdd = YES;
+                                  /* Preprocess the range to adjust for placeholders. */
 
-        /* Preprocess the range to adjust for placeholders. */
+                                  NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
+                                                                                                   forward:NO
+                                                                                                      wrap:NO
+                                                                                                     limit:0];
 
-        NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
-                                                                         forward:NO
-                                                                            wrap:YES
-                                                                           limit:rangeToAdd.length];
+                                  NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:rangeToAdd.location
+                                                                                                  forward:YES
+                                                                                                     wrap:NO
+                                                                                                    limit:0];
 
-        NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
-                                                                        forward:YES
-                                                                           wrap:YES
-                                                                          limit:rangeToAdd.length];
+                                  if (trailingPlaceholder.location != NSNotFound)
+                                  {
+                                      NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
+                                      if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0))
+                                      {
+                                          rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, trailingPlaceholder);
+                                      }
+                                  }
 
-        if (trailingPlaceholder.location != NSNotFound)
-        {
-            rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, trailingPlaceholder);
-        }
+                                  if (leadingPlaceholder.location != NSNotFound && !NSEqualRanges(leadingPlaceholder, trailingPlaceholder))
+                                  {
+                                      NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
+                                      if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0))
+                                      {
+                                          rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, leadingPlaceholder);
+                                      }
+                                  }
 
-        if (leadingPlaceholder.location != NSNotFound)
-        {
-            rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, leadingPlaceholder);
-        }
+                                  [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
+                                   {
+                                       if (selection == selectionRange2)
+                                       {
+                                           return;
+                                       }
 
-         [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
-          {
-              if (selection == selectionRange2)
-              {
-                  return;
-              }
+                                       NSRange range2 = [selectionRange2 range];
 
-              NSRange range2 = [selectionRange2 range];
+                                       BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
+                                       BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
 
-              BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
-              BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
+                                       if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
+                                       {
+                                           NSRange originalRangeToAdd = rangeToAdd;
 
-              if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
-              {
-                  NSRange originalRangeToAdd = rangeToAdd;
+                                           NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
+                                           if (relativeIncrease < range2.length)
+                                           {
+                                               rangeToAdd.length += range2.length - relativeIncrease;
+                                           }
 
-                  NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
-                  if (relativeIncrease < range2.length)
-                  {
-                      rangeToAdd.length += range2.length - relativeIncrease;
-                  }
-
-                  if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
-                  {
+                                           if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
+                                           {
 #warning Logic here does not transfer intraline index
-                      self.cat_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
-                  }
-              }
-          }];
+                                               self.cat_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
+                                           }
+                                       }
+                                   }];
 
-         [reducedRanges enumerateObjectsUsingBlock:^(MPXSelection *selectionRange2, NSUInteger idx, BOOL *stop)
-          {
-              NSRange range2 = [selectionRange2 range];
-              BOOL equivalentRanges = NSEqualRanges(rangeToAdd, range2);
-              if (equivalentRanges)
-              {
-                  shouldAdd = NO;
-                  *stop = YES;
-                  return;
-              }
-          }];
-
-//         BOOL modifiedSelection = [modifiedSelections[idx] boolValue];
-//         if (shouldAdd && modifiedSelection)
-//         {
-//             [reducedRanges addObject:[MPXSelection selectionWithRange:rangeToAdd]];
-//         }
-//         else if (shouldAdd && !modifiedSelection)
-//         {
-//             [reducedRanges addObject:[[MPXSelection alloc] initWithSelectionRange:rangeToAdd
-//                                                             intralineDesiredIndex:selectionRange1.intralineDesiredIndex]];
-//         }
-
-        return [MPXSelection selectionWithRange:rangeToAdd];
-    }].array;
+                                  return [MPXSelection selectionWithRange:rangeToAdd];
+                              }].array;
 
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
@@ -1148,7 +1131,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         self.cat_finalizingRanges = ranges;
     }
-    
+
     self.selectedTextAttributes = nil;
 
     /* Set the selected range for the breadcrumb bar. */
@@ -1181,40 +1164,40 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     RACSequence *rangeSequence = [ranges rac_sequence];
     self.cat_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection)
-    {
-        NSRange range = [selection range];
+                                {
+                                    NSRange range = [selection range];
 
-        if (range.length > 0)
-        {
-            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+                                    if (range.length > 0)
+                                    {
+                                        NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
-            [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
-                                     forCharacterRange:range];
-        }
+                                        [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
+                                                                 forCharacterRange:range];
+                                    }
 
-        NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
-                                                        actualCharacterRange:nil];
+                                    NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
+                                                                                    actualCharacterRange:nil];
 
-        NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
-                                                         inTextContainer:self.textContainer];
+                                    NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
+                                                                                     inTextContainer:self.textContainer];
 
-        CGRect caretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f, CGRectGetHeight(glyphRect)),
-                                        self.textContainerOrigin.x,
-                                        self.textContainerOrigin.y);
+                                    CGRect caretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f, CGRectGetHeight(glyphRect)),
+                                                                    self.textContainerOrigin.x,
+                                                                    self.textContainerOrigin.y);
 
-        NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
-        caretView.wantsLayer = YES;
-        caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+                                    NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
+                                    caretView.wantsLayer = YES;
+                                    caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-        return caretView;
-    }] array];
+                                    return caretView;
+                                }] array];
 
     [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *caret,
                                                           NSUInteger idx,
                                                           BOOL *stop)
-    {
-        [self addSubview:caret];
-    }];
+     {
+         [self addSubview:caret];
+     }];
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
@@ -1235,85 +1218,85 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     NSArray *selections =
     ({
         NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self cat_effectiveSelectedRanges]];
-
+        
         MPXSelection *existingSelection = selections[0];
-
+        
         offset += NSMaxRange(completedTextRange) - NSMaxRange(existingSelection.range);
-
+        
         selections[0] = [MPXSelection selectionWithRange:completedTextRange];
         selections;
     });
-
+    
     NSString *completionText = [self.string substringWithRange:completedTextRange];
-
+    
     /* Now, the remaining ranges need to be adjusted to include the text (and adjust the selection.) */
-
+    
     __block NSUInteger idx = 0;
     NSArray *newSelections = [[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection)
-    {
-        NSRange selectionRange = selection.range;
-
-        if (idx > 0)
-        {
-            selectionRange.location += offset;
-
-            /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
-             */
-            NSInteger completionStringIndex = [completionText length] - 1;
-
-            /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
-
-             (Completing for the word `category`)
-
-             cate| vs. nate|
-
-             Only chcking the first char before the selection would not be accurate.
-             */
-
-            NSInteger selectionRelativeIndex = 0;
-
-            while (completionStringIndex >= 0)
-            {
-                unichar completionChar = [completionText characterAtIndex:completionStringIndex];
-                unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
-
-                if (completionChar == compareStorageChar)
-                {
-                    selectionRelativeIndex--;
-                }
-
-                /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back.
-                 */
-                completionStringIndex--;
-            }
-
-            NSInteger completionStringStartIndex = -selectionRelativeIndex;
-            NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
-            
-            [self insertText:[completionText substringFromIndex:completionStringStartIndex]
-            replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
-
-            offset += insertedStringLength;
-        }
-
-        NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:selectionRange];
-        
-        NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:indentedRange.location
-                                                                      forward:YES
-                                                                         wrap:YES
-                                                                        limit:indentedRange.length];
-
-        idx++;
-
-        if (firstPlaceholder.location == NSUIntegerMax)
-        {
-            NSRange finalEndOfCompletionRange = NSMakeRange(NSMaxRange(indentedRange), 0);
-            return [MPXSelection selectionWithRange:finalEndOfCompletionRange];
-        }
-
-        return [MPXSelection selectionWithRange:firstPlaceholder];
-    }].array;
-
+                              {
+                                  NSRange selectionRange = selection.range;
+                                  
+                                  if (idx > 0)
+                                  {
+                                      selectionRange.location += offset;
+                                      
+                                      /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
+                                       */
+                                      NSInteger completionStringIndex = [completionText length] - 1;
+                                      
+                                      /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
+                                       
+                                       (Completing for the word `category`)
+                                       
+                                       cate| vs. nate|
+                                       
+                                       Only chcking the first char before the selection would not be accurate.
+                                       */
+                                      
+                                      NSInteger selectionRelativeIndex = 0;
+                                      
+                                      while (completionStringIndex >= 0)
+                                      {
+                                          unichar completionChar = [completionText characterAtIndex:completionStringIndex];
+                                          unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
+                                          
+                                          if (completionChar == compareStorageChar)
+                                          {
+                                              selectionRelativeIndex--;
+                                          }
+                                          
+                                          /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back.
+                                           */
+                                          completionStringIndex--;
+                                      }
+                                      
+                                      NSInteger completionStringStartIndex = -selectionRelativeIndex;
+                                      NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
+                                      
+                                      [self insertText:[completionText substringFromIndex:completionStringStartIndex]
+                                      replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
+                                      
+                                      offset += insertedStringLength;
+                                  }
+                                  
+                                  NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:selectionRange];
+                                  
+                                  NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:indentedRange.location
+                                                                                                forward:YES
+                                                                                                   wrap:YES
+                                                                                                  limit:indentedRange.length];
+                                  
+                                  idx++;
+                                  
+                                  if (firstPlaceholder.location == NSUIntegerMax)
+                                  {
+                                      NSRange finalEndOfCompletionRange = NSMakeRange(NSMaxRange(indentedRange), 0);
+                                      return [MPXSelection selectionWithRange:finalEndOfCompletionRange];
+                                  }
+                                  
+                                  return [MPXSelection selectionWithRange:firstPlaceholder];
+                              }].array;
+    
     [self cat_setSelectedRanges:newSelections
                        finalize:YES];
 }
