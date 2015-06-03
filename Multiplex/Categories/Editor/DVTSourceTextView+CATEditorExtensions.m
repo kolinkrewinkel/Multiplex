@@ -911,10 +911,12 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 
     NSInteger clickCount = theEvent.clickCount;
-    BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
+    BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
 
-    if (altKeyHeld)
+    BOOL insertNewCursorKeysHeld = (altKeyHeld && commandKeyHeld);
+
+    if ((altKeyHeld || commandKeyHeld) && !insertNewCursorKeysHeld)
     {
         CAT_DVTSourceTextView_Original_MouseDown(self, @selector(mouseDown:), theEvent);
         return;
@@ -956,7 +958,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.cat_rangeInProgress = selection;
     self.cat_rangeInProgressStart = selection;
 
-    if (commandKeyHeld)
+    if (insertNewCursorKeysHeld)
     {
         [self cat_setSelectedRanges:[selections arrayByAddingObject:selection]
                            finalize:NO];
