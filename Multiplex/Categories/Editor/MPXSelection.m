@@ -12,6 +12,7 @@
 
 @property (nonatomic) NSRange range;
 @property (nonatomic) NSUInteger intralineDesiredIndex;
+@property (nonatomic) NSUInteger origin;
 
 @end
 
@@ -20,12 +21,15 @@
 #pragma mark -
 #pragma mark Designated Initializer
 
-- (instancetype)initWithSelectionRange:(NSRange)range intralineDesiredIndex:(NSUInteger)intralineDesiredIndex
+- (instancetype)initWithSelectionRange:(NSRange)range
+                 intralineDesiredIndex:(NSUInteger)intralineDesiredIndex
+                                origin:(NSUInteger)origin
 {
     if ((self = [self init]))
     {
         self.range = range;
         self.intralineDesiredIndex = intralineDesiredIndex;
+        self.origin = origin;
     }
 
     return self;
@@ -36,7 +40,9 @@
 
 - (instancetype)initWithSelectionRange:(NSRange)range
 {
-    return [[[self class] alloc] initWithSelectionRange:range intralineDesiredIndex:NSNotFound];
+    return [[[self class] alloc] initWithSelectionRange:range
+                                  intralineDesiredIndex:NSNotFound
+                                                 origin:range.location];
 }
 
 + (instancetype)selectionWithRange:(NSRange)range
