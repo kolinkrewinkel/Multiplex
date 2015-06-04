@@ -36,6 +36,20 @@ NS_INLINE NSRange MPXSelectionJoinRanges(NSRange originalRange, NSRange newRange
     return joinedRange;
 }
 
+NS_INLINE CGFloat MPXApproximatePixelValueForView(NSView *view, CGFloat value)
+{
+  CGFloat scale = view.window.screen.backingScaleFactor;
+  return roundf(value * scale) / scale;
+}
+
+NS_INLINE CGRect MPXApproximateRectToView(CGRect rect, NSView *view)
+{
+  return CGRectMake(MPXApproximatePixelValueForView(view, rect.origin.x),
+                    MPXApproximatePixelValueForView(view, rect.origin.y),
+                    MPXApproximatePixelValueForView(view, rect.size.width),
+                    MPXApproximatePixelValueForView(view, rect.size.height));
+}
+
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
 
@@ -1183,14 +1197,16 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                     NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
                                                                                      inTextContainer:self.textContainer];
 
-                                    CGRect caretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f, CGRectGetHeight(glyphRect)),
+                                    CGRect unroundedCaretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f/self.window.screen.backingScaleFactor, CGRectGetHeight(glyphRect)),
                                                                     self.textContainerOrigin.x,
                                                                     self.textContainerOrigin.y);
-
+                                  
+                                    CGRect caretRect = MPXApproximateRectToView(unroundedCaretRect, self);
+                                  
                                     NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
                                     caretView.wantsLayer = YES;
                                     caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
-
+                                  
                                     return caretView;
                                 }] array];
 
