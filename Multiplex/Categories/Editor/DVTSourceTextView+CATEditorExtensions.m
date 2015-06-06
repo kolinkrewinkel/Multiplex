@@ -18,6 +18,7 @@ static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
 static IMP CAT_DVTSourceTextView_Original_MouseDown = nil;
 static IMP CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
 static IMP CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
+static IMP CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = nil;
 
 NS_INLINE NSRange MPXSelectionJoinRanges(NSRange originalRange, NSRange newRange)
 {
@@ -73,6 +74,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     CAT_DVTSourceTextView_Original_MouseDown = PLYPoseSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), YES);
     CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = PLYPoseSwizzle(self, @selector(didInsertCompletionTextAtRange:), self, @selector(cat_didInsertCompletionTextAtRange:), YES);
     CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = PLYPoseSwizzle(self, @selector(adjustTypeOverCompletionForEditedRange:changeInLength:), self, @selector(cat_adjustTypeOverCompletionForEditedRange:changeInLength:), YES);
+    CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = PLYPoseSwizzle(self, @selector(shouldAutoCompleteAtLocation:), self, @selector(cat_shouldAutoCompleteAtLocation:), YES);
 }
 
 #pragma mark -
@@ -86,8 +88,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.cat_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
     self.selectedTextAttributes = nil;
-
-    [self cat_startBlinking];
 }
 
 #pragma mark -
@@ -98,6 +98,16 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     return YES;
 }
 
+- (void)cat_setCursorsVisible:(BOOL)visible
+{
+    [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *view,
+                                                          NSUInteger idx,
+                                                          BOOL *stop)
+    {
+        view.hidden = !visible;
+    }];
+}
+
 - (void)cat_blinkCursors:(NSTimer *)sender
 {
     if ([self.cat_selectionViews count] == 0)
@@ -106,31 +116,25 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 
     BOOL previous = self.cat_blinkState;
+    BOOL windowActive = self.window.isKeyWindow;
 
-    [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *view,
-                                                          NSUInteger idx,
-                                                          BOOL *stop)
-     {
-         if (self.window.isKeyWindow)
-         {
-             view.hidden = !previous;
-         }
-         else
-         {
-             view.hidden = YES;
-         }
-     }];
-
-    self.cat_blinkState = !previous;
+    if (windowActive)
+    {
+        [self cat_setCursorsVisible:!previous];
+    }
+    else
+    {
+        [self cat_setCursorsVisible:windowActive];
+        self.cat_blinkState = windowActive;
+    }
 }
 
 - (void)cat_startBlinking
 {
-    if (self.cat_blinkTimer.valid)
-    {
-        return;
-    }
-
+    // This used to check if the blink timer was already there, however:
+    // we should restart it because the old one will mess up a new cursor's showing
+    // for too short a time if the timer was already in motion.
+    [self cat_stopBlinking];
     self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5
                                                   target:self
                                                 selector:@selector(cat_blinkCursors:)
@@ -144,6 +148,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (void)cat_stopBlinking
 {
     [self.cat_blinkTimer invalidate];
+
+    [self cat_setCursorsVisible:NO];
 }
 
 - (void)cat_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
@@ -208,7 +214,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
          // Move cursor (or range-selection) to the end of what was just added with 0-length.
          NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
          return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
-                                       intralineDesiredIndex:relativeLinePosition];
+                                       intralineDesiredIndex:relativeLinePosition
+                                                      origin:newInsertionPointRange.location];
      }];
 }
 
@@ -814,7 +821,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
          // This will place it at the end of the line, aiming to be placed at the original position.
          return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
-                                       intralineDesiredIndex:previousRelativeIndex];
+                                       intralineDesiredIndex:previousRelativeIndex
+                                                      origin:newAbsoluteRange.location];
      }];
 }
 
@@ -923,6 +931,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     {
         return;
     }
+
+    [self cat_stopBlinking];
 
     NSInteger clickCount = theEvent.clickCount;
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
@@ -1317,6 +1327,16 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     
     [self cat_setSelectedRanges:newSelections
                        finalize:YES];
+}
+
+- (BOOL)cat_shouldAutoCompleteAtLocation:(NSUInteger)location
+{
+    BOOL internalShouldAutoComplete = (BOOL)CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation(self,
+                                                                                                        @selector(shouldAutoCompleteAtLocation:),
+                                                                                                        location);
+
+    return (internalShouldAutoComplete &&
+            !([[self cat_effectiveSelectedRanges] count] > 1));
 }
 
 @end
