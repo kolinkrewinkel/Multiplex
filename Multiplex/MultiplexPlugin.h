@@ -10,8 +10,7 @@
 
 @interface MultiplexPlugin : NSObject
 
-#pragma mark -
-#pragma mark Singleton
+#pragma mark - Singleton
 
 + (instancetype)sharedPlugin;
 

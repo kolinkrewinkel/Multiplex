@@ -18,8 +18,7 @@ static NSString *kCATApplicationName = @"Xcode";
 
 @implementation MultiplexPlugin
 
-#pragma mark -
-#pragma mark Instantiation
+#pragma mark - Instantiation
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
@@ -31,8 +30,7 @@ static NSString *kCATApplicationName = @"Xcode";
     }
 }
 
-#pragma mark -
-#pragma mark Singleton
+#pragma mark - Singleton
 
 + (instancetype)sharedPluginWithBundle:(NSBundle *)bundle
 {
@@ -51,8 +49,7 @@ static NSString *kCATApplicationName = @"Xcode";
     return [self sharedPluginWithBundle:nil];
 }
 
-#pragma mark -
-#pragma mark Designated Initializer
+#pragma mark - Designated Initializer
 
 - (id)initWithBundle:(NSBundle *)bundle
 {

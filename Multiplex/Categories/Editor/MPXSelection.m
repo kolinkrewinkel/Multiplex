@@ -18,8 +18,7 @@
 
 @implementation MPXSelection
 
-#pragma mark -
-#pragma mark Designated Initializer
+#pragma mark - Designated Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range
                  intralineDesiredIndex:(NSUInteger)intralineDesiredIndex
@@ -35,8 +34,7 @@
     return self;
 }
 
-#pragma mark -
-#pragma mark New Range-Convenience Initializer
+#pragma mark - New Range-Convenience Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range
 {
@@ -50,8 +48,7 @@
     return [[[self alloc] init] initWithSelectionRange:range];
 }
 
-#pragma mark -
-#pragma mark NSObject
+#pragma mark - NSObject
 
 - (BOOL)isEqual:(id)object
 {

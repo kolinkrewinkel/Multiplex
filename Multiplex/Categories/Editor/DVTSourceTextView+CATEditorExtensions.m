@@ -39,16 +39,16 @@ NS_INLINE NSRange MPXSelectionJoinRanges(NSRange originalRange, NSRange newRange
 
 NS_INLINE CGFloat MPXApproximatePixelValueForView(NSView *view, CGFloat value)
 {
-  CGFloat scale = view.window.screen.backingScaleFactor;
-  return roundf(value * scale) / scale;
+    CGFloat scale = view.window.screen.backingScaleFactor;
+    return roundf(value * scale) / scale;
 }
 
 NS_INLINE CGRect MPXApproximateRectToView(CGRect rect, NSView *view)
 {
-  return CGRectMake(MPXApproximatePixelValueForView(view, rect.origin.x),
-                    MPXApproximatePixelValueForView(view, rect.origin.y),
-                    MPXApproximatePixelValueForView(view, rect.size.width),
-                    MPXApproximatePixelValueForView(view, rect.size.height));
+    return CGRectMake(MPXApproximatePixelValueForView(view, rect.origin.x),
+                      MPXApproximatePixelValueForView(view, rect.origin.y),
+                      MPXApproximatePixelValueForView(view, rect.size.width),
+                      MPXApproximatePixelValueForView(view, rect.size.height));
 }
 
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
@@ -64,8 +64,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 @synthesizeAssociation(DVTSourceTextView, cat_selectedRanges);
 @synthesizeAssociation(DVTSourceTextView, cat_selectionViews);
 
-#pragma mark -
-#pragma mark NSObject
+#pragma mark - NSObject
 
 + (void)load
 {
@@ -77,8 +76,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = PLYPoseSwizzle(self, @selector(shouldAutoCompleteAtLocation:), self, @selector(cat_shouldAutoCompleteAtLocation:), YES);
 }
 
-#pragma mark -
-#pragma mark Initializer
+#pragma mark - Initializer
 
 - (void)cat_commonInitDVTSourceTextView
 {
@@ -90,8 +88,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.selectedTextAttributes = nil;
 }
 
-#pragma mark -
-#pragma mark Cursors
+#pragma mark - Cursors
 
 - (BOOL)isSelectable
 {
@@ -103,9 +100,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *view,
                                                           NSUInteger idx,
                                                           BOOL *stop)
-    {
-        view.hidden = !visible;
-    }];
+     {
+         view.hidden = !visible;
+     }];
 }
 
 - (void)cat_blinkCursors:(NSTimer *)sender
@@ -159,8 +156,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self cat_updateSelectionVisualizations];
 }
 
-#pragma mark -
-#pragma mark Setters/Getters
+#pragma mark - Setters/Getters
 
 - (NSArray *)cat_effectiveSelectedRanges
 {
@@ -172,8 +168,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     return self.cat_selectedRanges ?: @[];
 }
 
-#pragma mark -
-#pragma mark Keyboard Events
+#pragma mark - Keyboard Events
 
 - (void)insertText:(id)insertObject
 {
@@ -656,8 +651,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     NSLog(@"Center selection requested from %@", sender);
 }
 
-#pragma mark -
-#pragma mark Basic Directional Arrows
+#pragma mark - Basic Directional Arrows
 #pragma mark -
 
 #pragma mark Simple Index-Movement
@@ -884,8 +878,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark -
 
-#pragma mark -
-#pragma mark Mouse Events
+#pragma mark - Mouse Events
 
 - (void)cat_mouseDragged:(NSEvent *)theEvent
 {
@@ -1009,8 +1002,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 }
 
 
-#pragma mark -
-#pragma mark Range Manipulation
+#pragma mark - Range Manipulation
 
 - (void)selectAll:(id)sender
 {
@@ -1208,15 +1200,15 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                                                      inTextContainer:self.textContainer];
 
                                     CGRect unroundedCaretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f/self.window.screen.backingScaleFactor, CGRectGetHeight(glyphRect)),
-                                                                    self.textContainerOrigin.x,
-                                                                    self.textContainerOrigin.y);
-                                  
+                                                                             self.textContainerOrigin.x,
+                                                                             self.textContainerOrigin.y);
+
                                     CGRect caretRect = MPXApproximateRectToView(unroundedCaretRect, self);
-                                  
+
                                     NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
                                     caretView.wantsLayer = YES;
                                     caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
-                                  
+
                                     return caretView;
                                 }] array];
 
@@ -1233,8 +1225,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 }
 
-#pragma mark -
-#pragma mark Autocompletion
+#pragma mark - Autocompletion
 
 - (void)cat_didInsertCompletionTextAtRange:(NSRange)completedTextRange
 {
@@ -1246,28 +1237,28 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     NSArray *selections =
     ({
         NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self cat_effectiveSelectedRanges]];
-        
+
         MPXSelection *existingSelection = selections[0];
-        
+
         offset += NSMaxRange(completedTextRange) - NSMaxRange(existingSelection.range);
-        
+
         selections[0] = [MPXSelection selectionWithRange:completedTextRange];
         selections;
     });
-    
+
     NSString *completionText = [self.string substringWithRange:completedTextRange];
-    
+
     /* Now, the remaining ranges need to be adjusted to include the text (and adjust the selection.) */
-    
+
     __block NSUInteger idx = 0;
     NSArray *newSelections = [[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection)
                               {
                                   NSRange selectionRange = selection.range;
-                                  
+
                                   if (idx > 0)
                                   {
                                       selectionRange.location += offset;
-                                      
+
                                       /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
                                        */
                                       NSInteger completionStringIndex = [completionText length] - 1;
@@ -1334,7 +1325,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     BOOL internalShouldAutoComplete = (BOOL)CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation(self,
                                                                                                         @selector(shouldAutoCompleteAtLocation:),
                                                                                                         location);
-
+    
     return (internalShouldAutoComplete &&
             !([[self cat_effectiveSelectedRanges] count] > 1));
 }

@@ -8,21 +8,18 @@
 
 @interface MPXSelection : NSObject
 
-#pragma mark -
-#pragma mark Designated Initializer
+#pragma mark - Designated Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range
                  intralineDesiredIndex:(NSUInteger)intralineDesiredIndex
                                 origin:(NSUInteger)origin;
 
-#pragma mark -
-#pragma mark New Range-Convenience Initializer
+#pragma mark - New Range-Convenience Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range;
 + (instancetype)selectionWithRange:(NSRange)range;
 
-#pragma mark -
-#pragma mark Attributes
+#pragma mark - Attributes
 
 @property (nonatomic, readonly) NSRange range;
 @property (nonatomic, readonly) NSUInteger intralineDesiredIndex;
