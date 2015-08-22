@@ -8,7 +8,7 @@
 
 #import "MultiplexPlugin.h"
 
-static NSString *kCATApplicationName = @"Xcode";
+static NSString *kMPXApplicationName = @"Xcode";
 
 @interface MultiplexPlugin ()
 
@@ -22,10 +22,7 @@ static NSString *kCATApplicationName = @"Xcode";
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
-    NSString *currentApplicationName = [[NSBundle mainBundle] infoDictionary][(NSString *)kCFBundleNameKey];
-
-    if ([currentApplicationName isEqual:kCATApplicationName])
-    {
+    if ([[[NSBundle mainBundle] infoDictionary][(NSString *)kCFBundleNameKey] isEqual:kMPXApplicationName]) {
         [self sharedPluginWithBundle:plugin];
     }
 }
@@ -53,8 +50,7 @@ static NSString *kCATApplicationName = @"Xcode";
 
 - (id)initWithBundle:(NSBundle *)bundle
 {
-    if ((self = [self init]))
-    {
+    if (self = [self init]) {
         self.bundle = bundle;
     }
 

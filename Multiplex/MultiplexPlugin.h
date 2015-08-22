@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import <AppKit/AppKit.h>
-
 @interface MultiplexPlugin : NSObject
 
 #pragma mark - Singleton
