@@ -1153,49 +1153,44 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
                              forCharacterRange:NSMakeRange(0, self.string.length)];
 
-
     /* Remove any onscreen cursors */
     [self.mpx_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     RACSequence *rangeSequence = [ranges rac_sequence];
-    self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection)
-                                {
-                                    NSRange range = [selection range];
+    self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
+        NSRange range = [selection range];
 
-                                    if (range.length > 0)
-                                    {
-                                        NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+        if (range.length > 0)
+        {
+            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
 
-                                        [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
-                                                                 forCharacterRange:range];
-                                    }
+            [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
+                                     forCharacterRange:range];
+        }
 
-                                    NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
-                                                                                    actualCharacterRange:nil];
+        NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
+                                                        actualCharacterRange:nil];
 
-                                    NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
-                                                                                     inTextContainer:self.textContainer];
+        NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
+                                                         inTextContainer:self.textContainer];
 
-                                    CGRect unroundedCaretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f/self.window.screen.backingScaleFactor, CGRectGetHeight(glyphRect)),
-                                                                             self.textContainerOrigin.x,
-                                                                             self.textContainerOrigin.y);
+        CGRect unroundedCaretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f/self.window.screen.backingScaleFactor, CGRectGetHeight(glyphRect)),
+                                                 self.textContainerOrigin.x,
+                                                 self.textContainerOrigin.y);
 
-                                    CGRect caretRect = MPXRoundedValueRectForView(unroundedCaretRect, self);
+        CGRect caretRect = MPXRoundedValueRectForView(unroundedCaretRect, self);
 
-                                    NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
-                                    caretView.wantsLayer = YES;
-                                    caretView.hidden = !self.mpx_blinkState;
-                                    caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+        NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
+        caretView.wantsLayer = YES;
+        caretView.hidden = !self.mpx_blinkState;
+        caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-                                    return caretView;
-                                }] array];
+        return caretView;
+    }] array];
 
-    [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *caret,
-                                                          NSUInteger idx,
-                                                          BOOL *stop)
-     {
-         [self addSubview:caret];
-     }];
+    [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
+        [self addSubview:caret];
+    }];
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
