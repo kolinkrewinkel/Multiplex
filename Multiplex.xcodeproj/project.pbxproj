@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		33100A061A4F92400062D0D0 /* MPXSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* MPXSelection.m */; };
+		338732331B899E950053977A /* FrameworkHeaders in Resources */ = {isa = PBXBuildFile; fileRef = 338732321B899E950053977A /* FrameworkHeaders */; };
 		3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */; };
 		33A74F2D1B8935FB00FBBD2B /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2B1B8935FB00FBBD2B /* DVTFoundation.framework */; };
 		33A74F2E1B8935FB00FBBD2B /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2C1B8935FB00FBBD2B /* DVTKit.framework */; };
@@ -24,7 +25,7 @@
 /* Begin PBXFileReference section */
 		33100A041A4F92400062D0D0 /* MPXSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelection.h; sourceTree = "<group>"; };
 		33100A051A4F92400062D0D0 /* MPXSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelection.m; sourceTree = "<group>"; };
-		3338E1A118EF740300C76084 /* DVTInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTInterfaces.h; sourceTree = "<group>"; };
+		338732321B899E950053977A /* FrameworkHeaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrameworkHeaders; sourceTree = "<group>"; };
 		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
 		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
 		33A74F2B1B8935FB00FBBD2B /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = "../../../Applications/Xcode-beta.app/Contents/SharedFrameworks/DVTFoundation.framework"; sourceTree = "<group>"; };
@@ -76,14 +77,6 @@
 			path = Categories/Editor;
 			sourceTree = "<group>";
 		};
-		3338E1A018EF740300C76084 /* Developer Kits */ = {
-			isa = PBXGroup;
-			children = (
-				3338E1A118EF740300C76084 /* DVTInterfaces.h */,
-			);
-			path = "Developer Kits";
-			sourceTree = "<group>";
-		};
 		33B3A3E118CD36BE00AA64C8 = {
 			isa = PBXGroup;
 			children = (
@@ -119,10 +112,10 @@
 		33B3A3F118CD36BE00AA64C8 /* Multiplex */ = {
 			isa = PBXGroup;
 			children = (
+				338732321B899E950053977A /* FrameworkHeaders */,
 				33B3A3F718CD36BE00AA64C8 /* MultiplexPlugin.h */,
 				33B3A3F818CD36BE00AA64C8 /* MultiplexPlugin.m */,
 				33F94F3018CFC4DE0092E74C /* Categories */,
-				3338E1A018EF740300C76084 /* Developer Kits */,
 				33B3A3F218CD36BE00AA64C8 /* Supporting Files */,
 				33B3A40418CD375300AA64C8 /* Utilities */,
 			);
@@ -219,6 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				338732331B899E950053977A /* FrameworkHeaders in Resources */,
 				33B3A3F618CD36BE00AA64C8 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -387,6 +381,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "${TARGET_NAME}/${TARGET_NAME}-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/$(PROJECT_NAME)/FrameworkHeaders/";
 				INFOPLIST_FILE = "${TARGET_NAME}/${TARGET_NAME}-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
@@ -420,6 +415,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "${TARGET_NAME}/${TARGET_NAME}-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/$(PROJECT_NAME)/FrameworkHeaders/";
 				INFOPLIST_FILE = "${TARGET_NAME}/${TARGET_NAME}-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
