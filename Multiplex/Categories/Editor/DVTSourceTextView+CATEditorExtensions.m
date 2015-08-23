@@ -123,15 +123,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    BOOL previous = self.mpx_blinkState;
-    BOOL windowActive = self.window.isKeyWindow;
-
-    if (windowActive) {
-        [self mpx_setCursorsVisible:!previous];
-    } else {
-        [self mpx_setCursorsVisible:windowActive];
-        self.mpx_blinkState = windowActive;
-    }
+    self.mpx_blinkState = !self.mpx_blinkState;
+    [self mpx_setCursorsVisible:self.mpx_blinkState];
 }
 
 - (void)mpx_startBlinking
