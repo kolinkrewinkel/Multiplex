@@ -68,7 +68,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.cat_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.cat_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
-    self.selectedTextAttributes = nil;
+    self.selectedTextAttributes = @{};
 }
 
 #pragma mark - Cursors
