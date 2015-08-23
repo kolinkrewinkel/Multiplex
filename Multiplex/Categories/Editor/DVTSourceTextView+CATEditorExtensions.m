@@ -151,10 +151,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
 {
-    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1
-                                                                                             atIndex:2];
-    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg2
-                                                                                             atIndex:3];
+    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1 atIndex:2];
+    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg2 atIndex:3];
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
 
     [self mpx_updateSelectionVisualizations];
