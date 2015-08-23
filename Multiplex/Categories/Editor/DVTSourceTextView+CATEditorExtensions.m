@@ -1136,7 +1136,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         self.mpx_finalizingRanges = ranges;
     }
 
-    self.selectedTextAttributes = nil;
+    self.selectedTextAttributes = @{};
 
     /* Set the selected range for the breadcrumb bar. */
     if ([ranges count] > 0)
