@@ -25,6 +25,7 @@ static NSInvocation *Original_MouseDown = nil;
 static NSInvocation *Original_DidInsertCompletionTextAtRange = nil;
 static NSInvocation *Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 static NSInvocation *Original_ShouldAutoCompleteAtLocation = nil;
+static NSInvocation *Original_ViewWillMoveToWindow = nil;
 
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
@@ -65,6 +66,12 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                        self,
                                                        @selector(mpx_shouldAutoCompleteAtLocation:),
                                                        NO);
+
+    Original_ViewWillMoveToWindow = MPXSwizzle(self,
+                                               @selector(viewWillMoveToWindow:),
+                                               self,
+                                               @selector(mpx_viewWillMoveToWindow:),
+                                               NO);
 }
 
 #pragma mark - Initializer
@@ -77,6 +84,23 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
     self.selectedTextAttributes = @{};
+}
+
+#pragma mark - NSView
+
+- (void)mpx_viewWillMoveToWindow:(NSWindow *)window
+{
+    [Original_ViewWillMoveToWindow setArgument:&window atIndex:2];
+    [Original_ViewWillMoveToWindow invokeWithTarget:self];
+
+    // Observe the window's state while the view resides in it
+    if (window) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mpx_startBlinking) name:NSWindowDidBecomeKeyNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mpx_stopBlinking) name:NSWindowDidResignKeyNotification object:window];
+    } else {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+    }
 }
 
 #pragma mark - Cursors
