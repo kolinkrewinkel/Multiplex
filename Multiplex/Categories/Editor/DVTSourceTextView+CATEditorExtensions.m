@@ -11,14 +11,14 @@
 #import "DVTSourceTextView+CATEditorExtensions.h"
 
 #import "MPXSelection.h"
-#import "PLYSwizzling.h"
+#import "MPXSwizzle.h"
 
-static IMP CAT_DVTSourceTextView_Original_Init = nil;
-static IMP CAT_DVTSourceTextView_Original_MouseDragged = nil;
-static IMP CAT_DVTSourceTextView_Original_MouseDown = nil;
-static IMP CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
-static IMP CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
-static IMP CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = nil;
+static NSInvocation *CAT_DVTSourceTextView_Original_Init = nil;
+static NSInvocation *CAT_DVTSourceTextView_Original_MouseDragged = nil;
+static NSInvocation *CAT_DVTSourceTextView_Original_MouseDown = nil;
+static NSInvocation *CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
+static NSInvocation *CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
+static NSInvocation *CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = nil;
 
 NS_INLINE NSRange MPXSelectionJoinRanges(NSRange originalRange, NSRange newRange)
 {
@@ -68,19 +68,19 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 + (void)load
 {
-    CAT_DVTSourceTextView_Original_Init = PLYPoseSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), YES);
-    CAT_DVTSourceTextView_Original_MouseDragged = PLYPoseSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), YES);
-    CAT_DVTSourceTextView_Original_MouseDown = PLYPoseSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), YES);
-    CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = PLYPoseSwizzle(self, @selector(didInsertCompletionTextAtRange:), self, @selector(cat_didInsertCompletionTextAtRange:), YES);
-    CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = PLYPoseSwizzle(self, @selector(adjustTypeOverCompletionForEditedRange:changeInLength:), self, @selector(cat_adjustTypeOverCompletionForEditedRange:changeInLength:), YES);
-    CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = PLYPoseSwizzle(self, @selector(shouldAutoCompleteAtLocation:), self, @selector(cat_shouldAutoCompleteAtLocation:), YES);
+    CAT_DVTSourceTextView_Original_Init = MPXSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), NO);
+    CAT_DVTSourceTextView_Original_MouseDragged = MPXSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), NO);
+    CAT_DVTSourceTextView_Original_MouseDown = MPXSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), NO);
+    CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = MPXSwizzle(self, @selector(didInsertCompletionTextAtRange:), self, @selector(cat_didInsertCompletionTextAtRange:), NO);
+    CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = MPXSwizzle(self, @selector(adjustTypeOverCompletionForEditedRange:changeInLength:), self, @selector(cat_adjustTypeOverCompletionForEditedRange:changeInLength:), NO);
+    CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = MPXSwizzle(self, @selector(shouldAutoCompleteAtLocation:), self, @selector(cat_shouldAutoCompleteAtLocation:), NO);
 }
 
 #pragma mark - Initializer
 
 - (void)cat_commonInitDVTSourceTextView
 {
-    CAT_DVTSourceTextView_Original_Init(self, @selector(_commonInitDVTSourceTextView));
+    [CAT_DVTSourceTextView_Original_Init invokeWithTarget:self];
 
     self.cat_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.cat_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
@@ -151,7 +151,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)cat_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
 {
-    CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength(self, @selector(adjustTypeOverCompletionForEditedRange:changeInLength:), arg1, arg2);
+    [CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1
+                                                                                             atIndex:0];
+    [CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg2
+                                                                                             atIndex:1];
+    [CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
 
     [self cat_updateSelectionVisualizations];
 }
@@ -935,7 +939,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     if ((altKeyHeld || commandKeyHeld) && !insertNewCursorKeysHeld)
     {
-        CAT_DVTSourceTextView_Original_MouseDown(self, @selector(mouseDown:), theEvent);
+        [CAT_DVTSourceTextView_Original_MouseDown setArgument:&theEvent atIndex:0];
+        [CAT_DVTSourceTextView_Original_MouseDown invokeWithTarget:self];
         return;
     }
 
@@ -952,7 +957,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         {
             if ([((DVTLayoutManager *)self.layoutManager) foldCellAtCharacterIndex:index])
             {
-                CAT_DVTSourceTextView_Original_MouseDown(self, @selector(mouseDown:), theEvent);
+                [CAT_DVTSourceTextView_Original_MouseDown setArgument:&theEvent atIndex:0];
+                [CAT_DVTSourceTextView_Original_MouseDown invokeWithTarget:self];
                 return;
             }
 
@@ -1322,9 +1328,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (BOOL)cat_shouldAutoCompleteAtLocation:(NSUInteger)location
 {
-    BOOL internalShouldAutoComplete = (BOOL)CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation(self,
-                                                                                                        @selector(shouldAutoCompleteAtLocation:),
-                                                                                                        location);
+    [CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation setArgument:&location atIndex:0];
+    [CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation invokeWithTarget:self];
+
+    BOOL internalShouldAutoComplete = NO;
+    [CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation getReturnValue:&internalShouldAutoComplete];
     
     return (internalShouldAutoComplete &&
             !([[self cat_effectiveSelectedRanges] count] > 1));
