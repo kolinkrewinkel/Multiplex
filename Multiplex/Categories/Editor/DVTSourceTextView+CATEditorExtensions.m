@@ -1160,10 +1160,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
         NSRange range = [selection range];
 
-        if (range.length > 0)
-        {
+        // Paint the background of the selection range for selections taht are not just insertion points.
+        if (range.length > 0) {
             NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-
             [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
                                      forCharacterRange:range];
         }
