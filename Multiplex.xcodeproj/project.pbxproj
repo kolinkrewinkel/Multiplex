@@ -186,7 +186,7 @@
 		33B3A3E218CD36BE00AA64C8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Kolin Krewinkel";
 			};
 			buildConfigurationList = 33B3A3E518CD36BE00AA64C8 /* Build configuration list for PBXProject "Multiplex" */;
@@ -308,6 +308,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -389,6 +390,7 @@
 					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
 					"$(DEVELOPER_DIR)/../PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kolinkrewinkel.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = Multiplex;
 				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -423,6 +425,7 @@
 					"$(DEVELOPER_DIR)/../Frameworks/IDEFoundation.framework/Versions/A",
 					"$(DEVELOPER_DIR)/../PlugIns/IDESourceEditor.ideplugin/Contents/MacOS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kolinkrewinkel.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = Multiplex;
 				SWIFT_OBJC_BRIDGING_HEADER = "CommandEdit/CommandEdit-Bridging-Header.h";
 				VERSIONING_SYSTEM = "";
