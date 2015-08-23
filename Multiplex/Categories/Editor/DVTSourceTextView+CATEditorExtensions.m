@@ -908,9 +908,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    [self mpx_stopBlinking];
-    [self mpx_setCursorsVisible:YES];
-
     NSInteger clickCount = theEvent.clickCount;
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
@@ -956,6 +953,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     {
         return;
     }
+
+    [self mpx_stopBlinking];
+    [self mpx_setCursorsVisible:YES];
 
     MPXSelection *selection = [MPXSelection selectionWithRange:resultRange];
     self.mpx_rangeInProgress = selection;
