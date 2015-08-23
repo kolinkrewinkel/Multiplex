@@ -11,5 +11,6 @@ xcuserdata/*
 *.moved-aside
 DerivedData
 *.xcuserstate
+*.xcuserdatad/
 
 Pods/
