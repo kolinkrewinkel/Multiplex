@@ -1032,74 +1032,65 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (NSArray *)mpx_reduceSortedRanges:(NSArray *)sortedRanges
 {
     RACSequence *sortedSequence = [sortedRanges rac_sequence];
-    NSArray *reducedRanges = [sortedSequence map:^MPXSelection *(MPXSelection *selection)
-                              {
-                                  NSRange range1 = [selection range];
-                                  __block NSRange rangeToAdd = range1;
+    NSArray *reducedRanges = [sortedSequence map:^MPXSelection *(MPXSelection *selection) {
+        NSRange range1 = [selection range];
+        __block NSRange rangeToAdd = range1;
 
-                                  /* Preprocess the range to adjust for placeholders. */
+        /* Preprocess the range to adjust for placeholders. */
 
-                                  NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
-                                                                                                   forward:NO
-                                                                                                      wrap:NO
-                                                                                                     limit:0];
+        NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
+                                                                         forward:NO
+                                                                            wrap:NO
+                                                                           limit:0];
 
-                                  NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:rangeToAdd.location
-                                                                                                  forward:YES
-                                                                                                     wrap:NO
-                                                                                                    limit:0];
+        NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:rangeToAdd.location
+                                                                        forward:YES
+                                                                           wrap:NO
+                                                                          limit:0];
 
-                                  if (trailingPlaceholder.location != NSNotFound)
-                                  {
-                                      NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
-                                      if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0))
-                                      {
-                                          rangeToAdd = NSUnionRange(rangeToAdd, trailingPlaceholder);
-                                      }
-                                  }
+        if (trailingPlaceholder.location != NSNotFound) {
+            NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
+            if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0)) {
+                rangeToAdd = NSUnionRange(rangeToAdd, trailingPlaceholder);
+            }
+        }
 
-                                  if (leadingPlaceholder.location != NSNotFound && !NSEqualRanges(leadingPlaceholder, trailingPlaceholder))
-                                  {
-                                      NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
-                                      if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0))
-                                      {
-                                          rangeToAdd = NSUnionRange(rangeToAdd, leadingPlaceholder);
-                                      }
-                                  }
+        if (leadingPlaceholder.location != NSNotFound && !NSEqualRanges(leadingPlaceholder, trailingPlaceholder)) {
+            NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
+            if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0)) {
+                rangeToAdd = NSUnionRange(rangeToAdd, leadingPlaceholder);
+            }
+        }
 
-                                  [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2)
-                                   {
-                                       if (selection == selectionRange2)
-                                       {
-                                           return;
-                                       }
+        [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2) {
+            if (selection == selectionRange2)
+            {
+                return;
+            }
 
-                                       NSRange range2 = [selectionRange2 range];
+            NSRange range2 = [selectionRange2 range];
 
-                                       BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
-                                       BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
+            BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
+            BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
 
-                                       if (endsBeyondStartOfRange && startsBeforeOrWithinRange)
-                                       {
-                                           NSRange originalRangeToAdd = rangeToAdd;
+            if (endsBeyondStartOfRange && startsBeforeOrWithinRange) {
+                NSRange originalRangeToAdd = rangeToAdd;
 
-                                           NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
-                                           if (relativeIncrease < range2.length)
-                                           {
-                                               rangeToAdd.length += range2.length - relativeIncrease;
-                                           }
+                NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
+                if (relativeIncrease < range2.length) {
+                    rangeToAdd.length += range2.length - relativeIncrease;
+                }
 
-                                           if (NSEqualRanges(originalRangeToAdd, self.mpx_rangeInProgress.range))
-                                           {
+                if (NSEqualRanges(originalRangeToAdd, self.mpx_rangeInProgress.range)) {
 #warning Logic here does not transfer intraline index
-                                               self.mpx_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
-                                           }
-                                       }
-                                   }];
+                    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
+                }
+            }
+        }];
 
-                                  return [MPXSelection selectionWithRange:rangeToAdd];
-                              }].array;
-
+        return [MPXSelection selectionWithRange:rangeToAdd];
+    }].array;
+    
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
 
