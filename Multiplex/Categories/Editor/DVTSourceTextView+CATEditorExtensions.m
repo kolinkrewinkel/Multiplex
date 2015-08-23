@@ -115,6 +115,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
         view.hidden = !visible;
     }];
+
+    self.mpx_blinkState = visible;
 }
 
 - (void)mpx_blinkCursors:(NSTimer *)sender
@@ -123,8 +125,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    self.mpx_blinkState = !self.mpx_blinkState;
-    [self mpx_setCursorsVisible:self.mpx_blinkState];
+    [self mpx_setCursorsVisible:!self.mpx_blinkState];
 }
 
 - (void)mpx_startBlinking
@@ -132,7 +133,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // This used to check if the blink timer was already there, however:
     // we should restart it because the old one will mess up a new cursor's showing
     // for too short a time if the timer was already in motion.
-    [self mpx_stopBlinking];
     self.mpx_blinkTimer = [NSTimer timerWithTimeInterval:0.5
                                                   target:self
                                                 selector:@selector(mpx_blinkCursors:)
@@ -909,6 +909,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 
     [self mpx_stopBlinking];
+    [self mpx_setCursorsVisible:YES];
 
     NSInteger clickCount = theEvent.clickCount;
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
@@ -1192,6 +1193,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
                                     NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
                                     caretView.wantsLayer = YES;
+                                    caretView.hidden = !self.mpx_blinkState;
                                     caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
                                     return caretView;
