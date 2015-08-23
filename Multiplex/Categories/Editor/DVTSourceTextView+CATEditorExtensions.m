@@ -1008,25 +1008,21 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // Standard sorting logic.
     // Do not include the length so that iteration can do sequential iteration thereafter and do reducing.
     return [ranges sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selectionRange1,
-                                                                  MPXSelection *selectionRange2)
-            {
-                NSRange range1 = [selectionRange1 range];
-                NSInteger range1Loc = range1.location;
+                                                                  MPXSelection *selectionRange2) {
+        NSRange range1 = [selectionRange1 range];
+        NSInteger range1Loc = range1.location;
 
-                NSRange range2 = [selectionRange2 range];
-                NSInteger range2Loc = range2.location;
+        NSRange range2 = [selectionRange2 range];
+        NSInteger range2Loc = range2.location;
 
-                if (range2Loc > range1Loc)
-                {
-                    return NSOrderedAscending;
-                }
-                else if (range2Loc < range1Loc)
-                {
-                    return NSOrderedDescending;
-                }
+        if (range2Loc > range1Loc) {
+            return NSOrderedAscending;
+        } else if (range2Loc < range1Loc) {
+            return NSOrderedDescending;
+        }
 
-                return NSOrderedSame;
-            }];
+        return NSOrderedSame;
+    }];
 }
 
 - (NSArray *)mpx_reduceSortedRanges:(NSArray *)sortedRanges
@@ -1157,6 +1153,10 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.mpx_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     RACSequence *rangeSequence = [ranges rac_sequence];
+
+    NSLog(@"Ranges: %@", ranges);
+
+    __block NSUInteger idx = 0;
     self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
         NSRange range = [selection range];
 
@@ -1169,6 +1169,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
                                                         actualCharacterRange:nil];
+
+//        NSLog(@"Getting glyph range: %@, idx: %lu", NSStringFromRange(glyphRange), (unsigned long)idx);
 
         NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
                                                          inTextContainer:self.textContainer];
@@ -1183,6 +1185,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         caretView.wantsLayer = YES;
         caretView.hidden = !self.mpx_blinkState;
         caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
+
+        idx++;
 
         return caretView;
     }] array];
