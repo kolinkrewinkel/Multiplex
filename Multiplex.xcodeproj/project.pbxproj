@@ -25,6 +25,7 @@
 		33100A041A4F92400062D0D0 /* MPXSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelection.h; sourceTree = "<group>"; };
 		33100A051A4F92400062D0D0 /* MPXSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelection.m; sourceTree = "<group>"; };
 		338732481B89AB710053977A /* FrameworkHeaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrameworkHeaders; sourceTree = "<group>"; };
+		338732491B8A3BF10053977A /* MPXGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXGeometry.h; sourceTree = "<group>"; };
 		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
 		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
 		33A74F2B1B8935FB00FBBD2B /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = "../../../Applications/Xcode-beta.app/Contents/SharedFrameworks/DVTFoundation.framework"; sourceTree = "<group>"; };
@@ -134,6 +135,7 @@
 		33B3A40418CD375300AA64C8 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				338732491B8A3BF10053977A /* MPXGeometry.h */,
 				33A74F341B89380400FBBD2B /* MPXSwizzle.h */,
 				33A74F331B89380400FBBD2B /* MPXSwizzle.m */,
 			);

@@ -16,6 +16,7 @@
 #import "DVTSourceTextView+CATEditorExtensions.h"
 
 #import "MPXSelection.h"
+#import "MPXGeometry.h"
 #import "MPXSwizzle.h"
 
 static NSInvocation *CAT_DVTSourceTextView_Original_Init = nil;
@@ -24,20 +25,6 @@ static NSInvocation *CAT_DVTSourceTextView_Original_MouseDown = nil;
 static NSInvocation *CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRange = nil;
 static NSInvocation *CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 static NSInvocation *CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = nil;
-
-NS_INLINE CGFloat MPXApproximatePixelValueForView(NSView *view, CGFloat value)
-{
-    CGFloat scale = view.window.screen.backingScaleFactor;
-    return roundf(value * scale) / scale;
-}
-
-NS_INLINE CGRect MPXApproximateRectToView(CGRect rect, NSView *view)
-{
-    return CGRectMake(MPXApproximatePixelValueForView(view, rect.origin.x),
-                      MPXApproximatePixelValueForView(view, rect.origin.y),
-                      MPXApproximatePixelValueForView(view, rect.size.width),
-                      MPXApproximatePixelValueForView(view, rect.size.height));
-}
 
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
@@ -1170,7 +1157,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                                              self.textContainerOrigin.x,
                                                                              self.textContainerOrigin.y);
 
-                                    CGRect caretRect = MPXApproximateRectToView(unroundedCaretRect, self);
+                                    CGRect caretRect = MPXRoundedValueRectForView(unroundedCaretRect, self);
 
                                     NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
                                     caretView.wantsLayer = YES;
