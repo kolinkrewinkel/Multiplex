@@ -20,23 +20,6 @@ static NSInvocation *CAT_DVTSourceTextView_Original_DidInsertCompletionTextAtRan
 static NSInvocation *CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 static NSInvocation *CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation = nil;
 
-NS_INLINE NSRange MPXSelectionJoinRanges(NSRange originalRange, NSRange newRange)
-{
-    NSRange joinedRange = newRange;
-
-    if (newRange.location < originalRange.location)
-    {
-        joinedRange.length = NSMaxRange(originalRange) - newRange.location;
-    }
-    else
-    {
-        joinedRange.length = NSMaxRange(newRange) - originalRange.location;
-        joinedRange.location = originalRange.location;
-    }
-
-    return joinedRange;
-}
-
 NS_INLINE CGFloat MPXApproximatePixelValueForView(NSView *view, CGFloat value)
 {
     CGFloat scale = view.window.screen.backingScaleFactor;
@@ -299,7 +282,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         NSRange newAbsoluteRange = newRange;
 
         if (modifySelection) {
-            newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+            newAbsoluteRange = NSUnionRange(previousAbsoluteRange, newAbsoluteRange);
         }
 
         return [MPXSelection selectionWithRange:newAbsoluteRange];
@@ -371,7 +354,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         if (modifySelection)
         {
-            cursorRange = MPXSelectionJoinRanges(previousAbsoluteRange, cursorRange);
+            cursorRange = NSUnionRange(previousAbsoluteRange, cursorRange);
         }
 
         return [MPXSelection selectionWithRange:cursorRange];
@@ -477,7 +460,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
          if (modifySelection)
          {
-             return [MPXSelection selectionWithRange:MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange)];
+             return [MPXSelection selectionWithRange:NSUnionRange(previousAbsoluteRange, newAbsoluteRange)];
          }
 
          return [MPXSelection selectionWithRange:newAbsoluteRange];
@@ -557,7 +540,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
          // Unionize the ranges if we're expanding the selection.
          if (modifySelection)
          {
-             newRange = MPXSelectionJoinRanges(selectionRange, newRange);
+             newRange = NSUnionRange(selectionRange, newRange);
          }
 
          return [MPXSelection selectionWithRange:newRange];
@@ -666,7 +649,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
          // The selection should reach out and touch where it originated from.
          if (modifySelection)
          {
-             newRange = MPXSelectionJoinRanges(existingRange, newRange);
+             newRange = NSUnionRange(existingRange, newRange);
          }
 
          return [MPXSelection selectionWithRange:newRange];
@@ -778,7 +761,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
              NSRange newAbsoluteRange = NSMakeRange(desiredPosition, 0);
              if (modifySelection)
              {
-                 newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+                 newAbsoluteRange = NSUnionRange(previousAbsoluteRange, newAbsoluteRange);
              }
 
              return [MPXSelection selectionWithRange:newAbsoluteRange];
@@ -787,7 +770,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
          NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
          if (modifySelection)
          {
-             newAbsoluteRange = MPXSelectionJoinRanges(previousAbsoluteRange, newAbsoluteRange);
+             newAbsoluteRange = NSUnionRange(previousAbsoluteRange, newAbsoluteRange);
          }
 
          // This will place it at the end of the line, aiming to be placed at the original position.
@@ -1047,7 +1030,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                       NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
                                       if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0))
                                       {
-                                          rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, trailingPlaceholder);
+                                          rangeToAdd = NSUnionRange(rangeToAdd, trailingPlaceholder);
                                       }
                                   }
 
@@ -1056,7 +1039,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                       NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
                                       if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0))
                                       {
-                                          rangeToAdd = MPXSelectionJoinRanges(rangeToAdd, leadingPlaceholder);
+                                          rangeToAdd = NSUnionRange(rangeToAdd, leadingPlaceholder);
                                       }
                                   }
 
