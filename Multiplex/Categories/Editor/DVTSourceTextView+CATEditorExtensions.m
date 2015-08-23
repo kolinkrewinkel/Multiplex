@@ -31,50 +31,50 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 @implementation DVTSourceTextView (CATEditorExtensions)
 
-@synthesizeAssociation(DVTSourceTextView, cat_blinkTimer);
-@synthesizeAssociation(DVTSourceTextView, cat_blinkState);
-@synthesizeAssociation(DVTSourceTextView, cat_rangeInProgressStart);
-@synthesizeAssociation(DVTSourceTextView, cat_rangeInProgress);
-@synthesizeAssociation(DVTSourceTextView, cat_finalizingRanges);
-@synthesizeAssociation(DVTSourceTextView, cat_selectedRanges);
-@synthesizeAssociation(DVTSourceTextView, cat_selectionViews);
+@synthesizeAssociation(DVTSourceTextView, mpx_blinkTimer);
+@synthesizeAssociation(DVTSourceTextView, mpx_blinkState);
+@synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
+@synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
+@synthesizeAssociation(DVTSourceTextView, mpx_finalizingRanges);
+@synthesizeAssociation(DVTSourceTextView, mpx_selectedRanges);
+@synthesizeAssociation(DVTSourceTextView, mpx_selectionViews);
 
 #pragma mark - NSObject
 
 + (void)load
 {
-    Original_Init = MPXSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(cat_commonInitDVTSourceTextView), NO);
-    Original_MouseDragged = MPXSwizzle(self, @selector(mouseDragged:), self, @selector(cat_mouseDragged:), NO);
-    Original_MouseDown = MPXSwizzle(self, @selector(mouseDown:), self, @selector(cat_mouseDown:), NO);
+    Original_Init = MPXSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(mpx_commonInitDVTSourceTextView), NO);
+    Original_MouseDragged = MPXSwizzle(self, @selector(mouseDragged:), self, @selector(mpx_mouseDragged:), NO);
+    Original_MouseDown = MPXSwizzle(self, @selector(mouseDown:), self, @selector(mpx_mouseDown:), NO);
 
     Original_DidInsertCompletionTextAtRange = MPXSwizzle(self,
                                                          @selector(didInsertCompletionTextAtRange:),
                                                          self,
-                                                         @selector(cat_didInsertCompletionTextAtRange:),
+                                                         @selector(mpx_didInsertCompletionTextAtRange:),
                                                          NO);
 
     Original_AdjustTypeOverCompletionForEditedRangeChangeInLength =
     MPXSwizzle(self,
                @selector(adjustTypeOverCompletionForEditedRange:changeInLength:),
                self,
-               @selector(cat_adjustTypeOverCompletionForEditedRange:changeInLength:),
+               @selector(mpx_adjustTypeOverCompletionForEditedRange:changeInLength:),
                NO);
 
     Original_ShouldAutoCompleteAtLocation = MPXSwizzle(self,
                                                        @selector(shouldAutoCompleteAtLocation:),
                                                        self,
-                                                       @selector(cat_shouldAutoCompleteAtLocation:),
+                                                       @selector(mpx_shouldAutoCompleteAtLocation:),
                                                        NO);
 }
 
 #pragma mark - Initializer
 
-- (void)cat_commonInitDVTSourceTextView
+- (void)mpx_commonInitDVTSourceTextView
 {
     [Original_Init invokeWithTarget:self];
 
-    self.cat_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
-    self.cat_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
     self.selectedTextAttributes = @{};
 }
@@ -86,53 +86,53 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     return YES;
 }
 
-- (void)cat_setCursorsVisible:(BOOL)visible
+- (void)mpx_setCursorsVisible:(BOOL)visible
 {
-    [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
+    [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
         view.hidden = !visible;
     }];
 }
 
-- (void)cat_blinkCursors:(NSTimer *)sender
+- (void)mpx_blinkCursors:(NSTimer *)sender
 {
-    if ([self.cat_selectionViews count] == 0) {
+    if ([self.mpx_selectionViews count] == 0) {
         return;
     }
 
-    BOOL previous = self.cat_blinkState;
+    BOOL previous = self.mpx_blinkState;
     BOOL windowActive = self.window.isKeyWindow;
 
     if (windowActive) {
-        [self cat_setCursorsVisible:!previous];
+        [self mpx_setCursorsVisible:!previous];
     } else {
-        [self cat_setCursorsVisible:windowActive];
-        self.cat_blinkState = windowActive;
+        [self mpx_setCursorsVisible:windowActive];
+        self.mpx_blinkState = windowActive;
     }
 }
 
-- (void)cat_startBlinking
+- (void)mpx_startBlinking
 {
     // This used to check if the blink timer was already there, however:
     // we should restart it because the old one will mess up a new cursor's showing
     // for too short a time if the timer was already in motion.
-    [self cat_stopBlinking];
-    self.cat_blinkTimer = [NSTimer timerWithTimeInterval:0.5
+    [self mpx_stopBlinking];
+    self.mpx_blinkTimer = [NSTimer timerWithTimeInterval:0.5
                                                   target:self
-                                                selector:@selector(cat_blinkCursors:)
+                                                selector:@selector(mpx_blinkCursors:)
                                                 userInfo:nil
                                                  repeats:YES];
 
-    [[NSRunLoop mainRunLoop] addTimer:self.cat_blinkTimer forMode:NSRunLoopCommonModes];
+    [[NSRunLoop mainRunLoop] addTimer:self.mpx_blinkTimer forMode:NSRunLoopCommonModes];
 }
 
-- (void)cat_stopBlinking
+- (void)mpx_stopBlinking
 {
-    [self.cat_blinkTimer invalidate];
+    [self.mpx_blinkTimer invalidate];
 
-    [self cat_setCursorsVisible:NO];
+    [self mpx_setCursorsVisible:NO];
 }
 
-- (void)cat_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
+- (void)mpx_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
 {
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1
                                                                                              atIndex:2];
@@ -140,18 +140,18 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                                                              atIndex:3];
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
 
-    [self cat_updateSelectionVisualizations];
+    [self mpx_updateSelectionVisualizations];
 }
 
 #pragma mark - Setters/Getters
 
-- (NSArray *)cat_effectiveSelectedRanges
+- (NSArray *)mpx_effectiveSelectedRanges
 {
-    if (self.cat_finalizingRanges) {
-        return self.cat_finalizingRanges;
+    if (self.mpx_finalizingRanges) {
+        return self.mpx_finalizingRanges;
     }
 
-    return self.cat_selectedRanges ?: @[];
+    return self.mpx_selectedRanges ?: @[];
 }
 
 #pragma mark - Keyboard Events
@@ -167,7 +167,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
         NSUInteger insertStringLength = [insertString length];
 
@@ -202,7 +202,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         // Update the base range with the delta'd amount of change from previous mutations.
         NSRange range = [selection range];
         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
@@ -237,7 +237,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     [self insertText:@"\n"];
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
 
         [textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager];
@@ -280,12 +280,12 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark Document Navigation
 
-- (void)cat_moveToRange:(NSRange)newRange modifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveToRange:(NSRange)newRange modifyingSelection:(BOOL)modifySelection
 {
     // It would be possible to just take the longest range and unionize from there, but this is the most uniform approach.
     // Iterate over, join them to the start, and let the filter take care of joining them all into one.
     // In cases where the selection isn't being modified, they'll all just be set to 0,0 and they'll be de-duplicated.
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange previousAbsoluteRange = selection.range;
         NSRange newAbsoluteRange = newRange;
 
@@ -297,45 +297,45 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }];
 }
 
-- (void)cat_moveToBeginningOfDocumentModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveToBeginningOfDocumentModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_moveToRange:NSMakeRange(0, 0) modifyingSelection:modifySelection];
+    [self mpx_moveToRange:NSMakeRange(0, 0) modifyingSelection:modifySelection];
 }
 
-- (void)cat_moveToEndOfDocumentModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveToEndOfDocumentModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_moveToRange:NSMakeRange([self.textStorage length] - 1, 0) modifyingSelection:modifySelection];
+    [self mpx_moveToRange:NSMakeRange([self.textStorage length] - 1, 0) modifyingSelection:modifySelection];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self cat_moveToBeginningOfDocumentModifyingSelection:NO];
+    [self mpx_moveToBeginningOfDocumentModifyingSelection:NO];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    [self cat_moveToBeginningOfDocumentModifyingSelection:YES];
+    [self mpx_moveToBeginningOfDocumentModifyingSelection:YES];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    [self cat_moveToEndOfDocumentModifyingSelection:NO];
+    [self mpx_moveToEndOfDocumentModifyingSelection:NO];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    [self cat_moveToEndOfDocumentModifyingSelection:YES];
+    [self mpx_moveToEndOfDocumentModifyingSelection:YES];
 }
 
 #pragma mark Line Movements
 
-- (void)cat_moveSelectionsToRelativePositionWithinLine:(CATRelativePosition)relativePosition
+- (void)mpx_moveSelectionsToRelativePositionWithinLine:(CATRelativePosition)relativePosition
                                     modifyingSelection:(BOOL)modifySelection
 {
     NSAssert(relativePosition != CATRelativePositionTop, @"Paragraph methods should be used to move up lines.");
     NSAssert(relativePosition != CATRelativePositionBottom, @"Paragraph methods should be used to move down lines.");
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange previousAbsoluteRange = selection.range;
 
         // The cursors are being pushed to the line's relative location of 0 or .length.
@@ -369,15 +369,15 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }];
 }
 
-- (void)cat_moveToLeftEndOfLineModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveToLeftEndOfLineModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_moveSelectionsToRelativePositionWithinLine:CATRelativePositionLeft
+    [self mpx_moveSelectionsToRelativePositionWithinLine:CATRelativePositionLeft
                                       modifyingSelection:modifySelection];
 }
 
-- (void)cat_moveToRightEndOfLineModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveToRightEndOfLineModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_moveSelectionsToRelativePositionWithinLine:CATRelativePositionRight
+    [self mpx_moveSelectionsToRelativePositionWithinLine:CATRelativePositionRight
                                       modifyingSelection:modifySelection];
 }
 
@@ -385,22 +385,22 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)moveToLeftEndOfLine:(id)sender
 {
-    [self cat_moveToLeftEndOfLineModifyingSelection:NO];
+    [self mpx_moveToLeftEndOfLineModifyingSelection:NO];
 }
 
 - (void)moveToLeftEndOfLineAndModifySelection:(id)sender
 {
-    [self cat_moveToLeftEndOfLineModifyingSelection:YES];
+    [self mpx_moveToLeftEndOfLineModifyingSelection:YES];
 }
 
 - (void)moveToRightEndOfLine:(id)sender
 {
-    [self cat_moveToRightEndOfLineModifyingSelection:NO];
+    [self mpx_moveToRightEndOfLineModifyingSelection:NO];
 }
 
 - (void)moveToRightEndOfLineAndModifySelection:(id)sender
 {
-    [self cat_moveToRightEndOfLineModifyingSelection:YES];
+    [self mpx_moveToRightEndOfLineModifyingSelection:YES];
 }
 
 #pragma mark Line Movement Forwarding (Semantic)
@@ -427,12 +427,12 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark -
 
-- (void)cat_moveLinePositionIncludingLength:(BOOL)includeLength
+- (void)mpx_moveLinePositionIncludingLength:(BOOL)includeLength
                             modifySelection:(BOOL)modifySelection
 {
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
      {
          NSRange previousAbsoluteRange = selection.range;
          NSRange previousLineRange = [textStorage.string lineRangeForRange:previousAbsoluteRange];
@@ -477,43 +477,43 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    [self cat_moveLinePositionIncludingLength:NO
+    [self mpx_moveLinePositionIncludingLength:NO
                               modifySelection:NO];
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
-    [self cat_moveLinePositionIncludingLength:NO
+    [self mpx_moveLinePositionIncludingLength:NO
                               modifySelection:YES];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    [self cat_moveLinePositionIncludingLength:YES
+    [self mpx_moveLinePositionIncludingLength:YES
                               modifySelection:NO];
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
-    [self cat_moveLinePositionIncludingLength:YES
+    [self mpx_moveLinePositionIncludingLength:YES
                               modifySelection:YES];
 }
 
 - (void)moveParagraphBackwardAndModifySelection:(id)sender
 {
-    [self cat_moveLinePositionIncludingLength:NO
+    [self mpx_moveLinePositionIncludingLength:NO
                               modifySelection:YES];
 }
 
 - (void)moveParagraphForwardAndModifySelection:(id)sender
 {
-    [self cat_moveLinePositionIncludingLength:YES
+    [self mpx_moveLinePositionIncludingLength:YES
                               modifySelection:YES];
 }
 
 #pragma mark Word Movement
 
-- (void)cat_moveSelectionsToWordWithRelativePosition:(CATRelativePosition)relativePosition
+- (void)mpx_moveSelectionsToWordWithRelativePosition:(CATRelativePosition)relativePosition
                                      modifySelection:(BOOL)modifySelection
 {
     // Sanity checks. The up/down ones should call the paragraph ones, instead.
@@ -523,7 +523,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // The built in method is relative to back/forwards. Right means forward.
     BOOL wordForward = relativePosition == CATRelativePositionRight;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
      {
          NSRange selectionRange = selection.range;
 
@@ -557,36 +557,36 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark Word Movement Forwarding (Directional)
 
-- (void)cat_moveWordLeftModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveWordLeftModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_moveSelectionsToWordWithRelativePosition:CATRelativePositionLeft
+    [self mpx_moveSelectionsToWordWithRelativePosition:CATRelativePositionLeft
                                        modifySelection:modifySelection];
 }
 
-- (void)cat_moveWordRightModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveWordRightModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_moveSelectionsToWordWithRelativePosition:CATRelativePositionRight
+    [self mpx_moveSelectionsToWordWithRelativePosition:CATRelativePositionRight
                                        modifySelection:modifySelection];
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    [self cat_moveWordLeftModifyingSelection:NO];
+    [self mpx_moveWordLeftModifyingSelection:NO];
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
-    [self cat_moveWordLeftModifyingSelection:YES];
+    [self mpx_moveWordLeftModifyingSelection:YES];
 }
 
 - (void)moveWordRight:(id)sender
 {
-    [self cat_moveWordRightModifyingSelection:NO];
+    [self mpx_moveWordRightModifyingSelection:NO];
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
-    [self cat_moveWordRightModifyingSelection:YES];
+    [self mpx_moveWordRightModifyingSelection:YES];
 }
 
 #pragma mark Word Movement Forwarding (Semantic)
@@ -624,9 +624,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark Simple Index-Movement
 
-- (void)cat_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
+- (void)mpx_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
 {
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
      {
          NSRange existingRange = selection.range;
 
@@ -666,39 +666,39 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)moveLeft:(id)sender
 {
-    [self cat_moveLeftModifyingSelection:NO];
+    [self mpx_moveLeftModifyingSelection:NO];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    [self cat_moveLeftModifyingSelection:YES];
+    [self mpx_moveLeftModifyingSelection:YES];
 }
 
-- (void)cat_moveLeftModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveLeftModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsDefaultingLengthsToZero:MPXLeftArrowSelectionOffset
+    [self mpx_offsetSelectionsDefaultingLengthsToZero:MPXLeftArrowSelectionOffset
                                       modifySelection:modifySelection];
 }
 
 - (void)moveRight:(id)sender
 {
-    [self cat_moveRightModifyingSelection:NO];
+    [self mpx_moveRightModifyingSelection:NO];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    [self cat_moveRightModifyingSelection:YES];
+    [self mpx_moveRightModifyingSelection:YES];
 }
 
-- (void)cat_moveRightModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveRightModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_offsetSelectionsDefaultingLengthsToZero:MPXRightArrowSelectionOffset
+    [self mpx_offsetSelectionsDefaultingLengthsToZero:MPXRightArrowSelectionOffset
                                       modifySelection:modifySelection];
 }
 
 #pragma mark Up and Down/Line-Movements
 
-- (void)cat_shiftSelectionLineWithRelativePosition:(CATRelativePosition)position
+- (void)mpx_shiftSelectionLineWithRelativePosition:(CATRelativePosition)position
                                 modifyingSelection:(BOOL)modifySelection
 {
     NSCAssert(position != CATRelativePositionLeft, @"Use beginning/end of line methods.");
@@ -706,7 +706,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     NSLayoutManager *layoutManager = self.layoutManager;
 
-    [self cat_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection)
      {
          // "Previous" refers exclusively to time, not location.
          NSRange previousAbsoluteRange = selection.range;
@@ -788,15 +788,15 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
      }];
 }
 
-- (void)cat_moveSelectionsUpModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveSelectionsUpModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_shiftSelectionLineWithRelativePosition:CATRelativePositionTop
+    [self mpx_shiftSelectionLineWithRelativePosition:CATRelativePositionTop
                                   modifyingSelection:modifySelection];
 }
 
-- (void)cat_moveSelectionsDownModifyingSelection:(BOOL)modifySelection
+- (void)mpx_moveSelectionsDownModifyingSelection:(BOOL)modifySelection
 {
-    [self cat_shiftSelectionLineWithRelativePosition:CATRelativePositionBottom
+    [self mpx_shiftSelectionLineWithRelativePosition:CATRelativePositionBottom
                                   modifyingSelection:modifySelection];
 }
 
@@ -804,22 +804,22 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)moveUp:(id)sender
 {
-    [self cat_moveSelectionsUpModifyingSelection:NO];
+    [self mpx_moveSelectionsUpModifyingSelection:NO];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    [self cat_moveSelectionsUpModifyingSelection:YES];
+    [self mpx_moveSelectionsUpModifyingSelection:YES];
 }
 
 - (void)moveDown:(id)sender
 {
-    [self cat_moveSelectionsDownModifyingSelection:NO];
+    [self mpx_moveSelectionsDownModifyingSelection:NO];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    [self cat_moveSelectionsDownModifyingSelection:YES];
+    [self mpx_moveSelectionsDownModifyingSelection:YES];
 }
 
 #pragma mark Semantic Directional Movements (alias to explicit ones)
@@ -848,12 +848,12 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark - Mouse Events
 
-- (void)cat_mouseDragged:(NSEvent *)theEvent
+- (void)mpx_mouseDragged:(NSEvent *)theEvent
 {
-    [self cat_stopBlinking];
+    [self mpx_stopBlinking];
 
-    NSRange rangeInProgress = self.cat_rangeInProgress.range;
-    NSRange rangeInProgressOrigin = self.cat_rangeInProgressStart.range;
+    NSRange rangeInProgress = self.mpx_rangeInProgress.range;
+    NSRange rangeInProgressOrigin = self.mpx_rangeInProgressStart.range;
 
     if (rangeInProgress.location == NSNotFound || rangeInProgressOrigin.location == NSNotFound)
     {
@@ -874,13 +874,13 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 
     // Update the model value for when it is used combinatorily.
-    self.cat_rangeInProgress = [MPXSelection selectionWithRange:newRange];
+    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:newRange];
 
-    [self cat_setSelectedRanges:[self.cat_selectedRanges arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]
+    [self mpx_setSelectedRanges:[self.mpx_selectedRanges arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]
                        finalize:NO];
 }
 
-- (void)cat_mouseDown:(NSEvent *)theEvent
+- (void)mpx_mouseDown:(NSEvent *)theEvent
 {
     NSUInteger index = ({
         CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
@@ -893,7 +893,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    [self cat_stopBlinking];
+    [self mpx_stopBlinking];
 
     NSInteger clickCount = theEvent.clickCount;
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
@@ -908,7 +908,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    NSArray *selections = [self cat_effectiveSelectedRanges];
+    NSArray *selections = [self mpx_effectiveSelectedRanges];
     NSRange resultRange = NSMakeRange(NSNotFound, 0);
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
@@ -942,33 +942,33 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 
     MPXSelection *selection = [MPXSelection selectionWithRange:resultRange];
-    self.cat_rangeInProgress = selection;
-    self.cat_rangeInProgressStart = selection;
+    self.mpx_rangeInProgress = selection;
+    self.mpx_rangeInProgressStart = selection;
 
     if (insertNewCursorKeysHeld)
     {
-        [self cat_setSelectedRanges:[selections arrayByAddingObject:selection]
+        [self mpx_setSelectedRanges:[selections arrayByAddingObject:selection]
                            finalize:NO];
     }
     else
     {
         /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. Otherwise, they'll be re-added during dragging. */
-        [self cat_setSelectedRanges:@[selection]
+        [self mpx_setSelectedRanges:@[selection]
                            finalize:YES];
 
         /* In the event the user drags, however, it needs to unfinalized so that it can be extended again. */
-        [self cat_setSelectedRanges:@[selection]
+        [self mpx_setSelectedRanges:@[selection]
                            finalize:NO];
     }
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-    [self cat_setSelectedRanges:[self cat_effectiveSelectedRanges] finalize:YES];
-    self.cat_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
-    self.cat_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    [self mpx_setSelectedRanges:[self mpx_effectiveSelectedRanges] finalize:YES];
+    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
-    [self cat_startBlinking];
+    [self mpx_startBlinking];
 }
 
 
@@ -976,18 +976,18 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)selectAll:(id)sender
 {
-    [self cat_setSelectedRanges:@[[MPXSelection selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]]
+    [self mpx_setSelectedRanges:@[[MPXSelection selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]]
                        finalize:YES];
 }
 
-- (void)cat_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
 {
-    NSArray *mappedValues = [[[[self cat_effectiveSelectedRanges] rac_sequence] map:mapBlock] array];
-    [self cat_setSelectedRanges:mappedValues
+    NSArray *mappedValues = [[[[self mpx_effectiveSelectedRanges] rac_sequence] map:mapBlock] array];
+    [self mpx_setSelectedRanges:mappedValues
                        finalize:YES];
 }
 
-- (NSArray *)cat_sortRanges:(NSArray *)ranges
+- (NSArray *)mpx_sortRanges:(NSArray *)ranges
 {
     // Standard sorting logic.
     // Do not include the length so that iteration can do sequential iteration thereafter and do reducing.
@@ -1013,7 +1013,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
             }];
 }
 
-- (NSArray *)cat_reduceSortedRanges:(NSArray *)sortedRanges
+- (NSArray *)mpx_reduceSortedRanges:(NSArray *)sortedRanges
 {
     RACSequence *sortedSequence = [sortedRanges rac_sequence];
     NSArray *reducedRanges = [sortedSequence map:^MPXSelection *(MPXSelection *selection)
@@ -1073,10 +1073,10 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                rangeToAdd.length += range2.length - relativeIncrease;
                                            }
 
-                                           if (NSEqualRanges(originalRangeToAdd, self.cat_rangeInProgress.range))
+                                           if (NSEqualRanges(originalRangeToAdd, self.mpx_rangeInProgress.range))
                                            {
 #warning Logic here does not transfer intraline index
-                                               self.cat_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
+                                               self.mpx_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
                                            }
                                        }
                                    }];
@@ -1089,35 +1089,35 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (NSArray *)prepareRanges:(NSArray *)ranges
 {
-    NSArray *sortedRanges = [self cat_sortRanges:ranges];
-    NSArray *reducedRanges = [self cat_reduceSortedRanges:sortedRanges];
+    NSArray *sortedRanges = [self mpx_sortRanges:ranges];
+    NSArray *reducedRanges = [self mpx_reduceSortedRanges:sortedRanges];
 
     return reducedRanges;
 }
 
-- (void)cat_setSelectedRanges:(NSArray *)selectedRanges finalize:(BOOL)finalized
+- (void)mpx_setSelectedRanges:(NSArray *)selectedRanges finalize:(BOOL)finalized
 {
     /* Sort and reduce the ranges passed in */
     NSArray *ranges = [self prepareRanges:selectedRanges];
 
     if (finalized)
     {
-        if ([self.cat_selectedRanges isEqual:ranges] && self.cat_finalizingRanges == nil)
+        if ([self.mpx_selectedRanges isEqual:ranges] && self.mpx_finalizingRanges == nil)
         {
             return;
         }
 
-        self.cat_selectedRanges = ranges;
-        self.cat_finalizingRanges = nil;
+        self.mpx_selectedRanges = ranges;
+        self.mpx_finalizingRanges = nil;
     }
     else
     {
-        if ([ranges isEqualToArray:self.cat_finalizingRanges])
+        if ([ranges isEqualToArray:self.mpx_finalizingRanges])
         {
             return;
         }
 
-        self.cat_finalizingRanges = ranges;
+        self.mpx_finalizingRanges = ranges;
     }
 
     self.selectedTextAttributes = nil;
@@ -1133,13 +1133,13 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         self.selectedRange = NSMakeRange(0, 0);
     }
 
-    [self cat_updateSelectionVisualizations];
+    [self mpx_updateSelectionVisualizations];
 }
 
-- (void)cat_updateSelectionVisualizations
+- (void)mpx_updateSelectionVisualizations
 {
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-    NSArray *ranges = [self cat_effectiveSelectedRanges];
+    NSArray *ranges = [self mpx_effectiveSelectedRanges];
 
     /* Reset the background color of all the source text. */
     NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
@@ -1148,10 +1148,10 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 
     /* Remove any onscreen cursors */
-    [self.cat_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.mpx_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     RACSequence *rangeSequence = [ranges rac_sequence];
-    self.cat_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection)
+    self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection)
                                 {
                                     NSRange range = [selection range];
 
@@ -1182,7 +1182,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                     return caretView;
                                 }] array];
 
-    [self.cat_selectionViews enumerateObjectsUsingBlock:^(NSView *caret,
+    [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *caret,
                                                           NSUInteger idx,
                                                           BOOL *stop)
      {
@@ -1197,7 +1197,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 #pragma mark - Autocompletion
 
-- (void)cat_didInsertCompletionTextAtRange:(NSRange)completedTextRange
+- (void)mpx_didInsertCompletionTextAtRange:(NSRange)completedTextRange
 {
     __block NSInteger offset = 0;
 
@@ -1206,7 +1206,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     NSArray *selections =
     ({
-        NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self cat_effectiveSelectedRanges]];
+        NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self mpx_effectiveSelectedRanges]];
 
         MPXSelection *existingSelection = selections[0];
 
@@ -1286,11 +1286,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                   return [MPXSelection selectionWithRange:firstPlaceholder];
                               }].array;
     
-    [self cat_setSelectedRanges:newSelections
+    [self mpx_setSelectedRanges:newSelections
                        finalize:YES];
 }
 
-- (BOOL)cat_shouldAutoCompleteAtLocation:(NSUInteger)location
+- (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location
 {
     [Original_ShouldAutoCompleteAtLocation setArgument:&location atIndex:2];
     [Original_ShouldAutoCompleteAtLocation invokeWithTarget:self];
@@ -1299,7 +1299,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [Original_ShouldAutoCompleteAtLocation getReturnValue:&internalShouldAutoComplete];
     
     return (internalShouldAutoComplete &&
-            !([[self cat_effectiveSelectedRanges] count] > 1));
+            !([[self mpx_effectiveSelectedRanges] count] > 1));
 }
 
 @end
