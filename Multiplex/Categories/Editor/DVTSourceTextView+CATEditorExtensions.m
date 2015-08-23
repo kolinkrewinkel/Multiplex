@@ -10,6 +10,8 @@
 
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTLayoutManager.h>
+#import <DVTKit/DVTFontAndColorTheme.h>
+#import <DVTKit/DVTFoldingManager.h>
 
 #import "DVTSourceTextView+CATEditorExtensions.h"
 
@@ -130,9 +132,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (void)cat_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
 {
     [CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1
-                                                                                             atIndex:0];
+                                                                                             atIndex:2];
     [CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg2
-                                                                                             atIndex:1];
+                                                                                             atIndex:3];
     [CAT_DVTSourceTextView_Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
 
     [self cat_updateSelectionVisualizations];
@@ -898,7 +900,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     if ((altKeyHeld || commandKeyHeld) && !insertNewCursorKeysHeld)
     {
-        [CAT_DVTSourceTextView_Original_MouseDown setArgument:&theEvent atIndex:0];
+        [CAT_DVTSourceTextView_Original_MouseDown setArgument:&theEvent atIndex:2];
         [CAT_DVTSourceTextView_Original_MouseDown invokeWithTarget:self];
         return;
     }
@@ -914,9 +916,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
             break;
         case 2:
         {
-            if ([((DVTLayoutManager *)self.layoutManager) foldCellAtCharacterIndex:index])
+            if ([((DVTLayoutManager *)self.layoutManager).foldingManager firstFoldTouchingCharacterIndex:index])
             {
-                [CAT_DVTSourceTextView_Original_MouseDown setArgument:&theEvent atIndex:0];
+                [CAT_DVTSourceTextView_Original_MouseDown setArgument:&theEvent atIndex:2];
                 [CAT_DVTSourceTextView_Original_MouseDown invokeWithTarget:self];
                 return;
             }
@@ -1287,7 +1289,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (BOOL)cat_shouldAutoCompleteAtLocation:(NSUInteger)location
 {
-    [CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation setArgument:&location atIndex:0];
+    [CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation setArgument:&location atIndex:2];
     [CAT_DVTSourceTextView_Original_ShouldAutoCompleteAtLocation invokeWithTarget:self];
     
     BOOL internalShouldAutoComplete = NO;
