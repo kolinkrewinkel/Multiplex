@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
-#import "DVTInterfaces.h"
+#import <DVTKit/DVTSourceTextView.h>
 
 typedef NS_ENUM(NSInteger, CATRelativePosition) {
     CATRelativePositionTop,

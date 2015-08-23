@@ -8,6 +8,9 @@
 
 @import QuartzCore;
 
+#import <DVTKit/DVTTextStorage.h>
+#import <DVTKit/DVTLayoutManager.h>
+
 #import "DVTSourceTextView+CATEditorExtensions.h"
 
 #import "MPXSelection.h"
