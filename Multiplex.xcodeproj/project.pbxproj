@@ -327,6 +327,10 @@
 				INFOPLIST_FILE = "${PROJECT_NAME}/${PROJECT_NAME}-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-isystem",
+					"$(PROJECT_DIR)/$(PROJECT_NAME)/FrameworkHeaders",
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -360,6 +364,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "${PROJECT_NAME}/${PROJECT_NAME}-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_CFLAGS = (
+					"-isystem",
+					"$(PROJECT_DIR)/$(PROJECT_NAME)/FrameworkHeaders",
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;
