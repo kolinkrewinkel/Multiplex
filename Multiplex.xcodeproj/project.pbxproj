@@ -20,6 +20,7 @@
 		33D9FE911B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FE8B1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m */; };
 		33D9FE921B8AE32400A9CD4D /* MPXSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FE8E1B8AE32400A9CD4D /* MPXSelection.m */; };
 		33D9FE931B8AE32400A9CD4D /* MPXSelectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FE901B8AE32400A9CD4D /* MPXSelectionManager.m */; };
+		33D9FE961B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FE951B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,8 @@
 		33D9FE8E1B8AE32400A9CD4D /* MPXSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelection.m; sourceTree = "<group>"; };
 		33D9FE8F1B8AE32400A9CD4D /* MPXSelectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionManager.h; sourceTree = "<group>"; };
 		33D9FE901B8AE32400A9CD4D /* MPXSelectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionManager.m; sourceTree = "<group>"; };
+		33D9FE941B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXTextViewSelectionDecorator.h; sourceTree = "<group>"; };
+		33D9FE951B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXTextViewSelectionDecorator.m; sourceTree = "<group>"; };
 		741626E234D8521A05F9E61C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		B522172E4B68B9D17AA320A5 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CED95905E2ACE0A16D009A9A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -150,6 +153,8 @@
 				33D9FE8E1B8AE32400A9CD4D /* MPXSelection.m */,
 				33D9FE8F1B8AE32400A9CD4D /* MPXSelectionManager.h */,
 				33D9FE901B8AE32400A9CD4D /* MPXSelectionManager.m */,
+				33D9FE941B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.h */,
+				33D9FE951B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -276,6 +281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33D9FE961B8AF75600A9CD4D /* MPXTextViewSelectionDecorator.m in Sources */,
 				33D9FE921B8AE32400A9CD4D /* MPXSelection.m in Sources */,
 				33D9FE931B8AE32400A9CD4D /* MPXSelectionManager.m in Sources */,
 				33A74F351B89380400FBBD2B /* MPXSwizzle.m in Sources */,

@@ -168,11 +168,15 @@ static RACSequence *MPXCoallescedSelections(RACSequence *mergedSelections)
 {
     _finalizedSelections = [self fixedSelections:finalizedSelections];
     self.temporarySelections = nil;
+
+    [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
 - (void)setTemporarySelections:(NSArray *)temporarySelections
 {
     _temporarySelections = [self fixedSelections:temporarySelections];
+
+    [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
 @end

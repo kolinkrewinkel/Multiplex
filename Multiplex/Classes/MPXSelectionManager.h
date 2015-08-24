@@ -8,6 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class MPXSelectionManager;
+@protocol MPXSelectionManagerVisualizationDelegate <NSObject>
+
+/**
+ * Called when the visual selections that are to be used are changed.
+ */
+- (void)selectionManager:(MPXSelectionManager *)selectionManager didChangeVisualSelections:(NSArray *)visualSelections;
+
+@end
+
 @class DVTSourceTextView;
 
 /**
@@ -20,10 +30,19 @@
 
 - (instancetype)initWithTextView:(DVTSourceTextView *)textView;
 
+#pragma mark - Visualization
+
 /**
  * @return Selections which should be rendered onscreen.
  */
 @property (nonatomic, readonly) NSArray *visualSelections;
+
+/**
+ * Essentially a listener for changes to `visualSelections`.
+ */
+@property (nonatomic, weak) id<MPXSelectionManagerVisualizationDelegate> visualizationDelegate;
+
+#pragma mark - State
 
 /**
  * @return Selections which are finalized and not subject to mutation.
