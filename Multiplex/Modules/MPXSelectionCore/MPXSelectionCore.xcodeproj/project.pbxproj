@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		338A237C1B8BD4B800CC6C1F /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 338A237B1B8BD4B800CC6C1F /* Pods.framework */; };
+		336CDE571B8BDE680046D6AB /* libextobjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 336CDE551B8BDE680046D6AB /* libextobjc.framework */; };
+		336CDE581B8BDE680046D6AB /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */; };
 		33D9FF331B8BC72600A9CD4D /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */; };
-		33D9FF381B8BC72600A9CD4D /* MPXSelectionCoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FF371B8BC72600A9CD4D /* MPXSelectionCoreTests.m */; };
+		33D9FF381B8BC72600A9CD4D /* MPXSelectionManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FF371B8BC72600A9CD4D /* MPXSelectionManagerTests.m */; };
 		33D9FF5F1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D9FF591B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D9FF601B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FF5A1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.m */; };
 		33D9FF611B8BCD7C00A9CD4D /* MPXSelectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D9FF5B1B8BCD7C00A9CD4D /* MPXSelectionManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -52,11 +53,13 @@
 
 /* Begin PBXFileReference section */
 		0129EFFE524F157D47700FDC /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		336CDE551B8BDE680046D6AB /* libextobjc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libextobjc.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/libextobjc.framework"; sourceTree = "<group>"; };
+		336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/ReactiveCocoa.framework"; sourceTree = "<group>"; };
 		338A237B1B8BD4B800CC6C1F /* Pods.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/Pods.framework"; sourceTree = "<group>"; };
 		33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPXSelectionCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33D9FF2D1B8BC72500A9CD4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33D9FF321B8BC72600A9CD4D /* MPXSelectionCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MPXSelectionCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		33D9FF371B8BC72600A9CD4D /* MPXSelectionCoreTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionCoreTests.m; sourceTree = "<group>"; };
+		33D9FF371B8BC72600A9CD4D /* MPXSelectionManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionManagerTests.m; sourceTree = "<group>"; };
 		33D9FF391B8BC72600A9CD4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33D9FF591B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXTextViewSelectionDecorator.h; sourceTree = "<group>"; };
 		33D9FF5A1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXTextViewSelectionDecorator.m; sourceTree = "<group>"; };
@@ -75,7 +78,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				338A237C1B8BD4B800CC6C1F /* Pods.framework in Frameworks */,
+				336CDE571B8BDE680046D6AB /* libextobjc.framework in Frameworks */,
+				336CDE581B8BDE680046D6AB /* ReactiveCocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +106,8 @@
 		338A237E1B8BD4BC00CC6C1F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				336CDE551B8BDE680046D6AB /* libextobjc.framework */,
+				336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */,
 				33D9FFD11B8BD32500A9CD4D /* MPXFoundation.xcodeproj */,
 				338A237B1B8BD4B800CC6C1F /* Pods.framework */,
 			);
@@ -148,7 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				33D9FF391B8BC72600A9CD4D /* Info.plist */,
-				33D9FF371B8BC72600A9CD4D /* MPXSelectionCoreTests.m */,
+				33D9FF371B8BC72600A9CD4D /* MPXSelectionManagerTests.m */,
 			);
 			path = MPXSelectionCoreTests;
 			sourceTree = "<group>";
@@ -306,7 +312,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33D9FF381B8BC72600A9CD4D /* MPXSelectionCoreTests.m in Sources */,
+				33D9FF381B8BC72600A9CD4D /* MPXSelectionManagerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

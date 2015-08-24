@@ -4,11 +4,6 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>BundleLoader.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>4</integer>
-		</dict>
 		<key>FrameworkHeaders.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -16,6 +11,8 @@
 		</dict>
 		<key>MPXMultiSelectionCore.xcscheme</key>
 		<dict>
+			<key>isShown</key>
+			<false/>
 			<key>orderHint</key>
 			<integer>6</integer>
 		</dict>
@@ -23,11 +20,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
-		</dict>
-		<key>MultiplexTests.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>5</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
