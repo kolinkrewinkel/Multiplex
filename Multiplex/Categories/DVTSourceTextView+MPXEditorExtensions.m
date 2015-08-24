@@ -620,7 +620,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
-#warning Unimplemented method '-centerSelectionInVisibleArea:'
 }
 
 #pragma mark - Basic Directional Arrows

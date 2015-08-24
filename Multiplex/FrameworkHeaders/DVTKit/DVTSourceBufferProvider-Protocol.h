@@ -11,7 +11,6 @@
 @protocol DVTSourceBufferProvider <NSObject>
 - (unsigned long long)leadingWhitespacePositionsForLine:(unsigned long long)arg1;
 - (struct _NSRange)lineRangeForCharacterRange:(struct _NSRange)arg1;
-- (unsigned long long)length;
 - (NSString *)string;
 
 @optional
