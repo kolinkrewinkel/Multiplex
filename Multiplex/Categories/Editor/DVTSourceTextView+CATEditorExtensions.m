@@ -1027,12 +1027,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (NSArray *)mpx_reduceSortedRanges:(NSArray *)sortedRanges
 {
     RACSequence *sortedSequence = [sortedRanges rac_sequence];
-    NSArray *reducedRanges = [sortedSequence map:^MPXSelection *(MPXSelection *selection) {
+    RACSequence *placeholderExpandedSequence = [sortedSequence map:^MPXSelection *(MPXSelection *selection) {
         NSRange range1 = [selection range];
         __block NSRange rangeToAdd = range1;
 
-        /* Preprocess the range to adjust for placeholders. */
-
+        // Preprocess the range to adjust for placeholders.
         NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
                                                                          forward:NO
                                                                             wrap:NO
@@ -1057,30 +1056,58 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
             }
         }
 
-        [sortedRanges enumerateObjectsWithOptions:0 usingBlock:^(MPXSelection *selectionRange2, NSUInteger idx2, BOOL *stop2) {
-            if (selection == selectionRange2)
-            {
-                return;
+        return [MPXSelection selectionWithRange:rangeToAdd];
+    }];
+
+    NSArray *placeholderExpandedSequenceArray = [placeholderExpandedSequence array];
+    RACSequence *mergedRanges = [placeholderExpandedSequence map:^MPXSelection *(MPXSelection *selection) {
+        NSRange originalRange = selection.range;
+        NSRange currentRange = selection.range;
+
+        NSUInteger currentIndex = [placeholderExpandedSequenceArray indexOfObject:selection];
+
+        NSUInteger compareIndex = 0;
+        for (MPXSelection *compareSelection in placeholderExpandedSequenceArray) {
+            if (compareIndex > currentIndex) {
+                NSRange compareRange = compareSelection.range;
+
+                NSRange joinedRange = NSUnionRange(currentRange, compareRange);
+                if (!NSEqualRanges(joinedRange, currentRange) && !NSEqualRanges(joinedRange, compareRange)) {
+                    currentRange = joinedRange;
+                }
             }
 
-            NSRange range2 = [selectionRange2 range];
-            NSRange joinedRange = NSUnionRange(rangeToAdd, range2);
-
-            if (!NSEqualRanges(joinedRange, rangeToAdd) && !NSEqualRanges(joinedRange, range2)) {
-                rangeToAdd = joinedRange;
-            } else if (idx2 > [sortedRanges indexOfObject:selection]) {
-                rangeToAdd = NSMakeRange(NSUIntegerMax, 0);
-            }
-        }];
-
-        if (rangeToAdd.location == NSUIntegerMax) {
-            return nil;
+            compareIndex++;
         }
 
-        return [MPXSelection selectionWithRange:rangeToAdd];
-    }].array;
+        if (NSEqualRanges(originalRange, currentRange)) {
+            return selection;
+        }
 
-    return [[NSArray alloc] initWithArray:reducedRanges];
+        return [MPXSelection selectionWithRange:currentRange];
+    }];
+
+    NSArray *mergedRangesArray = [mergedRanges array];
+    RACSequence *filteredRanges = [mergedRanges filter:^BOOL(MPXSelection *selection) {
+        NSUInteger currentIndex = [mergedRangesArray indexOfObject:selection];
+        NSRange currentRange = selection.range;
+
+        NSUInteger compareIndex = 0;
+        for (MPXSelection *compareSelection in mergedRangesArray) {
+            if (compareIndex > currentIndex) {
+                NSRange compareRange = compareSelection.range;
+                if (NSIntersectionRange(compareRange, currentRange).length > 0) {
+                    return NO;
+                }
+            }
+
+            compareIndex++;
+        }
+
+        return YES;
+    }];
+
+    return [[NSArray alloc] initWithArray:filteredRanges.array];
 }
 
 - (NSArray *)prepareRanges:(NSArray *)ranges
