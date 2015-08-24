@@ -22,7 +22,7 @@
 
 @property (nonatomic) NSTimer *blinkTimer;
 @property (nonatomic) BOOL blinkState;
-@property (nonatomic) NSArray *selectionViews;
+@property (nonatomic) NSArray *caretViews;
 
 @end
 
@@ -52,12 +52,12 @@
                                       forCharacterRange:NSMakeRange(0, textStorage.length)];
 
     /* Remove any onscreen cursors */
-    [self.selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.caretViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     RACSequence *rangeSequence = [ranges rac_sequence];
 
     __block NSUInteger idx = 0;
-    self.selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
+    self.caretViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
         NSRange range = [selection range];
 
         // Paint the background of the selection range for selections taht are not just insertion points.
@@ -89,14 +89,14 @@
         return caretView;
     }] array];
 
-    [self.selectionViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
+    [self.caretViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
         [self.textView addSubview:caret];
     }];
 }
 
 - (void)setCursorsVisible:(BOOL)visible
 {
-    [self.selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
+    [self.caretViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
         view.hidden = !visible;
     }];
 
@@ -105,7 +105,7 @@
 
 - (void)blinkCursors:(NSTimer *)sender
 {
-    if ([self.selectionViews count] == 0) {
+    if ([self.caretViews count] == 0) {
         return;
     }
 
