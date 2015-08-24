@@ -13,7 +13,7 @@
 #import <DVTKit/DVTFontAndColorTheme.h>
 #import <DVTKit/DVTFoldingManager.h>
 
-#import "DVTSourceTextView+CATEditorExtensions.h"
+#import "DVTSourceTextView+MPXEditorExtensions.h"
 
 #import "MPXSelection.h"
 #import "MPXGeometry.h"
@@ -30,7 +30,7 @@ static NSInvocation *Original_ViewWillMoveToWindow = nil;
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
 
-@implementation DVTSourceTextView (CATEditorExtensions)
+@implementation DVTSourceTextView (MPXEditorExtensions)
 
 @synthesizeAssociation(DVTSourceTextView, mpx_blinkTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_blinkState);

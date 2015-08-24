@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		33100A061A4F92400062D0D0 /* MPXSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 33100A051A4F92400062D0D0 /* MPXSelection.m */; };
-		3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */; };
+		3396C02419D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3396C02319D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.m */; };
 		33A74F2D1B8935FB00FBBD2B /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2B1B8935FB00FBBD2B /* DVTFoundation.framework */; };
 		33A74F2E1B8935FB00FBBD2B /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2C1B8935FB00FBBD2B /* DVTKit.framework */; };
 		33A74F311B89365500FBBD2B /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2F1B89365500FBBD2B /* IDEFoundation.framework */; };
@@ -26,8 +26,8 @@
 		33100A051A4F92400062D0D0 /* MPXSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelection.m; sourceTree = "<group>"; };
 		338732481B89AB710053977A /* FrameworkHeaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrameworkHeaders; sourceTree = "<group>"; };
 		338732491B8A3BF10053977A /* MPXGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXGeometry.h; sourceTree = "<group>"; };
-		3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+CATEditorExtensions.h"; sourceTree = "<group>"; };
-		3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+CATEditorExtensions.m"; sourceTree = "<group>"; };
+		3396C02219D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXEditorExtensions.h"; sourceTree = "<group>"; };
+		3396C02319D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorExtensions.m"; sourceTree = "<group>"; };
 		33A74F2B1B8935FB00FBBD2B /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = "../../../Applications/Xcode-beta.app/Contents/SharedFrameworks/DVTFoundation.framework"; sourceTree = "<group>"; };
 		33A74F2C1B8935FB00FBBD2B /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = "../../../Applications/Xcode-beta.app/Contents/SharedFrameworks/DVTKit.framework"; sourceTree = "<group>"; };
 		33A74F2F1B89365500FBBD2B /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = "../../../Applications/Xcode-beta.app/Contents/Frameworks/IDEFoundation.framework"; sourceTree = "<group>"; };
@@ -70,8 +70,8 @@
 			children = (
 				33100A041A4F92400062D0D0 /* MPXSelection.h */,
 				33100A051A4F92400062D0D0 /* MPXSelection.m */,
-				3396C02219D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.h */,
-				3396C02319D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m */,
+				3396C02219D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.h */,
+				3396C02319D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.m */,
 			);
 			name = Editor;
 			path = Categories/Editor;
@@ -275,7 +275,7 @@
 				33100A061A4F92400062D0D0 /* MPXSelection.m in Sources */,
 				33A74F351B89380400FBBD2B /* MPXSwizzle.m in Sources */,
 				33B3A3F918CD36BF00AA64C8 /* MultiplexPlugin.m in Sources */,
-				3396C02419D4FA63003E147C /* DVTSourceTextView+CATEditorExtensions.m in Sources */,
+				3396C02419D4FA63003E147C /* DVTSourceTextView+MPXEditorExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

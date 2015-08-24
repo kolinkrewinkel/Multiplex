@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+CATEditorExtensions.h
+//  DVTSourceTextView+MPXEditorExtensions.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 9/25/14.
@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 @class MPXSelection;
 
-@interface DVTSourceTextView (CATEditorExtensions)
+@interface DVTSourceTextView (MPXEditorExtensions)
 
 #pragma mark - Multiple Selection
 
