@@ -38,10 +38,10 @@
 static RACSequence *MPXSortedSelections(NSArray *selections)
 {
     return [[selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection1,
-                                                                      MPXSelection *selection2) {
+                                                                       MPXSelection *selection2) {
         NSRange range1 = selection1.range;
         NSInteger range1Loc = range1.location;
-
+        
         NSRange range2 = selection2.range;
         NSInteger range2Loc = range2.location;
 
