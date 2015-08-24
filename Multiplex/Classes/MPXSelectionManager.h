@@ -14,4 +14,20 @@
 
 - (instancetype)initWithTextStorage:(DVTTextStorage *)textStorage;
 
+/**
+ * @return Selections which should be rendered onscreen.
+ */
+@property (nonatomic, readonly) NSArray *visualSelections;
+
+/**
+ * @return Selections which are finalized and not subject to mutation.
+ */
+@property (nonatomic) NSArray *finalizedSelections;
+
+/**
+ * Allows clients to temporarily alter the display attributes before a change to the selections is finalized.
+ */
+- (void)setTemporarySelections:(NSArray *)temporarySelections;
+
+
 @end

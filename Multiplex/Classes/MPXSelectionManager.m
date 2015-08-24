@@ -16,6 +16,8 @@
 
 @property (nonatomic) DVTSourceTextView *textView;
 
+@property (nonatomic) NSArray *temporarySelections;
+
 @end
 
 @implementation MPXSelectionManager
@@ -147,12 +149,30 @@ static RACSequence *MPXCoallescedSelections(RACSequence *mergedSelections)
     }];
 }
 
-- (NSArray *)fixedRanges:(NSArray *)ranges
+- (NSArray *)fixedSelections:(NSArray *)ranges
 {
     RACSequence *sortedSelections = MPXSortedSelections(ranges);
     RACSequence *placeholderFixedSelections = [self selectionsWithFixedPlaceholdersForSortedSelections:sortedSelections];
     RACSequence *mergedSelections = MPXMergedSortedSelections(placeholderFixedSelections);
     return [MPXCoallescedSelections(mergedSelections) array];
+}
+
+#pragma mark - Display
+
+- (NSArray *)visualSelections
+{
+    return self.temporarySelections ?: self.finalizedSelections;
+}
+
+- (void)setFinalizedSelections:(NSArray *)finalizedSelections
+{
+    _finalizedSelections = [self fixedSelections:finalizedSelections];
+    self.temporarySelections = nil;
+}
+
+- (void)setTemporarySelections:(NSArray *)temporarySelections
+{
+    _temporarySelections = [self fixedSelections:temporarySelections];
 }
 
 @end
