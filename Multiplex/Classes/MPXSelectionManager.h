@@ -8,11 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+@class DVTSourceTextView;
+
+/**
+ * Handles deduplication and temporary modifications of selections along with the nuances of making sure selection-range
+ * doesn't fall within the bounds of a token, etc.
+ */
 @interface MPXSelectionManager : NSObject
 
 #pragma mark - Initialization
 
-- (instancetype)initWithTextStorage:(DVTTextStorage *)textStorage;
+- (instancetype)initWithTextView:(DVTSourceTextView *)textView;
 
 /**
  * @return Selections which should be rendered onscreen.

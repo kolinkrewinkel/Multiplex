@@ -13,11 +13,12 @@
 #import <DVTKit/DVTFontAndColorTheme.h>
 #import <DVTKit/DVTFoldingManager.h>
 
-#import "DVTSourceTextView+MPXEditorExtensions.h"
-
 #import "MPXSelection.h"
+#import "MPXSelectionManager.h"
 #import "MPXGeometry.h"
 #import "MPXSwizzle.h"
+
+#import "DVTSourceTextView+MPXEditorExtensions.h"
 
 static NSInvocation *Original_Init = nil;
 static NSInvocation *Original_MouseDragged = nil;
@@ -32,12 +33,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 
+@synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_blinkTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_blinkState);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
-@synthesizeAssociation(DVTSourceTextView, mpx_finalizingRanges);
-@synthesizeAssociation(DVTSourceTextView, mpx_selectedRanges);
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionViews);
 
 #pragma mark - NSObject
@@ -80,6 +80,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 {
     [Original_Init invokeWithTarget:self];
 
+    self.mpx_selectionManager = [[MPXSelectionManager alloc] initWithTextView:self];
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
@@ -156,17 +157,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
 
     [self mpx_updateSelectionVisualizations];
-}
-
-#pragma mark - Setters/Getters
-
-- (NSArray *)mpx_effectiveSelectedRanges
-{
-    if (self.mpx_finalizingRanges) {
-        return self.mpx_finalizingRanges;
-    }
-
-    return self.mpx_selectedRanges ?: @[];
 }
 
 #pragma mark - Keyboard Events
@@ -890,8 +880,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // Update the model value for when it is used combinatorily.
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:newRange];
 
-    [self mpx_setSelectedRanges:[self.mpx_selectedRanges arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]
-                       finalize:NO];
+    [self.mpx_selectionManager setTemporarySelections:[self.mpx_selectionManager.finalizedSelections arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]];
 }
 
 - (void)mpx_mouseDown:(NSEvent *)theEvent
@@ -920,7 +909,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    NSArray *selections = [self mpx_effectiveSelectedRanges];
+    NSArray *selections = self.mpx_selectionManager.visualSelections;
     NSRange resultRange = NSMakeRange(NSNotFound, 0);
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
 
@@ -962,24 +951,23 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     if (insertNewCursorKeysHeld)
     {
-        [self mpx_setSelectedRanges:[selections arrayByAddingObject:selection]
-                           finalize:NO];
+        [self.mpx_selectionManager setTemporarySelections:[selections arrayByAddingObject:selection]];
     }
     else
     {
-        /* Because the click was singular, the other selections will *not* come back under any circumstances. Thus, it must be finalized at the point where it's at is if it's a zero-length selection. Otherwise, they'll be re-added during dragging. */
-        [self mpx_setSelectedRanges:@[selection]
-                           finalize:YES];
+        // Because the click was singular, the other selections will *not* come back under any circumstances.
+        // Thus, it must be finalized at the point where it's at is if it's a zero-length selection.
+        // Otherwise, they'll be re-added during dragging.
+        self.mpx_selectionManager.finalizedSelections = @[selection];
 
-        /* In the event the user drags, however, it needs to unfinalized so that it can be extended again. */
-        [self mpx_setSelectedRanges:@[selection]
-                           finalize:NO];
+        // In the event the user drags, however, it needs to unfinalized so that it can be extended again.
+        [self.mpx_selectionManager setTemporarySelections:@[selection]];
     }
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-    [self mpx_setSelectedRanges:[self mpx_effectiveSelectedRanges] finalize:YES];
+    self.mpx_selectionManager.finalizedSelections = self.mpx_selectionManager.visualSelections;
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
@@ -991,62 +979,19 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)selectAll:(id)sender
 {
-    [self mpx_setSelectedRanges:@[[MPXSelection selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]]
-                       finalize:YES];
+    self.mpx_selectionManager.finalizedSelections = @[[MPXSelection selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]];
 }
 
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
 {
-    NSArray *mappedValues = [[[[self mpx_effectiveSelectedRanges] rac_sequence] map:mapBlock] array];
-    [self mpx_setSelectedRanges:mappedValues
-                       finalize:YES];
-}
-
-- (void)mpx_setSelectedRanges:(NSArray *)selectedRanges finalize:(BOOL)finalized
-{
-    /* Sort and reduce the ranges passed in */
-    NSArray *ranges = [self prepareRanges:selectedRanges];
-
-    if (finalized)
-    {
-        if ([self.mpx_selectedRanges isEqual:ranges] && self.mpx_finalizingRanges == nil)
-        {
-            return;
-        }
-
-        self.mpx_selectedRanges = ranges;
-        self.mpx_finalizingRanges = nil;
-    }
-    else
-    {
-        if ([ranges isEqualToArray:self.mpx_finalizingRanges])
-        {
-            return;
-        }
-
-        self.mpx_finalizingRanges = ranges;
-    }
-
-    self.selectedTextAttributes = @{};
-
-    /* Set the selected range for the breadcrumb bar. */
-    if ([ranges count] > 0)
-    {
-        MPXSelection *firstSelection = (MPXSelection *)[ranges firstObject];
-        self.selectedRange = firstSelection.range;
-    }
-    else
-    {
-        self.selectedRange = NSMakeRange(0, 0);
-    }
-
-    [self mpx_updateSelectionVisualizations];
+    NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
+    self.mpx_selectionManager.finalizedSelections = mappedValues;
 }
 
 - (void)mpx_updateSelectionVisualizations
 {
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-    NSArray *ranges = [self mpx_effectiveSelectedRanges];
+    NSArray *ranges = self.mpx_selectionManager.visualSelections;
 
     /* Reset the background color of all the source text. */
     NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
@@ -1112,7 +1057,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     NSArray *selections =
     ({
-        NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:[self mpx_effectiveSelectedRanges]];
+        NSMutableArray *selections = [[NSMutableArray alloc] initWithArray:self.mpx_selectionManager.visualSelections];
 
         MPXSelection *existingSelection = selections[0];
 
@@ -1191,9 +1136,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                   
                                   return [MPXSelection selectionWithRange:firstPlaceholder];
                               }].array;
-    
-    [self mpx_setSelectedRanges:newSelections
-                       finalize:YES];
+
+    self.mpx_selectionManager.finalizedSelections = newSelections;
 }
 
 - (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location
@@ -1205,7 +1149,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [Original_ShouldAutoCompleteAtLocation getReturnValue:&internalShouldAutoComplete];
     
     return (internalShouldAutoComplete &&
-            !([[self mpx_effectiveSelectedRanges] count] > 1));
+            !([self.mpx_selectionManager.visualSelections count] > 1));
 }
 
 @end

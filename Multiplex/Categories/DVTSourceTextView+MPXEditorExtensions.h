@@ -16,12 +16,9 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 };
 
 @class MPXSelection;
+@class MPXSelectionManager;
 
 @interface DVTSourceTextView (MPXEditorExtensions)
-
-#pragma mark - Multiple Selection
-
-@property (nonatomic) NSArray *mpx_selectedRanges;
 
 #pragma mark - Vertical-bar Drawing
 
@@ -31,8 +28,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 #pragma mark - Mutation States
 
-@property (nonatomic) NSArray *mpx_finalizingRanges;
-
+@property (nonatomic) MPXSelectionManager *mpx_selectionManager;
 @property (nonatomic) MPXSelection *mpx_rangeInProgress;
 @property (nonatomic) MPXSelection *mpx_rangeInProgressStart;
 
