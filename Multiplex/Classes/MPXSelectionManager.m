@@ -33,7 +33,7 @@
 
 #pragma mark - Range Logic
 
-static NSArray *MPXSortSelections(NSArray *selections)
+static NSArray *MPXSortedSelections(NSArray *selections)
 {
     return [selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection1,
                                                                       MPXSelection *selection2) {
@@ -141,7 +141,7 @@ static NSArray *MPXSortSelections(NSArray *selections)
 
 - (NSArray *)prepareRanges:(NSArray *)ranges
 {
-    NSArray *sortedRanges = MPXSortSelections(ranges);
+    NSArray *sortedRanges = MPXSortedSelections(ranges);
     NSArray *reducedRanges = [self mpx_reduceSortedRanges:sortedRanges];
     
     return reducedRanges;
