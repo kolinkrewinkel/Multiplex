@@ -24,8 +24,7 @@
                  interLineDesiredIndex:(NSUInteger)interLineDesiredIndex
                                 origin:(NSUInteger)origin
 {
-    if ((self = [self init]))
-    {
+    if (self = [self init]) {
         self.range = range;
         self.interLineDesiredIndex = interLineDesiredIndex;
         self.origin = origin;
@@ -34,13 +33,11 @@
     return self;
 }
 
-#pragma mark - New Range-Convenience Initializer
+#pragma mark - Convenience Initializers
 
 - (instancetype)initWithSelectionRange:(NSRange)range
 {
-    return [[[self class] alloc] initWithSelectionRange:range
-                                  interLineDesiredIndex:NSNotFound
-                                                 origin:range.location];
+    return [self initWithSelectionRange:range interLineDesiredIndex:NSNotFound origin:range.location];
 }
 
 + (instancetype)selectionWithRange:(NSRange)range
@@ -52,8 +49,7 @@
 
 - (BOOL)isEqual:(id)object
 {
-    if (![object isKindOfClass:[self class]])
-    {
+    if (![object isKindOfClass:[self class]]) {
         return NO;
     }
 
@@ -63,17 +59,13 @@
             && NSEqualRanges(otherSelection.range, self.range));
 }
 
-- (NSString *)description
-{
-    return [self debugDescription];
-}
-
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"<%@: intraline index: %lu, range: %@>",
+    return [NSString stringWithFormat:@"<%@: Range: %@, interline index: %lu>",
             NSStringFromClass([self class]),
-            (unsigned long)self.interLineDesiredIndex,
-            NSStringFromRange(self.range)];
+            NSStringFromRange(self.range),
+            (unsigned long)self.interLineDesiredIndex];
+
 }
 
 @end
