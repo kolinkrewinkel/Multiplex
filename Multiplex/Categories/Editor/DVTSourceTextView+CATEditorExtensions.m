@@ -631,7 +631,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (void)centerSelectionInVisibleArea:(id)sender
 {
 #warning Unimplemented method '-centerSelectionInVisibleArea:'
-    NSLog(@"Center selection requested from %@", sender);
 }
 
 #pragma mark - Basic Directional Arrows
@@ -1065,28 +1064,22 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
             }
 
             NSRange range2 = [selectionRange2 range];
+            NSRange joinedRange = NSUnionRange(rangeToAdd, range2);
 
-            BOOL endsBeyondStartOfRange = range2.location + range2.length >= rangeToAdd.location;
-            BOOL startsBeforeOrWithinRange = range2.location <= rangeToAdd.location + rangeToAdd.length;
-
-            if (endsBeyondStartOfRange && startsBeforeOrWithinRange) {
-                NSRange originalRangeToAdd = rangeToAdd;
-
-                NSInteger relativeIncrease = (rangeToAdd.location + rangeToAdd.length) - range2.location;
-                if (relativeIncrease < range2.length) {
-                    rangeToAdd.length += range2.length - relativeIncrease;
-                }
-
-                if (NSEqualRanges(originalRangeToAdd, self.mpx_rangeInProgress.range)) {
-#warning Logic here does not transfer intraline index
-                    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:rangeToAdd];
-                }
+            if (!NSEqualRanges(joinedRange, rangeToAdd) && !NSEqualRanges(joinedRange, range2)) {
+                rangeToAdd = joinedRange;
+            } else if (idx2 > [sortedRanges indexOfObject:selection]) {
+                rangeToAdd = NSMakeRange(NSUIntegerMax, 0);
             }
         }];
 
+        if (rangeToAdd.location == NSUIntegerMax) {
+            return nil;
+        }
+
         return [MPXSelection selectionWithRange:rangeToAdd];
     }].array;
-    
+
     return [[NSArray alloc] initWithArray:reducedRanges];
 }
 
@@ -1154,8 +1147,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     RACSequence *rangeSequence = [ranges rac_sequence];
 
-    NSLog(@"Ranges: %@", ranges);
-
     __block NSUInteger idx = 0;
     self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
         NSRange range = [selection range];
@@ -1169,8 +1160,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
                                                         actualCharacterRange:nil];
-
-//        NSLog(@"Getting glyph range: %@, idx: %lu", NSStringFromRange(glyphRange), (unsigned long)idx);
 
         NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
                                                          inTextContainer:self.textContainer];
