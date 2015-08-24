@@ -6,7 +6,7 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
-#import <DVTKit/DVTTextStorage.h>
+#import <DVTKit/DVTSourceTextView.h>
 
 #import "MPXSelection.h"
 
@@ -14,7 +14,7 @@
 
 @interface MPXSelectionManager ()
 
-@property (nonatomic) DVTTextStorage *textStorage;
+@property (nonatomic) DVTSourceTextView *textView;
 
 @end
 
@@ -22,25 +22,25 @@
 
 #pragma mark - Initialization
 
-- (instancetype)initWithTextStorage:(DVTTextStorage *)textStorage
+- (instancetype)initWithTextView:(DVTSourceTextView *)textView
 {
     if (self = [super init]) {
-        self.textStorage = textStorage;
+        self.textView = textView;
     }
 
     return self;
 }
 
-- (NSArray *)mpx_sortRanges:(NSArray *)ranges
+#pragma mark - Range Logic
+
+static NSArray *MPXSortSelections(NSArray *selections)
 {
-    // Standard sorting logic.
-    // Do not include the length so that iteration can do sequential iteration thereafter and do reducing.
-    return [ranges sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selectionRange1,
-                                                                  MPXSelection *selectionRange2) {
-        NSRange range1 = [selectionRange1 range];
+    return [selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection1,
+                                                                      MPXSelection *selection2) {
+        NSRange range1 = selection1.range;
         NSInteger range1Loc = range1.location;
 
-        NSRange range2 = [selectionRange2 range];
+        NSRange range2 = selection2.range;
         NSInteger range2Loc = range2.location;
 
         if (range2Loc > range1Loc) {
@@ -61,15 +61,15 @@
         __block NSRange rangeToAdd = range1;
 
         // Preprocess the range to adjust for placeholders.
-        NSRange trailingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
-                                                                         forward:NO
-                                                                            wrap:NO
-                                                                           limit:0];
+        NSRange trailingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
+                                                                                  forward:NO
+                                                                                     wrap:NO
+                                                                                    limit:0];
 
-        NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:rangeToAdd.location
-                                                                        forward:YES
-                                                                           wrap:NO
-                                                                          limit:0];
+        NSRange leadingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:rangeToAdd.location
+                                                                                 forward:YES
+                                                                                    wrap:NO
+                                                                                   limit:0];
 
         if (trailingPlaceholder.location != NSNotFound) {
             NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
@@ -141,7 +141,7 @@
 
 - (NSArray *)prepareRanges:(NSArray *)ranges
 {
-    NSArray *sortedRanges = [self mpx_sortRanges:ranges];
+    NSArray *sortedRanges = MPXSortSelections(ranges);
     NSArray *reducedRanges = [self mpx_reduceSortedRanges:sortedRanges];
     
     return reducedRanges;
