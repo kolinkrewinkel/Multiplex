@@ -51,6 +51,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0129EFFE524F157D47700FDC /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		338A237B1B8BD4B800CC6C1F /* Pods.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/Pods.framework"; sourceTree = "<group>"; };
 		33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPXSelectionCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33D9FF2D1B8BC72500A9CD4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -66,6 +67,7 @@
 		33D9FF991B8BD16A00A9CD4D /* MPXSelectionCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionCore.h; sourceTree = "<group>"; };
 		33D9FF9B1B8BD1DC00A9CD4D /* MPXSelectionCore-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MPXSelectionCore-Prefix.pch"; sourceTree = "<group>"; };
 		33D9FFD11B8BD32500A9CD4D /* MPXFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPXFoundation.xcodeproj; path = ../MPXFoundation/MPXFoundation.xcodeproj; sourceTree = "<group>"; };
+		CEF91527415022A9010F9EEA /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		14A9D2B986EADC596418901E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0129EFFE524F157D47700FDC /* Pods.debug.xcconfig */,
+				CEF91527415022A9010F9EEA /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		338A237E1B8BD4BC00CC6C1F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +115,7 @@
 				33D9FF2A1B8BC72500A9CD4D /* MPXSelectionCore */,
 				33D9FF361B8BC72600A9CD4D /* MPXSelectionCoreTests */,
 				33D9FF291B8BC72500A9CD4D /* Products */,
+				14A9D2B986EADC596418901E /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -399,6 +411,7 @@
 		};
 		33D9FF3D1B8BC72600A9CD4D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0129EFFE524F157D47700FDC /* Pods.debug.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -425,6 +438,7 @@
 		};
 		33D9FF3E1B8BC72600A9CD4D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CEF91527415022A9010F9EEA /* Pods.release.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;

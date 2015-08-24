@@ -27,6 +27,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		29D883A4ECA87D08FADF3BC5 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		334387EE1B8BD56800A1AA32 /* MPXSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSwizzle.h; sourceTree = "<group>"; };
 		334387EF1B8BD56800A1AA32 /* MPXGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXGeometry.h; sourceTree = "<group>"; };
 		334387F01B8BD56800A1AA32 /* MPXSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSwizzle.m; sourceTree = "<group>"; };
@@ -37,6 +38,7 @@
 		33D9FFB01B8BD24200A9CD4D /* MPXFoundationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MPXFoundationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33D9FFB51B8BD24200A9CD4D /* MPXFoundationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPXFoundationTests.m; sourceTree = "<group>"; };
 		33D9FFB71B8BD24200A9CD4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		629522D4ECF19249113E3481 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				33D9FFA81B8BD24200A9CD4D /* MPXFoundation */,
 				33D9FFB41B8BD24200A9CD4D /* MPXFoundationTests */,
 				33D9FFA71B8BD24200A9CD4D /* Products */,
+				7AD6D1F91232A821312F5B28 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,6 +108,15 @@
 				33D9FFB51B8BD24200A9CD4D /* MPXFoundationTests.m */,
 			);
 			path = MPXFoundationTests;
+			sourceTree = "<group>";
+		};
+		7AD6D1F91232A821312F5B28 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				629522D4ECF19249113E3481 /* Pods.debug.xcconfig */,
+				29D883A4ECA87D08FADF3BC5 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,6 +336,7 @@
 		};
 		33D9FFBB1B8BD24300A9CD4D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 629522D4ECF19249113E3481 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -342,6 +355,7 @@
 		};
 		33D9FFBC1B8BD24300A9CD4D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 29D883A4ECA87D08FADF3BC5 /* Pods.release.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
