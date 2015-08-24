@@ -11,7 +11,7 @@
 @interface MPXSelection ()
 
 @property (nonatomic) NSRange range;
-@property (nonatomic) NSUInteger intralineDesiredIndex;
+@property (nonatomic) NSUInteger interLineDesiredIndex;
 @property (nonatomic) NSUInteger origin;
 
 @end
@@ -21,13 +21,13 @@
 #pragma mark - Designated Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range
-                 intralineDesiredIndex:(NSUInteger)intralineDesiredIndex
+                 interLineDesiredIndex:(NSUInteger)interLineDesiredIndex
                                 origin:(NSUInteger)origin
 {
     if ((self = [self init]))
     {
         self.range = range;
-        self.intralineDesiredIndex = intralineDesiredIndex;
+        self.interLineDesiredIndex = interLineDesiredIndex;
         self.origin = origin;
     }
 
@@ -39,7 +39,7 @@
 - (instancetype)initWithSelectionRange:(NSRange)range
 {
     return [[[self class] alloc] initWithSelectionRange:range
-                                  intralineDesiredIndex:NSNotFound
+                                  interLineDesiredIndex:NSNotFound
                                                  origin:range.location];
 }
 
@@ -59,7 +59,7 @@
 
     MPXSelection *otherSelection = (MPXSelection *)object;
 
-    return (otherSelection.intralineDesiredIndex == self.intralineDesiredIndex
+    return (otherSelection.interLineDesiredIndex == self.interLineDesiredIndex
             && NSEqualRanges(otherSelection.range, self.range));
 }
 
@@ -72,7 +72,7 @@
 {
     return [NSString stringWithFormat:@"<%@: intraline index: %lu, range: %@>",
             NSStringFromClass([self class]),
-            (unsigned long)self.intralineDesiredIndex,
+            (unsigned long)self.interLineDesiredIndex,
             NSStringFromRange(self.range)];
 }
 

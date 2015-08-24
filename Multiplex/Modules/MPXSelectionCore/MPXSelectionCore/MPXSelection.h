@@ -13,7 +13,7 @@
 #pragma mark - Designated Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range
-                 intralineDesiredIndex:(NSUInteger)intralineDesiredIndex
+                 interLineDesiredIndex:(NSUInteger)interLineDesiredIndex
                                 origin:(NSUInteger)origin;
 
 #pragma mark - New Range-Convenience Initializer
@@ -24,7 +24,7 @@
 #pragma mark - Attributes
 
 @property (nonatomic, readonly) NSRange range;
-@property (nonatomic, readonly) NSUInteger intralineDesiredIndex;
+@property (nonatomic, readonly) NSUInteger interLineDesiredIndex;
 @property (nonatomic, readonly) NSUInteger origin;
 
 @end

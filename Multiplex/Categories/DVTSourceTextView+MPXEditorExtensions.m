@@ -146,7 +146,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         NSRange lineRange;
         (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange) effectiveRange:&lineRange];
 
-        NSUInteger relativeLinePosition = selection.intralineDesiredIndex;
+        NSUInteger relativeLinePosition = selection.interLineDesiredIndex;
 
         if (relativeLinePosition == NSNotFound)
         {
@@ -156,7 +156,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         // Move cursor (or range-selection) to the end of what was just added with 0-length.
         NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
-                                      intralineDesiredIndex:relativeLinePosition
+                                      interLineDesiredIndex:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
     }];
 }
@@ -685,10 +685,10 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
          NSUInteger previousRelativeIndex = NSMaxRange(previousAbsoluteRange) - previousLineRange.location;
 
          // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
-         if (selection.intralineDesiredIndex != previousRelativeIndex &&
-             selection.intralineDesiredIndex != NSNotFound)
+         if (selection.interLineDesiredIndex != previousRelativeIndex &&
+             selection.interLineDesiredIndex != NSNotFound)
          {
-             previousRelativeIndex = selection.intralineDesiredIndex;
+             previousRelativeIndex = selection.interLineDesiredIndex;
          }
 
          // The selection is in the first/zero-th line, so there is no above line to find.
@@ -745,7 +745,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
          // This will place it at the end of the line, aiming to be placed at the original position.
          return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
-                                       intralineDesiredIndex:previousRelativeIndex
+                                       interLineDesiredIndex:previousRelativeIndex
                                                       origin:newAbsoluteRange.location];
      }];
 }
