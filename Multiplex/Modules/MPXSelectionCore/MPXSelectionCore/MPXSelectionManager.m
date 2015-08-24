@@ -6,10 +6,10 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
+@import ReactiveCocoa;
 #import <DVTKit/DVTSourceTextView.h>
 
 #import "MPXSelection.h"
-
 #import "MPXSelectionManager.h"
 
 @interface MPXSelectionManager ()

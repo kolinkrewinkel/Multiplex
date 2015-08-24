@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 @interface MPXSelection : NSObject
 
 #pragma mark - Designated Initializer

@@ -8,6 +8,8 @@
 
 #import <objc/runtime.h>
 
+@import Foundation;
+
 /**
  * Replaces the method provided and returns the invocation for clients to call back to the original implementaiton.
  *

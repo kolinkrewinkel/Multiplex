@@ -6,18 +6,14 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
+@import MPXFoundation;
+@import MPXSelectionCore;
 @import QuartzCore;
 
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTFontAndColorTheme.h>
 #import <DVTKit/DVTFoldingManager.h>
-
-#import "MPXSelection.h"
-#import "MPXSelectionManager.h"
-#import "MPXTextViewSelectionDecorator.h"
-#import "MPXGeometry.h"
-#import "MPXSwizzle.h"
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 

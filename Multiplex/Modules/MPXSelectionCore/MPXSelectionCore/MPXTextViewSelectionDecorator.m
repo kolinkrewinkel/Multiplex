@@ -11,7 +11,9 @@
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTFontAndColorTheme.h>
 
-#import "MPXGeometry.h"
+@import MPXFoundation;
+@import ReactiveCocoa;
+
 #import "MPXSelection.h"
 
 #import "MPXTextViewSelectionDecorator.h"

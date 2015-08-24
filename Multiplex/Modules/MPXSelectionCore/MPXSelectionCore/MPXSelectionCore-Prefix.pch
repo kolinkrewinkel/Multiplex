@@ -1,0 +1,10 @@
+//
+//  MPXSelectionCorePrefix.pch
+//  MPXSelectionCore
+//
+//  Created by Kolin Krewinkel on 8/24/15.
+//  Copyright © 2015 Kolin Krewinkel. All rights reserved.
+//
+
+@import Foundation;
+@import Cocoa;
