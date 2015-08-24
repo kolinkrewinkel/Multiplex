@@ -15,6 +15,7 @@
 
 #import "MPXSelection.h"
 #import "MPXSelectionManager.h"
+#import "MPXTextViewSelectionDecorator.h"
 #import "MPXGeometry.h"
 #import "MPXSwizzle.h"
 
@@ -34,11 +35,10 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 @implementation DVTSourceTextView (MPXEditorExtensions)
 
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
-@synthesizeAssociation(DVTSourceTextView, mpx_blinkTimer);
-@synthesizeAssociation(DVTSourceTextView, mpx_blinkState);
+@synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
+
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
-@synthesizeAssociation(DVTSourceTextView, mpx_selectionViews);
 
 #pragma mark - NSObject
 
@@ -80,7 +80,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 {
     [Original_Init invokeWithTarget:self];
 
+    self.mpx_textViewSelectionDecorator = [[MPXTextViewSelectionDecorator alloc] initWithTextView:self];
+
     self.mpx_selectionManager = [[MPXSelectionManager alloc] initWithTextView:self];
+    self.mpx_selectionManager.visualizationDelegate = self.mpx_textViewSelectionDecorator;
+
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
@@ -96,8 +100,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     // Observe the window's state while the view resides in it
     if (window) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mpx_startBlinking) name:NSWindowDidBecomeKeyNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mpx_stopBlinking) name:NSWindowDidResignKeyNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self.mpx_textViewSelectionDecorator selector:@selector(startBlinking) name:NSWindowDidBecomeKeyNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self.mpx_textViewSelectionDecorator selector:@selector(stopBlinking) name:NSWindowDidResignKeyNotification object:window];
     } else {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
@@ -111,52 +115,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     return YES;
 }
 
-- (void)mpx_setCursorsVisible:(BOOL)visible
-{
-    [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
-        view.hidden = !visible;
-    }];
-
-    self.mpx_blinkState = visible;
-}
-
-- (void)mpx_blinkCursors:(NSTimer *)sender
-{
-    if ([self.mpx_selectionViews count] == 0) {
-        return;
-    }
-
-    [self mpx_setCursorsVisible:!self.mpx_blinkState];
-}
-
-- (void)mpx_startBlinking
-{
-    // This used to check if the blink timer was already there, however:
-    // we should restart it because the old one will mess up a new cursor's showing
-    // for too short a time if the timer was already in motion.
-    self.mpx_blinkTimer = [NSTimer timerWithTimeInterval:0.5
-                                                  target:self
-                                                selector:@selector(mpx_blinkCursors:)
-                                                userInfo:nil
-                                                 repeats:YES];
-
-    [[NSRunLoop mainRunLoop] addTimer:self.mpx_blinkTimer forMode:NSRunLoopCommonModes];
-}
-
-- (void)mpx_stopBlinking
-{
-    [self.mpx_blinkTimer invalidate];
-
-    [self mpx_setCursorsVisible:NO];
-}
-
 - (void)mpx_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
 {
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1 atIndex:2];
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg2 atIndex:3];
     [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
-
-    [self mpx_updateSelectionVisualizations];
 }
 
 #pragma mark - Keyboard Events
@@ -853,7 +816,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_mouseDragged:(NSEvent *)theEvent
 {
-    [self mpx_stopBlinking];
+    [self.mpx_textViewSelectionDecorator stopBlinking];
 
     NSRange rangeInProgress = self.mpx_rangeInProgress.range;
     NSRange rangeInProgressOrigin = self.mpx_rangeInProgressStart.range;
@@ -941,8 +904,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
-    [self mpx_stopBlinking];
-    [self mpx_setCursorsVisible:YES];
+    [self.mpx_textViewSelectionDecorator stopBlinking];
+    [self.mpx_textViewSelectionDecorator setCursorsVisible:YES];
 
     MPXSelection *selection = [MPXSelection selectionWithRange:resultRange];
     self.mpx_rangeInProgress = selection;
@@ -970,7 +933,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
-    [self mpx_startBlinking];
+    [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 
@@ -985,59 +948,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 {
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
     self.mpx_selectionManager.finalizedSelections = mappedValues;
-}
-
-- (void)mpx_updateSelectionVisualizations
-{
-    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-    NSArray *ranges = self.mpx_selectionManager.visualSelections;
-
-    /* Reset the background color of all the source text. */
-    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
-    [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
-                             forCharacterRange:NSMakeRange(0, self.string.length)];
-
-    /* Remove any onscreen cursors */
-    [self.mpx_selectionViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
-    RACSequence *rangeSequence = [ranges rac_sequence];
-
-    __block NSUInteger idx = 0;
-    self.mpx_selectionViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
-        NSRange range = [selection range];
-
-        // Paint the background of the selection range for selections taht are not just insertion points.
-        if (range.length > 0) {
-            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-            [self.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
-                                     forCharacterRange:range];
-        }
-
-        NSRange glyphRange = [self.layoutManager glyphRangeForCharacterRange:range
-                                                        actualCharacterRange:nil];
-
-        NSRect glyphRect = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location + glyphRange.length, 0)
-                                                         inTextContainer:self.textContainer];
-
-        CGRect unroundedCaretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f/self.window.screen.backingScaleFactor, CGRectGetHeight(glyphRect)),
-                                                 self.textContainerOrigin.x,
-                                                 self.textContainerOrigin.y);
-
-        CGRect caretRect = MPXRoundedValueRectForView(unroundedCaretRect, self);
-
-        NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
-        caretView.wantsLayer = YES;
-        caretView.hidden = !self.mpx_blinkState;
-        caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
-
-        idx++;
-
-        return caretView;
-    }] array];
-
-    [self.mpx_selectionViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
-        [self addSubview:caret];
-    }];
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color

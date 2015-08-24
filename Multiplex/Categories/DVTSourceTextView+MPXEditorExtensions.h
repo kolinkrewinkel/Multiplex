@@ -17,18 +17,17 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 @class MPXSelection;
 @class MPXSelectionManager;
+@class MPXTextViewSelectionDecorator;
 
 @interface DVTSourceTextView (MPXEditorExtensions)
 
-#pragma mark - Vertical-bar Drawing
+#pragma mark - Selection Management Core
 
-@property (nonatomic) NSTimer *mpx_blinkTimer;
-@property (nonatomic) BOOL mpx_blinkState;
-@property (nonatomic) NSArray *mpx_selectionViews;
+@property (nonatomic) MPXSelectionManager *mpx_selectionManager;
+@property (nonatomic) MPXTextViewSelectionDecorator *mpx_textViewSelectionDecorator;
 
 #pragma mark - Mutation States
 
-@property (nonatomic) MPXSelectionManager *mpx_selectionManager;
 @property (nonatomic) MPXSelection *mpx_rangeInProgress;
 @property (nonatomic) MPXSelection *mpx_rangeInProgressStart;
 

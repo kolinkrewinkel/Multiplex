@@ -15,4 +15,10 @@
 
 - (instancetype)initWithTextView:(DVTSourceTextView *)textView;
 
+#pragma mark - Caret Blink
+
+- (void)startBlinking;
+- (void)stopBlinking;
+- (void)setCursorsVisible:(BOOL)visible;
+
 @end
