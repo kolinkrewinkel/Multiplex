@@ -56,7 +56,6 @@
 
     RACSequence *rangeSequence = [ranges rac_sequence];
 
-    __block NSUInteger idx = 0;
     self.caretViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
         NSRange range = [selection range];
 
@@ -83,8 +82,6 @@
         caretView.wantsLayer = YES;
         caretView.hidden = !self.blinkState;
         caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
-
-        idx++;
 
         return caretView;
     }] array];
