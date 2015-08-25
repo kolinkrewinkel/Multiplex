@@ -59,6 +59,11 @@
             && NSEqualRanges(otherSelection.range, self.range));
 }
 
+- (NSUInteger)hash
+{
+    return self.range.location;
+}
+
 - (NSString *)description
 {
     return [self debugDescription];

@@ -115,11 +115,9 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     }];
 
     for (MPXSelection *selection in placeholderFixedSelections) {
-        if (selection.range.length > 0 || [indexSet containsIndex:selection.range.location]) {
-            continue;
+        if (selection.range.length == 0 && ![indexSet containsIndexesInRange:NSMakeRange(selection.range.location, 1)]) {
+            [selections addObject:selection];
         }
-
-        [selections addObject:selection];
     }
 
     return MPXSortedSelections(selections.allObjects);

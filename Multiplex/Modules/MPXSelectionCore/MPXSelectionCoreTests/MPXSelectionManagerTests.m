@@ -39,17 +39,24 @@
     XCTAssertEqualObjects(self.selectionManager.finalizedSelections, originalSelections);
 }
 
-- (void)testMultipleFinalizedSelections
+- (void)testSelectionMerging
 {
-    NSArray *originalSelections = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 0)],
-                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 0)],
-                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 0)],
+    NSArray *originalSelections = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 1)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(3, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(3, 2)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(5, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(8, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 10)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(19, 0)],
                                     [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)],
                                     [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)]];
     self.selectionManager.finalizedSelections = originalSelections;
 
-    NSArray *expectedOutput = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 0)],
-                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 0)],
+    NSArray *expectedOutput = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 1)],
+                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(3, 2)],
+                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(5, 0)],
+                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(8, 0)],
+                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 10)],
                                 [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)]];
     XCTAssertEqualObjects(self.selectionManager.visualSelections, expectedOutput);
     XCTAssertEqualObjects(self.selectionManager.finalizedSelections, expectedOutput);
