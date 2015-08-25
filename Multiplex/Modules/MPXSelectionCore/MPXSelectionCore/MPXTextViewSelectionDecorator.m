@@ -48,27 +48,18 @@
     [self stopBlinking];
 
     DVTTextStorage *textStorage = self.textView.textStorage;
-    NSArray *ranges = selectionManager.visualSelections;
 
-    /* Reset the background color of all the source text. */
-    NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
-    [self.textView.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
+    // Reset the background color of all the source text.
+    NSColor *defaultBackgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
+    [self.textView.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: defaultBackgroundColor}
                                       forCharacterRange:NSMakeRange(0, textStorage.length)];
 
-    /* Remove any onscreen cursors */
+    // Remove any onscreen cursors
     [self.caretViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
-    RACSequence *rangeSequence = [ranges rac_sequence];
-
-    self.caretViews = [[rangeSequence map:^NSView *(MPXSelection *selection) {
+    RACSequence *selectionSequence = [visualSelections rac_sequence];
+    self.caretViews = [[selectionSequence map:^NSView *(MPXSelection *selection) {
         NSRange range = [selection range];
-
-        // Paint the background of the selection range for selections taht are not just insertion points.
-        if (range.length > 0) {
-            NSColor *backgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
-            [self.textView.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: backgroundColor}
-                                     forCharacterRange:range];
-        }
 
         NSRange glyphRange = [self.textView.layoutManager glyphRangeForCharacterRange:range
                                                         actualCharacterRange:nil];
@@ -88,12 +79,20 @@
 
         return caretView;
     }] array];
-
     [self.caretViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
         [self.textView addSubview:caret];
     }];
 
-    [self startBlinking];
+    // Paint the background of the selection range for selections taht are not just insertion points.
+    NSArray *rangedSelections = [[selectionSequence filter:^BOOL(MPXSelection *selection) {
+        return selection.range.length > 0;
+    }] array];
+
+    NSColor *selectedBackgroundColor = textStorage.fontAndColorTheme.sourceTextSelectionColor;
+    for (MPXSelection *selection in rangedSelections) {
+        [self.textView.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: selectedBackgroundColor}
+                                          forCharacterRange:selection.range];
+    }
 }
 
 - (void)setCursorsVisible:(BOOL)visible

@@ -159,6 +159,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                       interLineDesiredIndex:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
     }];
+
+    [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 - (void)deleteBackward:(id)sender
@@ -944,6 +946,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 {
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
     self.mpx_selectionManager.finalizedSelections = mappedValues;
+
+    [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
