@@ -125,6 +125,14 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)insertText:(id)insertObject
 {
+    [self.undoManager beginUndoGrouping];
+
+    NSArray *previousSelections = self.mpx_selectionManager.visualSelections;
+
+    [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+        self.mpx_selectionManager.finalizedSelections = previousSelections;
+    }];
+
     // Prevents random stuff being thrown in.
     if (![insertObject isKindOfClass:[NSString class]]) {
         return;
@@ -162,6 +170,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                       interLineDesiredIndex:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
     }];
+
+    [self.undoManager endUndoGrouping];
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
