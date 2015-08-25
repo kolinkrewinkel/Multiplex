@@ -20,6 +20,7 @@
 static NSInvocation *Original_Init = nil;
 static NSInvocation *Original_MouseDragged = nil;
 static NSInvocation *Original_MouseDown = nil;
+static NSInvocation *Original_MouseUp = nil;
 static NSInvocation *Original_DidInsertCompletionTextAtRange = nil;
 static NSInvocation *Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 static NSInvocation *Original_ShouldAutoCompleteAtLocation = nil;
@@ -43,6 +44,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     Original_Init = MPXSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(mpx_commonInitDVTSourceTextView), NO);
     Original_MouseDragged = MPXSwizzle(self, @selector(mouseDragged:), self, @selector(mpx_mouseDragged:), NO);
     Original_MouseDown = MPXSwizzle(self, @selector(mouseDown:), self, @selector(mpx_mouseDown:), NO);
+    Original_MouseUp = MPXSwizzle(self, @selector(mouseUp:), self, @selector(mpx_mouseUp:), NO);
 
     Original_DidInsertCompletionTextAtRange = MPXSwizzle(self,
                                                          @selector(didInsertCompletionTextAtRange:),
@@ -814,6 +816,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_mouseDragged:(NSEvent *)theEvent
 {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(mpx_performOriginalJump:) object:nil];
+
     [self.mpx_textViewSelectionDecorator stopBlinking];
 
     NSRange rangeInProgress = self.mpx_rangeInProgress.range;
@@ -843,6 +847,19 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.mpx_selectionManager setTemporarySelections:[self.mpx_selectionManager.finalizedSelections arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]];
 }
 
+- (void)mpx_performOriginalJump:(NSEvent *)mouseDownEvent
+{
+    if (!CGPointEqualToPoint(self.window.mouseLocationOutsideOfEventStream, [mouseDownEvent locationInWindow])) {
+        return;
+    }
+
+    [self.mpx_selectionManager setTemporarySelections:nil];
+    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+
+    [self _didClickOnTemporaryLinkWithEvent:mouseDownEvent];
+}
+
 - (void)mpx_mouseDown:(NSEvent *)theEvent
 {
     NSUInteger index = ({
@@ -857,17 +874,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 
     NSInteger clickCount = theEvent.clickCount;
-    BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
-
-    BOOL insertNewCursorKeysHeld = (altKeyHeld && commandKeyHeld);
-
-    if ((altKeyHeld || commandKeyHeld) && !insertNewCursorKeysHeld)
-    {
-        [Original_MouseDown setArgument:&theEvent atIndex:2];
-        [Original_MouseDown invokeWithTarget:self];
-        return;
-    }
 
     NSArray *selections = self.mpx_selectionManager.visualSelections;
     NSRange resultRange = NSMakeRange(NSNotFound, 0);
@@ -909,9 +916,13 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_rangeInProgress = selection;
     self.mpx_rangeInProgressStart = selection;
 
-    if (insertNewCursorKeysHeld)
+    if (commandKeyHeld)
     {
         [self.mpx_selectionManager setTemporarySelections:[selections arrayByAddingObject:selection]];
+
+        [self performSelector:@selector(mpx_performOriginalJump:)
+                   withObject:theEvent
+                   afterDelay:0.5];
     }
     else
     {
@@ -925,8 +936,10 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     }
 }
 
-- (void)mouseUp:(NSEvent *)theEvent
+- (void)mpx_mouseUp:(NSEvent *)theEvent
 {
+    [[NSRunLoop mainRunLoop] cancelPerformSelector:@selector(mpx_performOriginalJump:) target:self argument:nil];
+
     self.mpx_selectionManager.finalizedSelections = self.mpx_selectionManager.visualSelections;
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
