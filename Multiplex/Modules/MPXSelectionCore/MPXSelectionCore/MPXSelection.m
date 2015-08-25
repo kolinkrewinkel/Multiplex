@@ -59,6 +59,11 @@
             && NSEqualRanges(otherSelection.range, self.range));
 }
 
+- (NSString *)description
+{
+    return [self debugDescription];
+}
+
 - (NSString *)debugDescription
 {
     return [NSString stringWithFormat:@"<%@: Range: %@, interline index: %lu>",

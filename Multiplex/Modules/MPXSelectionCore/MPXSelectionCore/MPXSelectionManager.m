@@ -35,9 +35,9 @@
 
 #pragma mark - Range Logic
 
-static RACSequence *MPXSortedSelections(NSArray *selections)
+static NSArray *MPXSortedSelections(NSArray *selections)
 {
-    return [[selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection1,
+    return [selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection1,
                                                                        MPXSelection *selection2) {
         NSRange range1 = selection1.range;
         NSInteger range1Loc = range1.location;
@@ -52,7 +52,7 @@ static RACSequence *MPXSortedSelections(NSArray *selections)
         }
 
         return NSOrderedSame;
-    }] rac_sequence];
+    }];
 }
 
 - (RACSequence *)selectionsWithFixedPlaceholdersForSortedSelections:(RACSequence *)sortedSelections
@@ -95,66 +95,34 @@ static RACSequence *MPXSortedSelections(NSArray *selections)
     }];
 }
 
-static RACSequence *MPXMergedSortedSelections(RACSequence *sortedSelections)
-{
-    NSArray *sortedSelectionsArray = [sortedSelections array];
-    return [sortedSelections map:^MPXSelection *(MPXSelection *selection) {
-        NSRange originalRange = selection.range;
-        NSRange currentRange = selection.range;
-
-        NSUInteger currentIndex = [sortedSelectionsArray indexOfObject:selection];
-
-        NSUInteger compareIndex = 0;
-        for (MPXSelection *compareSelection in sortedSelectionsArray) {
-            if (compareIndex > currentIndex) {
-                NSRange compareRange = compareSelection.range;
-
-                NSRange joinedRange = NSUnionRange(currentRange, compareRange);
-                if (!NSEqualRanges(joinedRange, currentRange) && !NSEqualRanges(joinedRange, compareRange)) {
-                    currentRange = joinedRange;
-                }
-            }
-
-            compareIndex++;
-        }
-
-        if (NSEqualRanges(originalRange, currentRange)) {
-            return selection;
-        }
-
-        return [MPXSelection selectionWithRange:currentRange];
-    }];
-}
-
-static RACSequence *MPXCoallescedSelections(RACSequence *mergedSelections)
-{
-    NSArray *mergedSelectionsArray = [mergedSelections array];
-    return [mergedSelections filter:^BOOL(MPXSelection *selection) {
-        NSUInteger currentIndex = [mergedSelectionsArray indexOfObject:selection];
-        NSRange currentRange = selection.range;
-
-        NSUInteger compareIndex = 0;
-        for (MPXSelection *compareSelection in mergedSelectionsArray) {
-            if (compareIndex > currentIndex) {
-                NSRange compareRange = compareSelection.range;
-                if (NSIntersectionRange(compareRange, currentRange).length > 0) {
-                    return NO;
-                }
-            }
-
-            compareIndex++;
-        }
-
-        return YES;
-    }];
-}
-
 - (NSArray *)fixedSelections:(NSArray *)ranges
 {
-    RACSequence *sortedSelections = MPXSortedSelections(ranges);
-    RACSequence *placeholderFixedSelections = [self selectionsWithFixedPlaceholdersForSortedSelections:sortedSelections];
-    RACSequence *mergedSelections = MPXMergedSortedSelections(placeholderFixedSelections);
-    return [MPXCoallescedSelections(mergedSelections) array];
+    NSArray *sortedSelections = MPXSortedSelections(ranges);
+    RACSequence *placeholderFixedSelections = [self selectionsWithFixedPlaceholdersForSortedSelections:sortedSelections.rac_sequence];
+
+    NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
+    for (MPXSelection *selection in placeholderFixedSelections) {
+        if (selection.range.length == 0) {
+            continue;
+        }
+
+        [indexSet addIndexesInRange:selection.range];
+    }
+
+    NSMutableSet *selections = [[NSMutableSet alloc] init];
+    [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        [selections addObject:[MPXSelection selectionWithRange:range]];
+    }];
+
+    for (MPXSelection *selection in placeholderFixedSelections) {
+        if (selection.range.length > 0 || [indexSet containsIndex:selection.range.location]) {
+            continue;
+        }
+
+        [selections addObject:selection];
+    }
+
+    return MPXSortedSelections(selections.allObjects);
 }
 
 #pragma mark - Display
@@ -174,6 +142,11 @@ static RACSequence *MPXCoallescedSelections(RACSequence *mergedSelections)
 
 - (void)setTemporarySelections:(NSArray *)temporarySelections
 {
+    if (!temporarySelections) {
+        _temporarySelections = nil;
+        return;
+    }
+    
     _temporarySelections = [self fixedSelections:temporarySelections];
 
     [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];

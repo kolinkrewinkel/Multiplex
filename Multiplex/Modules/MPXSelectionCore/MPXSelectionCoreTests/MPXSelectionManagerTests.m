@@ -26,6 +26,7 @@
 }
 
 - (void)tearDown {
+    self.selectionManager = nil;
     [super tearDown];
 }
 
@@ -36,6 +37,22 @@
 
     XCTAssertEqualObjects(self.selectionManager.visualSelections, originalSelections);
     XCTAssertEqualObjects(self.selectionManager.finalizedSelections, originalSelections);
+}
+
+- (void)testMultipleFinalizedSelections
+{
+    NSArray *originalSelections = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)],
+                                    [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)]];
+    self.selectionManager.finalizedSelections = originalSelections;
+
+    NSArray *expectedOutput = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 0)],
+                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 0)],
+                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)]];
+    XCTAssertEqualObjects(self.selectionManager.visualSelections, expectedOutput);
+    XCTAssertEqualObjects(self.selectionManager.finalizedSelections, expectedOutput);
 }
 
 - (void)testTemporaryToFinalizedSelection
