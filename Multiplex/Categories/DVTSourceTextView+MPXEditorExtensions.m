@@ -178,6 +178,14 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)deleteBackward:(id)sender
 {
+    [self.undoManager beginUndoGrouping];
+
+    NSArray *previousSelections = self.mpx_selectionManager.visualSelections;
+
+    [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+        self.mpx_selectionManager.finalizedSelections = previousSelections;
+    }];
+
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
@@ -205,6 +213,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         return newSelection;
     }];
+
+    [self.undoManager endUndoGrouping];
 }
 
 #pragma mark Indentations/Other insertions
