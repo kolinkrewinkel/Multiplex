@@ -26,6 +26,8 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
 @property (nonatomic) MPXTextViewSelectionDecorator *mpx_textViewSelectionDecorator;
 
+@property (nonatomic) NSTimer *mpx_definitionLongPressTimer;
+
 #pragma mark - Mutation States
 
 @property (nonatomic) MPXSelection *mpx_rangeInProgress;

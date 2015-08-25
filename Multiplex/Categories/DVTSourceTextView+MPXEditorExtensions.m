@@ -32,6 +32,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 @implementation DVTSourceTextView (MPXEditorExtensions)
 
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
+@synthesizeAssociation(DVTSourceTextView, mpx_definitionLongPressTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
 
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
@@ -847,10 +848,11 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.mpx_selectionManager setTemporarySelections:[self.mpx_selectionManager.finalizedSelections arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]];
 }
 
-- (void)mpx_performOriginalJump:(NSEvent *)mouseDownEvent
+- (void)mpx_performOriginalJump:(NSTimer *)sender
 {
+    NSEvent *mouseDownEvent = sender.userInfo;
     if (!CGPointEqualToPoint(self.window.mouseLocationOutsideOfEventStream, [mouseDownEvent locationInWindow])) {
-        return;
+        return;     
     }
 
     [self.mpx_selectionManager setTemporarySelections:nil];
@@ -920,9 +922,13 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     {
         [self.mpx_selectionManager setTemporarySelections:[selections arrayByAddingObject:selection]];
 
-        [self performSelector:@selector(mpx_performOriginalJump:)
-                   withObject:theEvent
-                   afterDelay:0.5];
+        self.mpx_definitionLongPressTimer = [NSTimer timerWithTimeInterval:0.333
+                                                                    target:self
+                                                                  selector:@selector(mpx_performOriginalJump:)
+                                                                  userInfo:theEvent
+                                                                   repeats:NO];
+
+        [[NSRunLoop mainRunLoop] addTimer:self.mpx_definitionLongPressTimer forMode:NSDefaultRunLoopMode];
     }
     else
     {
@@ -938,7 +944,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_mouseUp:(NSEvent *)theEvent
 {
-    [[NSRunLoop mainRunLoop] cancelPerformSelector:@selector(mpx_performOriginalJump:) target:self argument:nil];
+    [self.mpx_definitionLongPressTimer invalidate];
 
     self.mpx_selectionManager.finalizedSelections = self.mpx_selectionManager.visualSelections;
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
