@@ -54,7 +54,6 @@
 
     NSArray *expectedOutput = @[[[MPXSelection alloc] initWithSelectionRange:NSMakeRange(0, 1)],
                                 [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(3, 2)],
-                                [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(5, 0)],
                                 [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(8, 0)],
                                 [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(10, 10)],
                                 [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(50, 0)]];
