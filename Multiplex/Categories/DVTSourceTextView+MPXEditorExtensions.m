@@ -14,6 +14,7 @@
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTFontAndColorTheme.h>
 #import <DVTKit/DVTFoldingManager.h>
+#import <DVTKit/DVTUndoManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
@@ -125,13 +126,20 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)insertText:(id)insertObject
 {
-    [self.undoManager beginUndoGrouping];
+    DVTUndoManager *undoManager = (DVTUndoManager *)self.undoManager;
 
     NSArray *previousSelections = self.mpx_selectionManager.visualSelections;
 
-    [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-        self.mpx_selectionManager.finalizedSelections = previousSelections;
-    }];
+    void (^restoreSelections)(NSNotification * _Nonnull note) = ^(NSNotification * _Nonnull note) {
+        [undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+            self.mpx_selectionManager.finalizedSelections = previousSelections;
+        }];
+    };
+
+    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSUndoManagerDidOpenUndoGroupNotification
+                                                                    object:undoManager
+                                                                     queue:[NSOperationQueue mainQueue]
+                                                                usingBlock:restoreSelections];
 
     // Prevents random stuff being thrown in.
     if (![insertObject isKindOfClass:[NSString class]]) {
@@ -171,8 +179,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                      origin:newInsertionPointRange.location];
     }];
 
-    [self.undoManager endUndoGrouping];
-
+    [[NSNotificationCenter defaultCenter] removeObserver:observer];
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
