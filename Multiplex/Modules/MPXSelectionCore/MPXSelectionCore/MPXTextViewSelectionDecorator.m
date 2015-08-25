@@ -45,6 +45,8 @@
 
 - (void)selectionManager:(MPXSelectionManager *)selectionManager didChangeVisualSelections:(NSArray *)visualSelections
 {
+    [self stopBlinking];
+
     DVTTextStorage *textStorage = self.textView.textStorage;
     NSArray *ranges = selectionManager.visualSelections;
 
@@ -82,7 +84,6 @@
 
         NSView *caretView = [[NSView alloc] initWithFrame:caretRect];
         caretView.wantsLayer = YES;
-        caretView.hidden = !self.blinkState;
         caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
         return caretView;
@@ -91,6 +92,8 @@
     [self.caretViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
         [self.textView addSubview:caret];
     }];
+
+    [self startBlinking];
 }
 
 - (void)setCursorsVisible:(BOOL)visible
@@ -113,6 +116,9 @@
 
 - (void)startBlinking
 {
+    [self.blinkTimer invalidate];
+    self.blinkTimer = nil;
+
     // This used to check if the blink timer was already there, however:
     // we should restart it because the old one will mess up a new cursor's showing
     // for too short a time if the timer was already in motion.
@@ -128,6 +134,7 @@
 - (void)stopBlinking
 {
     [self.blinkTimer invalidate];
+    self.blinkTimer = nil;
 
     [self setCursorsVisible:NO];
 }
