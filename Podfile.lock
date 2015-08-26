@@ -1,4 +1,5 @@
 PODS:
+  - JRSwizzle (1.0)
   - libextobjc (0.4.1):
     - libextobjc/EXTADT (= 0.4.1)
     - libextobjc/EXTConcreteProtocol (= 0.4.1)
@@ -43,10 +44,12 @@ PODS:
     - ReactiveCocoa/Core
 
 DEPENDENCIES:
+  - JRSwizzle (= 1.0)
   - libextobjc
   - ReactiveCocoa (~> 2.3)
 
 SPEC CHECKSUMS:
+  JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
   libextobjc: a650fc1bf489a3d3a9bc2e621efa3e1006fc5471
   ReactiveCocoa: eb38dee0a0e698f73a9b25e5c1faea2bb4c79240
 

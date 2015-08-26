@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		334387F11B8BD56800A1AA32 /* MPXSwizzle.h in Headers */ = {isa = PBXBuildFile; fileRef = 334387EE1B8BD56800A1AA32 /* MPXSwizzle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		334387F21B8BD56800A1AA32 /* MPXGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 334387EF1B8BD56800A1AA32 /* MPXGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		334387F31B8BD56800A1AA32 /* MPXSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 334387F01B8BD56800A1AA32 /* MPXSwizzle.m */; };
 		338A23791B8BD49900CC6C1F /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 338A23781B8BD49900CC6C1F /* Pods.framework */; };
 		33D9FFAA1B8BD24200A9CD4D /* MPXFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D9FFA91B8BD24200A9CD4D /* MPXFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D9FFB11B8BD24200A9CD4D /* MPXFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FFA61B8BD24200A9CD4D /* MPXFoundation.framework */; };
@@ -128,7 +126,6 @@
 			files = (
 				33D9FFAA1B8BD24200A9CD4D /* MPXFoundation.h in Headers */,
 				334387F21B8BD56800A1AA32 /* MPXGeometry.h in Headers */,
-				334387F11B8BD56800A1AA32 /* MPXSwizzle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,7 +225,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				334387F31B8BD56800A1AA32 /* MPXSwizzle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,7 @@
 @import MPXFoundation;
 @import MPXSelectionCore;
 @import QuartzCore;
+@import JRSwizzle;
 
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTLayoutManager.h>
@@ -17,16 +18,6 @@
 #import <DVTKit/DVTUndoManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-
-static NSInvocation *Original_Init = nil;
-static NSInvocation *Original_MouseDragged = nil;
-static NSInvocation *Original_MouseDown = nil;
-static NSInvocation *Original_MouseUp = nil;
-static NSInvocation *Original_DidInsertCompletionTextAtRange = nil;
-static NSInvocation *Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
-static NSInvocation *Original_ShouldAutoCompleteAtLocation = nil;
-static NSInvocation *Original_ViewWillMoveToWindow = nil;
-static NSInvocation *Original_TextDidEndEditRangeChangeInLength = nil;
 
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
@@ -48,44 +39,30 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 + (void)load
 {
-    Original_Init = MPXSwizzle(self, @selector(_commonInitDVTSourceTextView), self, @selector(mpx_commonInitDVTSourceTextView), NO);
-    Original_MouseDragged = MPXSwizzle(self, @selector(mouseDragged:), self, @selector(mpx_mouseDragged:), NO);
-    Original_MouseDown = MPXSwizzle(self, @selector(mouseDown:), self, @selector(mpx_mouseDown:), NO);
-    Original_MouseUp = MPXSwizzle(self, @selector(mouseUp:), self, @selector(mpx_mouseUp:), NO);
+    [self jr_swizzleMethod:@selector(_commonInitDVTSourceTextView)
+                withMethod:@selector(mpx_commonInitDVTSourceTextView)
+                     error:nil];
 
-    Original_DidInsertCompletionTextAtRange = MPXSwizzle(self,
-                                                         @selector(didInsertCompletionTextAtRange:),
-                                                         self,
-                                                         @selector(mpx_didInsertCompletionTextAtRange:),
-                                                         NO);
+    [self jr_swizzleMethod:@selector(mouseDragged:) withMethod:@selector(mpx_mouseDragged:) error:nil];
+    [self jr_swizzleMethod:@selector(mouseDown:) withMethod:@selector(mpx_mouseDown:) error:nil];
+    [self jr_swizzleMethod:@selector(mouseUp:) withMethod:@selector(mpx_mouseUp:) error:nil];
 
-    Original_AdjustTypeOverCompletionForEditedRangeChangeInLength =
-    MPXSwizzle(self,
-               @selector(adjustTypeOverCompletionForEditedRange:changeInLength:),
-               self,
-               @selector(mpx_adjustTypeOverCompletionForEditedRange:changeInLength:),
-               NO);
+    [self jr_swizzleMethod:@selector(didInsertCompletionTextAtRange:)
+                withMethod:@selector(mpx_didInsertCompletionTextAtRange:)
+                     error:nil];
 
-    Original_ShouldAutoCompleteAtLocation = MPXSwizzle(self,
-                                                       @selector(shouldAutoCompleteAtLocation:),
-                                                       self,
-                                                       @selector(mpx_shouldAutoCompleteAtLocation:),
-                                                       NO);
+    [self jr_swizzleMethod:@selector(shouldAutoCompleteAtLocation:)
+                withMethod:@selector(mpx_shouldAutoCompleteAtLocation:)
+                     error:nil];
 
-    Original_ViewWillMoveToWindow = MPXSwizzle(self,
-                                               @selector(viewWillMoveToWindow:),
-                                               self,
-                                               @selector(mpx_viewWillMoveToWindow:),
-                                               NO);
-
-    Original_TextDidEndEditRangeChangeInLength = MPXSwizzle(self, @selector(textStorage:didEndEditRange:changeInLength:), self, @selector(mpx_textStorage:didEndEditRange:changeInLength:), NO);
+    [self jr_swizzleMethod:@selector(viewWillMoveToWindow:) withMethod:@selector(mpx_viewWillMoveToWindow:) error:nil];
 }
 
 #pragma mark - Initializer
 
 - (void)mpx_commonInitDVTSourceTextView
 {
-    [Original_Init invokeWithTarget:self];
+    [self mpx_commonInitDVTSourceTextView];
 
     self.mpx_textViewSelectionDecorator = [[MPXTextViewSelectionDecorator alloc] initWithTextView:self];
 
@@ -112,8 +89,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_viewWillMoveToWindow:(NSWindow *)window
 {
-    [Original_ViewWillMoveToWindow setArgument:&window atIndex:2];
-    [Original_ViewWillMoveToWindow invokeWithTarget:self];
+    [self mpx_viewWillMoveToWindow:window];
 
     // Observe the window's state while the view resides in it
     if (window) {
@@ -132,13 +108,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (BOOL)isSelectable
 {
     return YES;
-}
-
-- (void)mpx_adjustTypeOverCompletionForEditedRange:(struct _NSRange)arg1 changeInLength:(long long)arg2
-{
-    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg1 atIndex:2];
-    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength setArgument:&arg2 atIndex:3];
-    [Original_AdjustTypeOverCompletionForEditedRangeChangeInLength invoke];
 }
 
 #pragma mark - Keyboard Events
@@ -205,16 +174,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
-
-- (void)mpx_textStorage:(id)arg1 didEndEditRange:(NSRange)arg2 changeInLength:(long long)arg3
-{
-    [Original_TextDidEndEditRangeChangeInLength setArgument:&arg1 atIndex:2];
-    [Original_TextDidEndEditRangeChangeInLength setArgument:&arg2 atIndex:3];
-    [Original_TextDidEndEditRangeChangeInLength setArgument:&arg3 atIndex:4];
-    [Original_TextDidEndEditRangeChangeInLength invokeWithTarget:self];
-}
-
-
 
 - (void)deleteBackward:(id)sender
 {
@@ -941,8 +900,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         {
             if ([((DVTLayoutManager *)self.layoutManager).foldingManager firstFoldTouchingCharacterIndex:index])
             {
-                [Original_MouseDown setArgument:&theEvent atIndex:2];
-                [Original_MouseDown invokeWithTarget:self];
+                [self mpx_mouseDown:theEvent];
                 return;
             }
 
@@ -1138,11 +1096,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location
 {
-    [Original_ShouldAutoCompleteAtLocation setArgument:&location atIndex:2];
-    [Original_ShouldAutoCompleteAtLocation invokeWithTarget:self];
-    
-    BOOL internalShouldAutoComplete = NO;
-    [Original_ShouldAutoCompleteAtLocation getReturnValue:&internalShouldAutoComplete];
+    BOOL internalShouldAutoComplete = [self mpx_shouldAutoCompleteAtLocation:location];
     
     return (internalShouldAutoComplete &&
             !([self.mpx_selectionManager.visualSelections count] > 1));
