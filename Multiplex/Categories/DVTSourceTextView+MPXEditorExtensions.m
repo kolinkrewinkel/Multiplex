@@ -26,12 +26,15 @@ static NSInvocation *Original_DidInsertCompletionTextAtRange = nil;
 static NSInvocation *Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 static NSInvocation *Original_ShouldAutoCompleteAtLocation = nil;
 static NSInvocation *Original_ViewWillMoveToWindow = nil;
+static NSInvocation *Original_Undo = nil;
 
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 
+@synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
+@synthesizeAssociation(DVTSourceTextView, mpx_undoSelectionState);
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_definitionLongPressTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
@@ -72,6 +75,9 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                self,
                                                @selector(mpx_viewWillMoveToWindow:),
                                                NO);
+
+
+    Original_Undo = MPXSwizzle(self, NSSelectorFromString(@"undo:"), self, @selector(mpx_undo:), NO);
 }
 
 #pragma mark - Initializer
@@ -89,7 +95,48 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
     self.selectedTextAttributes = @{};
+
+    DVTUndoManager *undoManager = (DVTUndoManager *)self.undoManager;
+
+    void (^restoreSelections)(NSNotification * _Nonnull note) = ^(NSNotification * _Nonnull note) {
+        NSLog(@"Will close");
+    };
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:NSUndoManagerWillCloseUndoGroupNotification
+                                                      object:undoManager
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:restoreSelections];
+
+    void (^openBlock)(NSNotification * _Nonnull note) = ^(NSNotification * _Nonnull note) {
+        if (self.mpx_inUndoGroup) {
+            NSArray *state = self.mpx_undoSelectionState;
+            [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+                self.mpx_selectionManager.finalizedSelections = state;
+            }];
+
+            [self.undoManager endUndoGrouping];
+            self.mpx_undoSelectionState = nil;
+            self.mpx_inUndoGroup = NO;
+        }
+    };
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:NSUndoManagerWillUndoChangeNotification
+                                                      object:undoManager
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:openBlock];
+
+    NSLog(@"%@", [self valueForKey:@"_sharedData"]);
 }
+
+//- (void)mpx_undo:(id)sender
+//{
+//    if (self.mpx_inUndoGroup) {
+//        [self.undoManager endUndoGrouping];
+//    }
+//
+//    [Original_Undo setArgument:&sender atIndex:2];
+//    [Original_Undo invokeWithTarget:self];
+//}
 
 #pragma mark - NSView
 
@@ -106,6 +153,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
     }
+
+
 }
 
 #pragma mark - Cursors
@@ -126,24 +175,25 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)insertText:(id)insertObject
 {
-    DVTUndoManager *undoManager = (DVTUndoManager *)self.undoManager;
-
-    NSArray *previousSelections = self.mpx_selectionManager.visualSelections;
-
-    void (^restoreSelections)(NSNotification * _Nonnull note) = ^(NSNotification * _Nonnull note) {
-        [undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-            self.mpx_selectionManager.finalizedSelections = previousSelections;
-        }];
-    };
-
-    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:NSUndoManagerDidOpenUndoGroupNotification
-                                                                    object:undoManager
-                                                                     queue:[NSOperationQueue mainQueue]
-                                                                usingBlock:restoreSelections];
-
     // Prevents random stuff being thrown in.
     if (![insertObject isKindOfClass:[NSString class]]) {
         return;
+    }
+
+    if (self.mpx_undoSelectionState) {
+        NSArray *state = self.mpx_undoSelectionState;
+        [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+            self.mpx_selectionManager.finalizedSelections = state;
+        }];
+
+        [self.undoManager endUndoGrouping];
+        self.mpx_undoSelectionState = nil;
+        self.mpx_inUndoGroup = NO;
+    }
+
+    if (!self.mpx_inUndoGroup) {
+        self.mpx_inUndoGroup = YES;
+        [self.undoManager beginUndoGrouping];
     }
 
     NSString *insertString = (NSString *)insertObject;
@@ -177,22 +227,13 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
                                       interLineDesiredIndex:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
-    }];
+    } sequentialModification:YES];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:observer];
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 - (void)deleteBackward:(id)sender
 {
-    [self.undoManager beginUndoGrouping];
-
-    NSArray *previousSelections = self.mpx_selectionManager.visualSelections;
-
-    [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-        self.mpx_selectionManager.finalizedSelections = previousSelections;
-    }];
-
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
 
@@ -220,8 +261,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         return newSelection;
     }];
-
-    [self.undoManager endUndoGrouping];
 }
 
 #pragma mark Indentations/Other insertions
@@ -990,6 +1029,19 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
 {
+    [self mpx_mapAndFinalizeSelectedRanges:mapBlock sequentialModification:NO];
+}
+
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
+                  sequentialModification:(BOOL)sequentialModification
+{
+    if (!sequentialModification) {
+        NSArray *oldSelections = self.mpx_selectionManager.visualSelections;
+        self.mpx_undoSelectionState = oldSelections;
+    } else {
+        self.mpx_undoSelectionState = nil;
+    }
+
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
     self.mpx_selectionManager.finalizedSelections = mappedValues;
 
