@@ -96,51 +96,14 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
 
     self.selectedTextAttributes = @{};
-
-    DVTUndoManager *undoManager = (DVTUndoManager *)self.undoManager;
-
-    void (^restoreSelections)(NSNotification * _Nonnull note) = ^(NSNotification * _Nonnull note) {
-        NSLog(@"Will close");
-    };
-
-    [[NSNotificationCenter defaultCenter] addObserverForName:NSUndoManagerWillCloseUndoGroupNotification
-                                                      object:undoManager
-                                                       queue:[NSOperationQueue mainQueue]
-                                                  usingBlock:restoreSelections];
-
-//    void (^openBlock)(NSNotification * _Nonnull note) = ^(NSNotification * _Nonnull note) {
-//        if (self.mpx_inUndoGroup) {
-//            NSArray *state = self.mpx_undoSelectionState;
-//            [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-//                self.mpx_selectionManager.finalizedSelections = state;
-//            }];
-//
-//            [self.undoManager endUndoGrouping];
-//            self.mpx_undoSelectionState = nil;
-//            self.mpx_inUndoGroup = NO;
-//        }
-//    };
-//
-//    [[NSNotificationCenter defaultCenter] addObserverForName:NSUndoManagerWillUndoChangeNotification
-//                                                      object:undoManager
-//                                                       queue:[NSOperationQueue mainQueue]
-//                                                  usingBlock:openBlock];
-
-    NSLog(@"%@", [self valueForKey:@"_sharedData"]);
 }
 
 - (void)undo:(id)sender
 {
     if (self.mpx_inUndoGroup) {
-
-        NSArray *state = self.mpx_undoSelectionState ?: self.mpx_beginningUndoSelectionState ?: self.mpx_lastSelectionState;
-        [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-            self.mpx_selectionManager.finalizedSelections = state;
-            [self.mpx_textViewSelectionDecorator startBlinking];
-        }];
+        self.mpx_inUndoGroup = NO;
 
         [self.undoManager endUndoGrouping];
-        self.mpx_inUndoGroup = NO;
     }
 
     [self.undoManager undoNestedGroup];
@@ -211,8 +174,14 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
     if (!self.mpx_inUndoGroup) {
         self.mpx_inUndoGroup = YES;
-        self.mpx_beginningUndoSelectionState = self.mpx_selectionManager.finalizedSelections;
+
         [self.undoManager beginUndoGrouping];
+
+        NSArray *currState = self.mpx_selectionManager.finalizedSelections;
+        [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+            self.mpx_selectionManager.finalizedSelections = currState;
+            [self.mpx_textViewSelectionDecorator startBlinking];
+        }];
     }
 
     NSString *insertString = (NSString *)insertObject;
@@ -254,10 +223,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_textStorage:(id)arg1 didEndEditRange:(NSRange)arg2 changeInLength:(long long)arg3
 {
-//    [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-//        [self.textStorage replaceCharactersInRange:range withString:previousChars];
-//    }];
-
     [Original_TextDidEndEditRangeChangeInLength setArgument:&arg1 atIndex:2];
     [Original_TextDidEndEditRangeChangeInLength setArgument:&arg2 atIndex:3];
     [Original_TextDidEndEditRangeChangeInLength setArgument:&arg3 atIndex:4];
@@ -1037,6 +1002,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         // Otherwise, they'll be re-added during dragging.
         self.mpx_selectionManager.finalizedSelections = @[selection];
 
+        self.mpx_beginningUndoSelectionState = self.mpx_selectionManager.finalizedSelections;
+
         // In the event the user drags, however, it needs to unfinalized so that it can be extended again.
         [self.mpx_selectionManager setTemporarySelections:@[selection]];
     }
@@ -1074,12 +1041,17 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     if (!sequentialModification) {
         NSArray *oldSelections = self.mpx_selectionManager.visualSelections;
         self.mpx_undoSelectionState = oldSelections;
+        self.mpx_beginningUndoSelectionState = nil;
     } else {
         self.mpx_undoSelectionState = nil;
     }
 
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
     self.mpx_selectionManager.finalizedSelections = mappedValues;
+
+    if (!sequentialModification) {
+        self.mpx_beginningUndoSelectionState = self.mpx_selectionManager.finalizedSelections;
+    }
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
