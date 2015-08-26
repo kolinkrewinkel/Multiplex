@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 @property (nonatomic) NSTimer *mpx_definitionLongPressTimer;
 
 @property (nonatomic) NSArray *mpx_beginningUndoSelectionState;
-@property (nonatomic) NSArray *mpx_undoSelectionState;
+@property (nonatomic) BOOL mpx_shouldCloseGroupOnNextChange;
 @property (nonatomic) NSArray *mpx_lastSelectionState;
 @property (nonatomic) BOOL mpx_inUndoGroup;
 

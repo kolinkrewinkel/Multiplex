@@ -36,7 +36,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 @synthesizeAssociation(DVTSourceTextView, mpx_beginningUndoSelectionState);
 @synthesizeAssociation(DVTSourceTextView, mpx_lastSelectionState);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
-@synthesizeAssociation(DVTSourceTextView, mpx_undoSelectionState);
+@synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_definitionLongPressTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
@@ -102,7 +102,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 {
     if (self.mpx_inUndoGroup) {
         self.mpx_inUndoGroup = NO;
-
         [self.undoManager endUndoGrouping];
     }
 
@@ -150,6 +149,13 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     if (![insertObject isKindOfClass:[NSString class]]) {
         return;
     }
+
+    if (self.mpx_shouldCloseGroupOnNextChange && self.mpx_inUndoGroup) {
+        self.mpx_inUndoGroup = NO;
+        [self.undoManager endUndoGrouping];
+        self.mpx_shouldCloseGroupOnNextChange = NO;
+    }
+
 
     if (!self.mpx_inUndoGroup) {
         self.mpx_inUndoGroup = YES;
@@ -981,7 +987,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         // Otherwise, they'll be re-added during dragging.
         self.mpx_selectionManager.finalizedSelections = @[selection];
 
-        self.mpx_beginningUndoSelectionState = self.mpx_selectionManager.finalizedSelections;
+        self.mpx_shouldCloseGroupOnNextChange = YES;
 
         // In the event the user drags, however, it needs to unfinalized so that it can be extended again.
         [self.mpx_selectionManager setTemporarySelections:@[selection]];
@@ -1018,11 +1024,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.mpx_lastSelectionState = self.mpx_selectionManager.visualSelections;
 
     if (!sequentialModification) {
-        NSArray *oldSelections = self.mpx_selectionManager.visualSelections;
-        self.mpx_undoSelectionState = oldSelections;
-        self.mpx_beginningUndoSelectionState = nil;
-    } else {
-        self.mpx_undoSelectionState = nil;
+        
     }
 
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
