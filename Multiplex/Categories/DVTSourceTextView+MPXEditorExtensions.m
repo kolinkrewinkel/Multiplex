@@ -14,6 +14,7 @@
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTFontAndColorTheme.h>
 #import <DVTKit/DVTFoldingManager.h>
+#import <DVTKit/DVTUndoManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
@@ -25,12 +26,17 @@ static NSInvocation *Original_DidInsertCompletionTextAtRange = nil;
 static NSInvocation *Original_AdjustTypeOverCompletionForEditedRangeChangeInLength = nil;
 static NSInvocation *Original_ShouldAutoCompleteAtLocation = nil;
 static NSInvocation *Original_ViewWillMoveToWindow = nil;
+static NSInvocation *Original_TextDidEndEditRangeChangeInLength = nil;
 
 static const NSInteger MPXLeftArrowSelectionOffset = -1;
 static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 
+@synthesizeAssociation(DVTSourceTextView, mpx_beginningUndoSelectionState);
+@synthesizeAssociation(DVTSourceTextView, mpx_lastSelectionState);
+@synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
+@synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_definitionLongPressTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
@@ -71,6 +77,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
                                                self,
                                                @selector(mpx_viewWillMoveToWindow:),
                                                NO);
+
+    Original_TextDidEndEditRangeChangeInLength = MPXSwizzle(self, @selector(textStorage:didEndEditRange:changeInLength:), self, @selector(mpx_textStorage:didEndEditRange:changeInLength:), NO);
 }
 
 #pragma mark - Initializer
@@ -90,6 +98,16 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     self.selectedTextAttributes = @{};
 }
 
+- (void)undo:(id)sender
+{
+    if (self.mpx_inUndoGroup) {
+        self.mpx_inUndoGroup = NO;
+        [self.undoManager endUndoGrouping];
+    }
+
+    [self.undoManager undoNestedGroup];
+}
+
 #pragma mark - NSView
 
 - (void)mpx_viewWillMoveToWindow:(NSWindow *)window
@@ -105,6 +123,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
     }
+
+
 }
 
 #pragma mark - Cursors
@@ -130,6 +150,25 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return;
     }
 
+    if (self.mpx_shouldCloseGroupOnNextChange && self.mpx_inUndoGroup) {
+        self.mpx_inUndoGroup = NO;
+        [self.undoManager endUndoGrouping];
+        self.mpx_shouldCloseGroupOnNextChange = NO;
+    }
+
+
+    if (!self.mpx_inUndoGroup) {
+        self.mpx_inUndoGroup = YES;
+
+        [self.undoManager beginUndoGrouping];
+
+        NSArray *currState = self.mpx_selectionManager.finalizedSelections;
+        [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+            self.mpx_selectionManager.finalizedSelections = currState;
+            [self.mpx_textViewSelectionDecorator startBlinking];
+        }];
+    }
+
     NSString *insertString = (NSString *)insertObject;
 
     // Sequential (negative) offset of characters added.
@@ -140,7 +179,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point correspond to the relative offset made by inserting a # of chars.)
         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
-        [self insertText:insertString replacementRange:offsetRange];
+
+        [self.textStorage replaceCharactersInRange:offsetRange withString:insertString withUndoManager:self.undoManager];
 
         // Offset the following ones by noting the original length and updating for the replacement's length, moving cursors following forward/backward.
         NSInteger delta = range.length - insertStringLength;
@@ -161,10 +201,20 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
                                       interLineDesiredIndex:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
-    }];
+    } sequentialModification:YES];
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
+
+- (void)mpx_textStorage:(id)arg1 didEndEditRange:(NSRange)arg2 changeInLength:(long long)arg3
+{
+    [Original_TextDidEndEditRangeChangeInLength setArgument:&arg1 atIndex:2];
+    [Original_TextDidEndEditRangeChangeInLength setArgument:&arg2 atIndex:3];
+    [Original_TextDidEndEditRangeChangeInLength setArgument:&arg3 atIndex:4];
+    [Original_TextDidEndEditRangeChangeInLength invokeWithTarget:self];
+}
+
+
 
 - (void)deleteBackward:(id)sender
 {
@@ -937,6 +987,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         // Otherwise, they'll be re-added during dragging.
         self.mpx_selectionManager.finalizedSelections = @[selection];
 
+        self.mpx_shouldCloseGroupOnNextChange = YES;
+
         // In the event the user drags, however, it needs to unfinalized so that it can be extended again.
         [self.mpx_selectionManager setTemporarySelections:@[selection]];
     }
@@ -963,8 +1015,24 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
 {
+    [self mpx_mapAndFinalizeSelectedRanges:mapBlock sequentialModification:NO];
+}
+
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
+                  sequentialModification:(BOOL)sequentialModification
+{
+    self.mpx_lastSelectionState = self.mpx_selectionManager.visualSelections;
+
+    if (!sequentialModification) {
+        
+    }
+
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
     self.mpx_selectionManager.finalizedSelections = mappedValues;
+
+    if (!sequentialModification) {
+        self.mpx_beginningUndoSelectionState = self.mpx_selectionManager.finalizedSelections;
+    }
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
