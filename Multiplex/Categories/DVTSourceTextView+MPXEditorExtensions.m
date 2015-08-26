@@ -109,16 +109,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     [self.undoManager undoNestedGroup];
 }
 
-//- (void)mpx_undo:(id)sender
-//{
-//    if (self.mpx_inUndoGroup) {
-//        [self.undoManager endUndoGrouping];
-//    }
-//
-//    [Original_Undo setArgument:&sender atIndex:2];
-//    [Original_Undo invokeWithTarget:self];
-//}
-
 #pragma mark - NSView
 
 - (void)mpx_viewWillMoveToWindow:(NSWindow *)window
@@ -159,17 +149,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     // Prevents random stuff being thrown in.
     if (![insertObject isKindOfClass:[NSString class]]) {
         return;
-    }
-
-    if (self.mpx_undoSelectionState) {
-        NSArray *state = self.mpx_undoSelectionState;
-        [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
-            self.mpx_selectionManager.finalizedSelections = state;
-        }];
-
-        [self.undoManager endUndoGrouping];
-        self.mpx_undoSelectionState = nil;
-        self.mpx_inUndoGroup = NO;
     }
 
     if (!self.mpx_inUndoGroup) {
