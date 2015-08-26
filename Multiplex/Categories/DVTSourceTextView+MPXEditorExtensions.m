@@ -222,7 +222,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
         NSLayoutManager *layoutManager = [self layoutManager];
         NSRange lineRange;
-        NSUInteger desiredIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(range) + 1];
+        NSUInteger desiredIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(range)];
         NSUInteger lineNumber = 0;
         NSUInteger numberOfLines = 0;
 
