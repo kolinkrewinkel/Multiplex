@@ -27,7 +27,10 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 @property (nonatomic) MPXTextViewSelectionDecorator *mpx_textViewSelectionDecorator;
 
 @property (nonatomic) NSTimer *mpx_definitionLongPressTimer;
+
+@property (nonatomic) NSArray *mpx_beginningUndoSelectionState;
 @property (nonatomic) NSArray *mpx_undoSelectionState;
+@property (nonatomic) NSArray *mpx_lastSelectionState;
 @property (nonatomic) BOOL mpx_inUndoGroup;
 
 #pragma mark - Mutation States
