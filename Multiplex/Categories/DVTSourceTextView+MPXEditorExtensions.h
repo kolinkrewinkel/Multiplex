@@ -21,6 +21,10 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 @interface DVTSourceTextView (MPXEditorExtensions)
 
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock;
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
+                  sequentialModification:(BOOL)sequentialModification;
+
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
