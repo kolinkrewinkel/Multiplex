@@ -97,8 +97,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
     }
-
-
 }
 
 #pragma mark - Cursors
@@ -1004,70 +1002,69 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
     /* Now, the remaining ranges need to be adjusted to include the text (and adjust the selection.) */
 
     __block NSUInteger idx = 0;
-    NSArray *newSelections = [[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection)
-                              {
-                                  NSRange selectionRange = selection.range;
+    NSArray *newSelections = [[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection) {
+        NSRange selectionRange = selection.range;
 
-                                  if (idx > 0)
-                                  {
-                                      selectionRange.location += offset;
+        if (idx > 0)
+        {
+            selectionRange.location += offset;
 
-                                      /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
-                                       */
-                                      NSInteger completionStringIndex = [completionText length] - 1;
+            /* First, one needs to reverse-enumerate over the completion text. We're looking for the first match of a character, and then traversing back from there. Then we'll know what, if anything, is already available as a base to complete. If nothing is there, the whole string needs to be inserted.
+             */
+            NSInteger completionStringIndex = [completionText length] - 1;
 
-                                      /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
+            /* Used as the pointer to walk-back from the selection and see what matches. Essentially, we're wanting to find the first substring to match and go back from there to see if it matches the "full" partial substring to the beginning of it. For instance:
 
-                                       (Completing for the word `category`)
+             (Completing for the word `category`)
 
-                                       cate| vs. nate|
+             cate| vs. nate|
 
-                                       Only chcking the first char before the selection would not be accurate.
-                                       */
+             Only chcking the first char before the selection would not be accurate.
+             */
 
-                                      NSInteger selectionRelativeIndex = 0;
+            NSInteger selectionRelativeIndex = 0;
 
-                                      while (completionStringIndex >= 0)
-                                      {
-                                          unichar completionChar = [completionText characterAtIndex:completionStringIndex];
-                                          unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
+            while (completionStringIndex >= 0)
+            {
+                unichar completionChar = [completionText characterAtIndex:completionStringIndex];
+                unichar compareStorageChar = [self.string characterAtIndex:(NSMaxRange(selectionRange) - 1) + selectionRelativeIndex];
 
-                                          if (completionChar == compareStorageChar)
-                                          {
-                                              selectionRelativeIndex--;
-                                          }
+                if (completionChar == compareStorageChar)
+                {
+                    selectionRelativeIndex--;
+                }
 
-                                          /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back.
-                                           */
-                                          completionStringIndex--;
-                                      }
+                /* Always decrement, as we're seeking the first match within the completion string that is found in the text. If a match was found, we need to continue walking back.
+                 */
+                completionStringIndex--;
+            }
 
-                                      NSInteger completionStringStartIndex = -selectionRelativeIndex;
-                                      NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
+            NSInteger completionStringStartIndex = -selectionRelativeIndex;
+            NSInteger insertedStringLength = ([completionText length]) - completionStringStartIndex;
 
-                                      [self insertText:[completionText substringFromIndex:completionStringStartIndex]
-                                      replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
+            [self insertText:[completionText substringFromIndex:completionStringStartIndex]
+            replacementRange:NSMakeRange(NSMaxRange(selectionRange), 0)];
 
-                                      offset += insertedStringLength;
-                                  }
+            offset += insertedStringLength;
+        }
 
-                                  NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:selectionRange];
+        NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:selectionRange];
 
-                                  NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:indentedRange.location
-                                                                                                forward:YES
-                                                                                                   wrap:YES
-                                                                                                  limit:indentedRange.length];
-                                  
-                                  idx++;
-                                  
-                                  if (firstPlaceholder.location == NSUIntegerMax)
-                                  {
-                                      NSRange finalEndOfCompletionRange = NSMakeRange(NSMaxRange(indentedRange), 0);
-                                      return [MPXSelection selectionWithRange:finalEndOfCompletionRange];
-                                  }
-                                  
-                                  return [MPXSelection selectionWithRange:firstPlaceholder];
-                              }].array;
+        NSRange firstPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:indentedRange.location
+                                                                      forward:YES
+                                                                         wrap:YES
+                                                                        limit:indentedRange.length];
+
+        idx++;
+
+        if (firstPlaceholder.location == NSUIntegerMax)
+        {
+            NSRange finalEndOfCompletionRange = NSMakeRange(NSMaxRange(indentedRange), 0);
+            return [MPXSelection selectionWithRange:finalEndOfCompletionRange];
+        }
+
+        return [MPXSelection selectionWithRange:firstPlaceholder];
+    }].array;
 
     self.mpx_selectionManager.finalizedSelections = newSelections;
 }
@@ -1075,7 +1072,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location
 {
     BOOL internalShouldAutoComplete = [self mpx_shouldAutoCompleteAtLocation:location];
-    
+
     return (internalShouldAutoComplete &&
             !([self.mpx_selectionManager.visualSelections count] > 1));
 }
