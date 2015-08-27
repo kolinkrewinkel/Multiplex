@@ -33,9 +33,6 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 - (void)mpx_viewWillMoveToWindow:(NSWindow *)window;
 
-- (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location;
-- (void)mpx_didInsertCompletionTextAtRange:(NSRange)range;
-
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;

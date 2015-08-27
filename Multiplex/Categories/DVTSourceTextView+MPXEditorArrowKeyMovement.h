@@ -8,9 +8,6 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@interface DVTSourceTextView (MPXEditorAutocompletion)
-
-- (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location;
-- (void)mpx_didInsertCompletionTextAtRange:(NSRange)range;
+@interface DVTSourceTextView (MPXSwizzling)
 
 @end

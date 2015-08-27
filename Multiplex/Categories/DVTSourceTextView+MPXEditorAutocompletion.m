@@ -15,7 +15,7 @@
 
 #import "DVTSourceTextView+MPXSwizzling.h"
 
-@implementation DVTSourceTextView (MPXSwizzling)
+@implementation DVTSourceTextView (MPXEditorAutocompletion)
 
 - (void)mpx_didInsertCompletionTextAtRange:(NSRange)completedTextRange
 {
