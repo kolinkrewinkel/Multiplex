@@ -27,10 +27,6 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 - (void)mpx_commonInitDVTSourceTextView;
 
-- (void)mpx_mouseDown:(id)sender;
-- (void)mpx_mouseUp:(id)sender;
-- (void)mpx_mouseDragged:(id)sender;
-
 - (void)mpx_viewWillMoveToWindow:(NSWindow *)window;
 
 #pragma mark - Selection Management Core
@@ -38,14 +34,7 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
 @property (nonatomic) MPXTextViewSelectionDecorator *mpx_textViewSelectionDecorator;
 
-@property (nonatomic) NSTimer *mpx_definitionLongPressTimer;
-
 @property (nonatomic) BOOL mpx_shouldCloseGroupOnNextChange;
 @property (nonatomic) BOOL mpx_inUndoGroup;
-
-#pragma mark - Mutation States
-
-@property (nonatomic) MPXSelection *mpx_rangeInProgress;
-@property (nonatomic) MPXSelection *mpx_rangeInProgressStart;
 
 @end
