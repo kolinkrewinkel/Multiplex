@@ -25,6 +25,17 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
                   sequentialModification:(BOOL)sequentialModification;
 
+- (void)mpx_commonInitDVTSourceTextView;
+
+- (void)mpx_mouseDown:(id)sender;
+- (void)mpx_mouseUp:(id)sender;
+- (void)mpx_mouseDragged:(id)sender;
+
+- (void)mpx_viewWillMoveToWindow:(NSWindow *)window;
+
+- (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location;
+- (void)mpx_didInsertCompletionTextAtRange:(NSRange)range;
+
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
