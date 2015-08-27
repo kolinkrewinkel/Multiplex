@@ -24,8 +24,6 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 
-@synthesizeAssociation(DVTSourceTextView, mpx_beginningUndoSelectionState);
-@synthesizeAssociation(DVTSourceTextView, mpx_lastSelectionState);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
 @synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
@@ -979,18 +977,8 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
                   sequentialModification:(BOOL)sequentialModification
 {
-    self.mpx_lastSelectionState = self.mpx_selectionManager.visualSelections;
-
-    if (!sequentialModification) {
-        
-    }
-
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
     self.mpx_selectionManager.finalizedSelections = mappedValues;
-
-    if (!sequentialModification) {
-        self.mpx_beginningUndoSelectionState = self.mpx_selectionManager.finalizedSelections;
-    }
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
