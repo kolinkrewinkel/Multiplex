@@ -15,10 +15,9 @@
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
-
+@synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
 @synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
-@synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
 
 #pragma mark - Initializer
@@ -59,13 +58,6 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
     }
-}
-
-#pragma mark - Cursors
-
-- (BOOL)isSelectable
-{
-    return YES;
 }
 
 #pragma mark - Keyboard Events
