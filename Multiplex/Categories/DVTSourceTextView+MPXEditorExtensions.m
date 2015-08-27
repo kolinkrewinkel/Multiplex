@@ -237,7 +237,7 @@ static const NSInteger MPXRightArrowSelectionOffset = 1;
             index = NSMaxRange(lineRange);
         }
 
-        NSUInteger firstNonBlank = [textStorage firstNonblankForLine:lineNumber - 1 convertTabs:YES];
+        NSUInteger firstNonBlank = [textStorage firstNonblankForLine:lineNumber + 1 convertTabs:YES];
 
         NSRange effectiveRange;
         (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:desiredIndex
