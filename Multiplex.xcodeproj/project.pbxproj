@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		333D0B4F1B9043C7004338FD /* MPXSelectionCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33742F8A1B903FBC001B4C55 /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */; };
 		337F17531B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17521B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m */; };
 		337F175A1B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17591B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m */; };
 		337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m */; };
@@ -74,6 +76,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		333D0B4E1B9043A4004338FD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				333D0B4F1B9043C7004338FD /* MPXSelectionCore.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		337F17511B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXEditorClipboardSupport.h"; sourceTree = "<group>"; };
 		337F17521B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorClipboardSupport.m"; sourceTree = "<group>"; };
@@ -128,6 +143,7 @@
 				33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */,
 				33A74F311B89365500FBBD2B /* IDEFoundation.framework in Frameworks */,
 				33A74F321B89365500FBBD2B /* IDEKit.framework in Frameworks */,
+				33742F8A1B903FBC001B4C55 /* MPXSelectionCore.framework in Frameworks */,
 				17963587F420FC6C9D934711 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -277,6 +293,7 @@
 				33B3A3E818CD36BE00AA64C8 /* Resources */,
 				303CED84CD8D47809E5313FB /* Copy Pods Resources */,
 				304B6276742BCA837B85B48E /* Embed Pods Frameworks */,
+				333D0B4E1B9043A4004338FD /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -521,6 +538,10 @@
 					"-isystem",
 					"$(PROJECT_DIR)/$(PROJECT_NAME)/Modules/IDEHeaders/IDEHeaders/",
 				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					"\"MPXSelectionCore\"",
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -572,6 +593,10 @@
 					"-isystem",
 					"$(PROJECT_DIR)/$(PROJECT_NAME)/Modules/IDEHeaders/IDEHeaders/",
 				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					"\"MPXSelectionCore\"",
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -595,7 +620,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "${PROJECT_NAME}/${TARGET_NAME}-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx \"@loader_path/../Frameworks\"";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
@@ -630,7 +655,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "${PROJECT_NAME}/${TARGET_NAME}-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $(DT_TOOLCHAIN_DIR)/usr/lib/swift/macosx \"@loader_path/../Frameworks\"";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks/IDEKit.framework/Versions/A",
