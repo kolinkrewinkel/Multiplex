@@ -216,7 +216,7 @@
 - (id)attribute:(id)arg1 atIndex:(unsigned long long)arg2 effectiveRange:(struct _NSRange *)arg3;
 - (id)attributesAtIndex:(unsigned long long)arg1 effectiveRange:(struct _NSRange *)arg2;
 - (id)contents;
-- (id)string;
+- (NSString *)string;
 
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;

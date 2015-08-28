@@ -182,6 +182,18 @@
 
 #pragma mark - Range Manipulation
 
+- (BOOL)mpx_validateMenuItem:(NSMenuItem *)item
+{
+    SEL theAction = item.action;
+    if (theAction == @selector(copy:) || theAction == @selector(cut:)) {
+        return [[[[self.mpx_selectionManager.visualSelections rac_sequence] filter:^BOOL(MPXSelection *selection) {
+            return selection.range.length > 0;
+        }] array] count] > 0;
+    }
+
+    return [self mpx_validateMenuItem:item];
+}
+
 - (void)selectAll:(id)sender
 {
     self.mpx_selectionManager.finalizedSelections = @[[MPXSelection selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]];

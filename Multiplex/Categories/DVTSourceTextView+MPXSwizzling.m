@@ -12,6 +12,7 @@
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorMouseEvents.h"
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
+#import "DVTSourceTextView+MPXEditorClipboardSupport.h"
 
 #import "DVTSourceTextView+MPXSwizzling.h"
 
@@ -34,6 +35,10 @@
 
     [self jr_swizzleMethod:@selector(didInsertCompletionTextAtRange:)
                 withMethod:@selector(mpx_didInsertCompletionTextAtRange:)
+                     error:nil];
+
+    [self jr_swizzleMethod:@selector(validateMenuItem:)
+                withMethod:@selector(mpx_validateMenuItem:)
                      error:nil];
 }
 

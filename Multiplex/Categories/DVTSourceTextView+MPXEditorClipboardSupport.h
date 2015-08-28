@@ -10,4 +10,6 @@
 
 @interface DVTSourceTextView (MPXEditorClipboardSupport)
 
+- (void)copy:(id)sender;
+
 @end

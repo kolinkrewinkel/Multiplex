@@ -26,6 +26,8 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 - (void)mpx_commonInitDVTSourceTextView;
 
+- (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;
+
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
