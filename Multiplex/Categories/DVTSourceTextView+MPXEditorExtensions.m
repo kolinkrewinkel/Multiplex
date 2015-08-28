@@ -13,12 +13,12 @@
 #import <DVTKit/DVTLayoutManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
 @synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
-@synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
 
 #pragma mark - Initializer
 
@@ -42,22 +42,6 @@
     }
 
     [self.undoManager undoNestedGroup];
-}
-
-#pragma mark - NSView
-
-- (void)mpx_viewWillMoveToWindow:(NSWindow *)window
-{
-    [self mpx_viewWillMoveToWindow:window];
-
-    // Observe the window's state while the view resides in it
-    if (window) {
-        [[NSNotificationCenter defaultCenter] addObserver:self.mpx_textViewSelectionDecorator selector:@selector(startBlinking) name:NSWindowDidBecomeKeyNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self.mpx_textViewSelectionDecorator selector:@selector(stopBlinking) name:NSWindowDidResignKeyNotification object:window];
-    } else {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
-    }
 }
 
 #pragma mark - Keyboard Events
@@ -215,11 +199,6 @@
     self.mpx_selectionManager.finalizedSelections = mappedValues;
 
     [self.mpx_textViewSelectionDecorator startBlinking];
-}
-
-- (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
-{
-
 }
 
 @end

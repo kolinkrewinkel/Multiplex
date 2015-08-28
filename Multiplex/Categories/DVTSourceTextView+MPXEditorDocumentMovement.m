@@ -6,16 +6,15 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
-@import JRSwizzle;
 @import MPXSelectionCore;
 
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
-#import "DVTSourceTextView+MPXSwizzling.h"
+#import "DVTSourceTextView+MPXEditorDocumentMovement.h"
 
-@implementation DVTSourceTextView (MPXSwizzling)
+@implementation DVTSourceTextView (MPXEditorDocumentMovement)
 
 - (void)mpx_moveToRange:(NSRange)newRange modifyingSelection:(BOOL)modifySelection
 {

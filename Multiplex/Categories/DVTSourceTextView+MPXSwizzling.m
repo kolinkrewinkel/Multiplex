@@ -11,6 +11,7 @@
 #import "DVTSourceTextView+MPXEditorAutocompletion.h"
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorMouseEvents.h"
+#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
 #import "DVTSourceTextView+MPXSwizzling.h"
 

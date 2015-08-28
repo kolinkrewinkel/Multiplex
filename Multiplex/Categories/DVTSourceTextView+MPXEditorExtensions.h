@@ -17,7 +17,6 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 @class MPXSelection;
 @class MPXSelectionManager;
-@class MPXTextViewSelectionDecorator;
 
 @interface DVTSourceTextView (MPXEditorExtensions)
 
@@ -27,12 +26,9 @@ typedef NS_ENUM(NSInteger, CATRelativePosition) {
 
 - (void)mpx_commonInitDVTSourceTextView;
 
-- (void)mpx_viewWillMoveToWindow:(NSWindow *)window;
-
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
-@property (nonatomic) MPXTextViewSelectionDecorator *mpx_textViewSelectionDecorator;
 
 @property (nonatomic) BOOL mpx_shouldCloseGroupOnNextChange;
 @property (nonatomic) BOOL mpx_inUndoGroup;
