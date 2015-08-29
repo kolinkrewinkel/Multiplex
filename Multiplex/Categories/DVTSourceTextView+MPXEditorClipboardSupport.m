@@ -8,6 +8,7 @@
 
 #import <MPXSelectionCore/MPXSelectionCore.h>
 #import <DVTKit/DVTTextStorage.h>
+#import <DVTKit/DVTLayoutManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
@@ -15,26 +16,44 @@
 
 @implementation DVTSourceTextView (MPXEditorClipboardSupport)
 
+#pragma mark - NSResponder
+
 - (void)copy:(id)sender
 {
-    NSArray *selectedAttributedStrings =
+    RACSequence *allSelectedAttributedStrings =
     [[self.mpx_selectionManager.visualSelections rac_sequence] map:^NSAttributedString *(MPXSelection *selection) {
-        return [self.textStorage.contents attributedSubstringFromRange:selection.range];
-    }].array;
+        NSRange range = selection.range;
+        if (range.length == 0) {
+            NSRange lineRange;
+            [self.layoutManager lineFragmentUsedRectForGlyphAtIndex:range.location effectiveRange:&lineRange];
+            return [self.textStorage.contents attributedSubstringFromRange:lineRange];
+        }
+
+        return [self.textStorage.contents attributedSubstringFromRange:range];
+    }];
+
+    NSSet *uniqueSelectedStrings = [NSSet setWithArray:[allSelectedAttributedStrings array]];
 
     NSMutableAttributedString *attributedStringToCopy = [[NSMutableAttributedString alloc] init];
-    [selectedAttributedStrings enumerateObjectsUsingBlock:^(NSAttributedString *_Nonnull attributedStringSelection,
-                                                            NSUInteger idx,
-                                                            BOOL * _Nonnull stop) {
+    [uniqueSelectedStrings.allObjects enumerateObjectsUsingBlock:^(NSAttributedString *_Nonnull attributedStringSelection,
+                                                                   NSUInteger idx,
+                                                                   BOOL * _Nonnull stop) {
         [attributedStringToCopy appendAttributedString:attributedStringSelection];
 
-        if (idx < [selectedAttributedStrings count] - 1 && [selectedAttributedStrings count] > 1) {
+        if (idx < [uniqueSelectedStrings count] - 1 && [uniqueSelectedStrings count] > 1) {
             [attributedStringToCopy appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
         }
     }];
 
     [[NSPasteboard generalPasteboard] clearContents];
     [[NSPasteboard generalPasteboard] writeObjects:@[attributedStringToCopy]];
+}
+
+- (void)cut:(id)sender
+{
+    [self copy:sender];
+
+//    [self.mpx_selectionManager.visualSelections]
 }
 
 - (void)paste:(id)sender
