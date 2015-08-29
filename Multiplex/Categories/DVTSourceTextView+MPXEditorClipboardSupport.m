@@ -20,12 +20,20 @@
 
 - (void)copy:(id)sender
 {
-    RACSequence *allSelectedAttributedStrings =
-    [[self.mpx_selectionManager.visualSelections rac_sequence] map:^NSAttributedString *(MPXSelection *selection) {
+    RACSequence *selectionSequence = [self.mpx_selectionManager.visualSelections rac_sequence];
+    RACSequence *allSelectedAttributedStrings = [selectionSequence map:^NSAttributedString *(MPXSelection *selection) {
         NSRange range = selection.range;
         if (range.length == 0) {
             NSRange lineRange;
             [self.layoutManager lineFragmentUsedRectForGlyphAtIndex:range.location effectiveRange:&lineRange];
+
+            for (MPXSelection *otherSelection in selectionSequence) {
+                NSRange otherRange = otherSelection.range;
+                if (NSIntersectionRange(otherRange, lineRange).length > 0) {
+                    return nil;
+                }
+            }
+
             return [self.textStorage.contents attributedSubstringFromRange:lineRange];
         }
 
@@ -53,7 +61,7 @@
 {
     [self copy:sender];
 
-//    [self.mpx_selectionManager.visualSelections]
+
 }
 
 - (void)paste:(id)sender
