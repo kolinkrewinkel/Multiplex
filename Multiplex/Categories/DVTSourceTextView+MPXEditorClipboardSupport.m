@@ -11,19 +11,19 @@
 #import <DVTKit/DVTLayoutManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-
+#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 #import "DVTSourceTextView+MPXEditorClipboardSupport.h"
 
 @implementation DVTSourceTextView (MPXEditorClipboardSupport)
 
-#pragma mark - NSResponder
+#pragma mark - Convenience
 
-- (void)copy:(id)sender
+- (NSArray *)mpx_clipboardSelectionsWithCaretsOverridingWholeLine:(BOOL)caretsOverrideWholeLine
 {
     RACSequence *selectionSequence = [self.mpx_selectionManager.visualSelections rac_sequence];
     RACSequence *allSelectedAttributedStrings = [selectionSequence map:^NSAttributedString *(MPXSelection *selection) {
         NSRange range = selection.range;
-        if (range.length == 0) {
+        if (caretsOverrideWholeLine && range.length == 0) {
             NSRange lineRange;
             [self.layoutManager lineFragmentUsedRectForGlyphAtIndex:range.location effectiveRange:&lineRange];
 
@@ -40,12 +40,19 @@
         return [self.textStorage.contents attributedSubstringFromRange:range];
     }];
 
-    NSSet *uniqueSelectedStrings = [NSSet setWithArray:[allSelectedAttributedStrings array]];
+    return [[NSSet setWithArray:[allSelectedAttributedStrings array]] allObjects];
+}
+
+#pragma mark - NSResponder
+
+- (void)copy:(id)sender
+{
+    NSArray *uniqueSelectedStrings = [self mpx_clipboardSelectionsWithCaretsOverridingWholeLine:YES];
 
     NSMutableAttributedString *attributedStringToCopy = [[NSMutableAttributedString alloc] init];
-    [uniqueSelectedStrings.allObjects enumerateObjectsUsingBlock:^(NSAttributedString *_Nonnull attributedStringSelection,
-                                                                   NSUInteger idx,
-                                                                   BOOL * _Nonnull stop) {
+    [uniqueSelectedStrings enumerateObjectsUsingBlock:^(NSAttributedString *_Nonnull attributedStringSelection,
+                                                        NSUInteger idx,
+                                                        BOOL * _Nonnull stop) {
         [attributedStringToCopy appendAttributedString:attributedStringSelection];
 
         if (idx < [uniqueSelectedStrings count] - 1 && [uniqueSelectedStrings count] > 1) {
@@ -59,9 +66,63 @@
 
 - (void)cut:(id)sender
 {
-    [self copy:sender];
+    if (self.mpx_inUndoGroup) {
+        self.mpx_inUndoGroup = NO;
+        [self.undoManager endUndoGrouping];
+        self.mpx_shouldCloseGroupOnNextChange = NO;
+    }
 
+    [self.undoManager beginUndoGrouping];
+    NSArray *currentSelections = self.mpx_selectionManager.visualSelections;
+    [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
+        self.mpx_selectionManager.finalizedSelections = currentSelections;
+        [self.mpx_textViewSelectionDecorator startBlinking];
+    }];
 
+    NSArray *uniqueSelectedStrings = [self mpx_clipboardSelectionsWithCaretsOverridingWholeLine:YES];
+
+    NSMutableAttributedString *attributedStringToCopy = [[NSMutableAttributedString alloc] init];
+    [uniqueSelectedStrings enumerateObjectsUsingBlock:^(NSAttributedString *_Nonnull attributedStringSelection,
+                                                        NSUInteger idx,
+                                                        BOOL * _Nonnull stop) {
+        [attributedStringToCopy appendAttributedString:attributedStringSelection];
+
+        if (idx < [uniqueSelectedStrings count] - 1 && [uniqueSelectedStrings count] > 1) {
+            [attributedStringToCopy appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+        }
+    }];
+
+    [[NSPasteboard generalPasteboard] clearContents];
+    [[NSPasteboard generalPasteboard] writeObjects:@[attributedStringToCopy]];
+
+    __block NSInteger offset = 0;
+    NSMutableArray *newSelections = [NSMutableArray array];
+    [self.mpx_selectionManager.visualSelections enumerateObjectsUsingBlock:^(MPXSelection *selection,
+                                                                             NSUInteger idx,
+                                                                             BOOL * _Nonnull stop) {
+        NSRange range = selection.range;
+        range.location += offset;
+
+        if (range.length == 0) {
+            NSRange lineRange;
+            [self.layoutManager lineFragmentUsedRectForGlyphAtIndex:range.location effectiveRange:&lineRange];
+            [self.textStorage replaceCharactersInRange:lineRange withString:@"" withUndoManager:self.undoManager];
+
+            [newSelections addObject:[MPXSelection selectionWithRange:NSMakeRange(range.location, 0)]];
+
+            offset -= lineRange.length;
+        } else {
+            [self.textStorage replaceCharactersInRange:range withString:@"" withUndoManager:self.undoManager];
+
+            [newSelections addObject:[MPXSelection selectionWithRange:NSMakeRange(range.location, 0)]];
+
+            offset -= range.length;
+        }
+    }];
+
+    [self.undoManager endUndoGrouping];
+
+    self.mpx_selectionManager.finalizedSelections = newSelections;
 }
 
 - (void)paste:(id)sender
