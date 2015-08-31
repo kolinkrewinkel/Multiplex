@@ -111,7 +111,18 @@ static NSArray *MPXSortedSelections(NSArray *selections)
 
     NSMutableSet *selections = [[NSMutableSet alloc] init];
     [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        [selections addObject:[MPXSelection selectionWithRange:range]];
+        NSPredicate *matchingPredicate =
+        [NSPredicate predicateWithBlock:^BOOL(MPXSelection *_Nonnull potentialMatch,
+                                              NSDictionary<NSString *,id> * _Nullable bindings) {
+            return NSEqualRanges(potentialMatch.range, range);
+        }];
+
+        MPXSelection *existingProvidedSelection = [[ranges filteredArrayUsingPredicate:matchingPredicate] firstObject];
+        if (existingProvidedSelection) {
+            [selections addObject:existingProvidedSelection];
+        } else {
+            [selections addObject:[MPXSelection selectionWithRange:range]];
+        }
     }];
 
     for (MPXSelection *selection in placeholderFixedSelections) {

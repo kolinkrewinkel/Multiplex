@@ -82,10 +82,11 @@
 
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"<%@: Range: %@, interline index: %lu>",
+    return [NSString stringWithFormat:@"<%@: range: %@, interline index: %lu, origin: %lu>",
             NSStringFromClass([self class]),
             NSStringFromRange(self.range),
-            (unsigned long)self.interLineDesiredIndex];
+            (unsigned long)self.interLineDesiredIndex,
+            (unsigned long)self.origin];
 
 }
 

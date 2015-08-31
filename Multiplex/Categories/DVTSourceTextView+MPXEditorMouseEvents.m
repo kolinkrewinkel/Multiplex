@@ -51,7 +51,12 @@
     // Update the model value for when it is used combinatorily.
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:newRange];
 
-    [self.mpx_selectionManager setTemporarySelections:[self.mpx_selectionManager.finalizedSelections arrayByAddingObject:[MPXSelection selectionWithRange:newRange]]];
+    NSArray *finalizedSelections = self.mpx_selectionManager.finalizedSelections;
+    MPXSelection *draggingSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                             interLineDesiredIndex:NSUIntegerMax
+                                                                            origin:self.mpx_rangeInProgressStart.range.location];
+
+    [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];
 }
 
 - (void)mpx_performOriginalJump:(NSTimer *)sender
