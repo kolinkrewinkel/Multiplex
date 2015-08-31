@@ -27,4 +27,6 @@
 @property (nonatomic, readonly) NSUInteger interLineDesiredIndex;
 @property (nonatomic, readonly) NSUInteger origin;
 
+@property (nonatomic, readonly) NSSelectionAffinity selectionAffinity;
+
 @end

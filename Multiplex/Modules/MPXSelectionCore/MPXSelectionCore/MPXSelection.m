@@ -45,6 +45,17 @@
     return [[[self alloc] init] initWithSelectionRange:range];
 }
 
+#pragma mark - Getters/Setters
+
+- (NSSelectionAffinity)selectionAffinity
+{
+    if (self.range.location < self.origin) {
+        return NSSelectionAffinityUpstream;
+    }
+
+    return NSSelectionAffinityDownstream;
+}
+
 #pragma mark - NSObject
 
 - (BOOL)isEqual:(id)object
