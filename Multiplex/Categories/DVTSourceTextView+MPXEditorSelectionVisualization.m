@@ -8,6 +8,7 @@
 
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
+@import libextobjc;
 @import MPXSelectionCore;
 
 @implementation DVTSourceTextView (MPXEditorSelectionVisualization)

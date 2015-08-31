@@ -7,6 +7,7 @@
 //
 
 @import JRSwizzle;
+@import libextobjc;
 @import MPXSelectionCore;
 
 #import <DVTKit/DVTFoldingManager.h>

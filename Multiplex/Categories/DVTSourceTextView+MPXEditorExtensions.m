@@ -12,6 +12,10 @@
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTLayoutManager.h>
 
+#import <libextobjc/EXTSynthesize.h>
+
+#import <ReactiveCocoa/ReactiveCocoa.h>
+
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
@@ -30,6 +34,9 @@
 
     self.mpx_selectionManager = [[MPXSelectionManager alloc] initWithTextView:self];
     self.mpx_selectionManager.visualizationDelegate = self.mpx_textViewSelectionDecorator;
+    [RACObserve(self.mpx_selectionManager, finalizedSelections) subscribeNext:^(id x) {
+
+    }];
 
     self.selectedTextAttributes = @{};
 }

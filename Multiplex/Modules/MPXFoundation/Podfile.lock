@@ -1,39 +1,4 @@
 PODS:
-  - libextobjc (0.4.1):
-    - libextobjc/EXTADT (= 0.4.1)
-    - libextobjc/EXTConcreteProtocol (= 0.4.1)
-    - libextobjc/EXTKeyPathCoding (= 0.4.1)
-    - libextobjc/EXTNil (= 0.4.1)
-    - libextobjc/EXTSafeCategory (= 0.4.1)
-    - libextobjc/EXTScope (= 0.4.1)
-    - libextobjc/EXTSelectorChecking (= 0.4.1)
-    - libextobjc/EXTSynthesize (= 0.4.1)
-    - libextobjc/NSInvocation+EXT (= 0.4.1)
-    - libextobjc/NSMethodSignature+EXT (= 0.4.1)
-    - libextobjc/RuntimeExtensions (= 0.4.1)
-    - libextobjc/UmbrellaHeader (= 0.4.1)
-  - libextobjc/EXTADT (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTConcreteProtocol (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTKeyPathCoding (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTNil (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTSafeCategory (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTScope (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTSelectorChecking (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTSynthesize (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/NSInvocation+EXT (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/NSMethodSignature+EXT (0.4.1):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/RuntimeExtensions (0.4.1)
-  - libextobjc/UmbrellaHeader (0.4.1)
   - ReactiveCocoa (2.5):
     - ReactiveCocoa/UI (= 2.5)
   - ReactiveCocoa/Core (2.5):
@@ -43,11 +8,9 @@ PODS:
     - ReactiveCocoa/Core
 
 DEPENDENCIES:
-  - libextobjc
   - ReactiveCocoa (~> 2.3)
 
 SPEC CHECKSUMS:
-  libextobjc: a650fc1bf489a3d3a9bc2e621efa3e1006fc5471
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
 
 COCOAPODS: 0.38.2

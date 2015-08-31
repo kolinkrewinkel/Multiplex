@@ -7,6 +7,5 @@
 #ifdef __OBJC__
     @import Foundation;
 
-    @import libextobjc;
     @import ReactiveCocoa;
 #endif
