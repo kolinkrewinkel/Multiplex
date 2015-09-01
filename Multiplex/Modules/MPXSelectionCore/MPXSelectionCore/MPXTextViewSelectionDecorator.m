@@ -24,6 +24,7 @@
 
 @property (nonatomic) NSTimer *blinkTimer;
 @property (nonatomic) BOOL blinkState;
+
 @property (nonatomic) NSArray *caretViews;
 
 @end
@@ -36,6 +37,13 @@
 {
     if (self = [super init]) {
         self.textView = textView;
+
+        NSScrollView *scrollView = (NSScrollView *)self.textView.superview;
+        [scrollView.contentView setPostsBoundsChangedNotifications:YES];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(scrollViewDidScroll:)
+                                                     name:NSViewBoundsDidChangeNotification
+                                                   object:scrollView.contentView];
     }
 
     return self;
@@ -55,10 +63,14 @@
                                       forCharacterRange:NSMakeRange(0, textStorage.length)];
 
     // Remove any onscreen cursors
-    [self.caretViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    for (RACTuple *tuple in self.caretViews) {
+        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = tuple;
+        [caretView removeFromSuperview];
+    }
 
     RACSequence *selectionSequence = [visualSelections rac_sequence];
-    self.caretViews = [[selectionSequence map:^NSView *(MPXSelection *selection) {
+
+    self.caretViews = [[selectionSequence map:^RACTuple *(MPXSelection *selection) {
         NSRange range = [selection range];
         if ([selection selectionAffinity] == NSSelectionAffinityDownstream) {
             range = NSMakeRange(NSMaxRange(range), 0);
@@ -82,11 +94,10 @@
         caretView.wantsLayer = YES;
         caretView.layer.backgroundColor = [textStorage.fontAndColorTheme.sourceTextInsertionPointColor CGColor];
 
-        return caretView;
+        [self.textView addSubview:caretView];
+
+        return RACTuplePack(selection, caretView);
     }] array];
-    [self.caretViews enumerateObjectsUsingBlock:^(NSView *caret, NSUInteger idx, BOOL *stop) {
-        [self.textView addSubview:caret];
-    }];
 
     // Paint the background of the selection range for selections taht are not just insertion points.
     NSArray *rangedSelections = [[selectionSequence filter:^BOOL(MPXSelection *selection) {
@@ -98,13 +109,16 @@
         [self.textView.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: selectedBackgroundColor}
                                           forCharacterRange:selection.range];
     }
+
+    [self updateTextViewSelectedRange];
 }
 
 - (void)setCursorsVisible:(BOOL)visible
 {
-    [self.caretViews enumerateObjectsUsingBlock:^(NSView *view, NSUInteger idx, BOOL *stop) {
-        view.hidden = !visible;
-    }];
+    for (RACTuple *tuple in self.caretViews) {
+        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = tuple;
+        caretView.hidden = !visible;
+    }
 
     self.blinkState = visible;
 }
@@ -141,6 +155,44 @@
     self.blinkTimer = nil;
 
     [self setCursorsVisible:NO];
+}
+
+- (void)scrollViewDidScroll:(NSNotification *)notification
+{
+    [self updateTextViewSelectedRange];
+}
+
+- (void)updateTextViewSelectedRange
+{
+    MPXSelection *visibleSelection = [self firstVisibleSelectionInTextView];
+    if (visibleSelection && [self.textView.string length] > 0) {
+        if (!NSEqualRanges(self.textView.selectedRange, visibleSelection.range)) {
+            self.textView.selectedRange = visibleSelection.range;
+        }
+    } else {
+        self.textView.selectedRange = NSMakeRange(0, 0);
+    }
+}
+
+- (MPXSelection *)firstVisibleSelectionInTextView
+{
+    NSClipView *clipView = (NSClipView *)self.textView.superview;
+
+    __block MPXSelection *visibleSelection = nil;
+    for (RACTuple *tuple in self.caretViews) {
+        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = tuple;
+
+        if (CGRectIntersectsRect(caretView.frame, clipView.documentVisibleRect)) {
+            visibleSelection = selection;
+            break;
+        }
+    }
+    
+    if (visibleSelection) {
+        return visibleSelection;
+    }
+
+    return nil;
 }
 
 @end

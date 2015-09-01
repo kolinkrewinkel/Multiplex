@@ -90,4 +90,9 @@
 
 }
 
+- (void)dealloc
+{
+    [self.caretView removeFromSuperview];
+}
+
 @end

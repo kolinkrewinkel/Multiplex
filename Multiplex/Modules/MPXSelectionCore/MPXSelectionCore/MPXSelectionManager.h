@@ -9,13 +9,16 @@
 #import <Foundation/Foundation.h>
 
 @class MPXSelectionManager;
-@protocol MPXSelectionManagerVisualizationDelegate <NSObject>
+@protocol MPXSelectionManagerSelectionChangeDelegate <NSObject>
 
 /**
  * Called when the visual selections that are to be used are changed.
  */
 - (void)selectionManager:(MPXSelectionManager *)selectionManager didChangeVisualSelections:(NSArray *)visualSelections;
 
+@end
+
+@protocol MPXSelectionManagerVisualizationDelegate <MPXSelectionManagerSelectionChangeDelegate>
 @end
 
 @class DVTSourceTextView;
@@ -41,6 +44,11 @@
  * Essentially a listener for changes to `visualSelections`.
  */
 @property (nonatomic, weak) id<MPXSelectionManagerVisualizationDelegate> visualizationDelegate;
+
+/**
+ * Used for updates to other visual state, such as the breadcrumb bar and autocomplete.
+ */
+@property (nonatomic, weak) id<MPXSelectionManagerSelectionChangeDelegate> selectionDelegate;
 
 #pragma mark - State
 

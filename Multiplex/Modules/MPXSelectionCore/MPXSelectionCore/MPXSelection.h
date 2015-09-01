@@ -29,4 +29,6 @@
 
 @property (nonatomic, readonly) NSSelectionAffinity selectionAffinity;
 
+@property (nonatomic) NSView *caretView;
+
 @end

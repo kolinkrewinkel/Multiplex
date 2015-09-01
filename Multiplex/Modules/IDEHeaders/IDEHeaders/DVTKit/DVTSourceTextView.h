@@ -327,7 +327,7 @@
 - (void)setTextStorage:(id)arg1;
 - (void)setTextStorage:(id)arg1 keepOldLayout:(BOOL)arg2;
 - (void)setTextContainer:(id)arg1;
-@property id  delegate; // @dynamic delegate;
+@property id <DVTSourceTextScrollViewDelegate> delegate; // @dynamic delegate;
 - (id)initWithCoder:(id)arg1;
 - (id)initWithFrame:(struct CGRect)arg1 textContainer:(id)arg2;
 - (void)_commonInitDVTSourceTextView;

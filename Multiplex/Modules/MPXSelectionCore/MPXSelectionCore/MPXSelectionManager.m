@@ -149,6 +149,7 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     self.temporarySelections = nil;
 
     [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
+    [self.selectionDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
 - (void)setTemporarySelections:(NSArray *)temporarySelections
@@ -161,6 +162,7 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     _temporarySelections = [self fixedSelections:temporarySelections];
 
     [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
+    [self.selectionDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
 @end

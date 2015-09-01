@@ -18,11 +18,13 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
+#import "MPXEditorSelectionBridge.h"
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
 @synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
+@synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionBridge);
 
 #pragma mark - Initializer
 
@@ -34,9 +36,6 @@
 
     self.mpx_selectionManager = [[MPXSelectionManager alloc] initWithTextView:self];
     self.mpx_selectionManager.visualizationDelegate = self.mpx_textViewSelectionDecorator;
-    [RACObserve(self.mpx_selectionManager, finalizedSelections) subscribeNext:^(id x) {
-
-    }];
 
     self.selectedTextAttributes = @{};
 }
