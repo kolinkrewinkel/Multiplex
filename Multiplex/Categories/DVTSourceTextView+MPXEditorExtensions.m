@@ -25,6 +25,7 @@
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
 @synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionBridge);
+@synthesizeAssociation(DVTSourceTextView, mpx_trimTrailingWhitespace);
 
 #pragma mark - Initializer
 
@@ -38,6 +39,8 @@
     self.mpx_selectionManager.visualizationDelegate = self.mpx_textViewSelectionDecorator;
 
     self.selectedTextAttributes = @{};
+
+    self.mpx_trimTrailingWhitespace = self.shouldTrimTrailingWhitespace;
 }
 
 - (void)undo:(id)sender
@@ -150,40 +153,27 @@
 
 - (void)insertNewline:(id)sender
 {
-    NSUndoManager *undoManager = self.undoManager;
-    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
+    BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
 
-    [self insertText:@"\n"];
+    NSString *newlineString = @"\n";
+    [self insertText:newlineString];
+
+    self.mpx_trimTrailingWhitespace = NO;
 
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
+        NSRange shiftedRange = NSMakeRange(NSMaxRange(range), [newlineString length]);
 
-        [textStorage indentAtBeginningOfLineForCharacterRange:range undoManager:undoManager];
+        NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:shiftedRange];
+        return [MPXSelection selectionWithRange:NSMakeRange(indentedRange.location, 0)];
+    } sequentialModification:YES];
 
-        NSLayoutManager *layoutManager = [self layoutManager];
-        NSRange lineRange;
-        NSUInteger desiredIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(range)];
-        NSUInteger lineNumber = 0;
-        NSUInteger numberOfLines = 0;
+    self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
+}
 
-        for (NSUInteger index = 0; index < [layoutManager numberOfGlyphs]; numberOfLines++) {
-            (void)[layoutManager lineFragmentRectForGlyphAtIndex:index effectiveRange:&lineRange];
-
-            if (desiredIndex >= lineRange.location && desiredIndex <= NSMaxRange(lineRange)) {
-                lineNumber = numberOfLines;
-                break;
-            }
-
-            index = NSMaxRange(lineRange);
-        }
-
-        NSUInteger firstNonBlank = [textStorage firstNonblankForLine:lineNumber + 1 convertTabs:YES];
-
-        NSRange effectiveRange;
-        (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:desiredIndex
-                                                   effectiveRange:&effectiveRange];
-        return [MPXSelection selectionWithRange:NSMakeRange(effectiveRange.location + firstNonBlank, 0)];
-    }];
+- (BOOL)mpx_shouldTrimTrailingWhitespace
+{
+    return self.mpx_trimTrailingWhitespace;
 }
 
 #pragma mark - Range Manipulation

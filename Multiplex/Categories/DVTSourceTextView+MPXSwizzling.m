@@ -25,6 +25,10 @@
     [self jr_swizzleMethod:@selector(mouseDragged:) withMethod:@selector(mpx_mouseDragged:) error:nil];
     [self jr_swizzleMethod:@selector(viewWillMoveToWindow:) withMethod:@selector(mpx_viewWillMoveToWindow:) error:nil];
 
+    [self jr_swizzleMethod:@selector(shouldTrimTrailingWhitespace)
+                withMethod:@selector(mpx_shouldTrimTrailingWhitespace)
+                     error:nil];
+
     [self jr_swizzleMethod:@selector(_commonInitDVTSourceTextView)
                 withMethod:@selector(mpx_commonInitDVTSourceTextView)
                      error:nil];
