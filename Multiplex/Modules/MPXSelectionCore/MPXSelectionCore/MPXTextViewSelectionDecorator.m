@@ -164,14 +164,14 @@
 
 - (void)updateTextViewSelectedRange
 {
-//    MPXSelection *visibleSelection = [self firstVisibleSelectionInTextView];
-//    if (visibleSelection && [self.textView.string length] > 0) {
-//        if (!NSEqualRanges(self.textView.selectedRange, visibleSelection.range)) {
-//            self.textView.selectedRange = visibleSelection.range;
-//        }
-//    } else {
-//        self.textView.selectedRange = NSMakeRange(0, 0);
-//    }
+    MPXSelection *visibleSelection = [self firstVisibleSelectionInTextView];
+    if (visibleSelection && [self.textView.string length] > 0) {
+        if (!NSEqualRanges(self.textView.selectedRange, visibleSelection.range)) {
+            self.textView.selectedRange = visibleSelection.range;
+        }
+    } else {
+        self.textView.selectedRange = NSMakeRange(0, 0);
+    }
 }
 
 - (MPXSelection *)firstVisibleSelectionInTextView
