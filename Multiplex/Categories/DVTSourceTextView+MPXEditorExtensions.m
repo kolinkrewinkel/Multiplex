@@ -9,8 +9,11 @@
 @import MPXFoundation;
 @import MPXSelectionCore;
 
-#import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTLayoutManager.h>
+#import <DVTKit/DVTTextCompletionController.h>
+#import <DVTKit/DVTTextStorage.h>
+#import <DVTKit/DVTTextCompletionSession.h>
+#import <DVTKit/DVTTextCompletionInlinePreviewController.h>
 
 #import <libextobjc/EXTSynthesize.h>
 
@@ -82,6 +85,12 @@
         }];
     }
 
+    if (self.selectedRange.location != NSNotFound) {
+        [self.completionController textViewShouldInsertText:insertString];
+
+//        [self adjustTypeOverCompletionForEditedRange:NSMakeRange(self.selectedRange.location, [insertString length]) changeInLength:[insertString length]];
+    }
+
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
@@ -116,6 +125,15 @@
     } sequentialModification:YES];
 
     [self.mpx_textViewSelectionDecorator startBlinking];
+
+    if (self.selectedRange.location != NSNotFound) {
+        [self.completionController textViewDidInsertText];
+        [self.completionController.currentSession showCompletionsExplicitly:YES];
+
+        DVTTextCompletionInlinePreviewController *inlinePreviewController =
+        (DVTTextCompletionInlinePreviewController *)[self.completionController.currentSession valueForKey:@"inlinePreviewController"];
+        [inlinePreviewController showInlinePreview];
+    }
 }
 
 - (void)deleteBackward:(id)sender
