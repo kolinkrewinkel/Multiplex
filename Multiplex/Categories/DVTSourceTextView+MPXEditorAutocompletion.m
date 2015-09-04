@@ -12,6 +12,7 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
 #import "DVTSourceTextView+MPXSwizzling.h"
 
@@ -91,7 +92,8 @@
 
         idx++;
 
-        if (firstPlaceholder.location == NSUIntegerMax) {
+        // No placeholder was added, move to the end of the inserted autocompletion.
+        if (firstPlaceholder.length == 0) {
             NSRange finalEndOfCompletionRange = NSMakeRange(NSMaxRange(indentedRange), 0);
             return [MPXSelection selectionWithRange:finalEndOfCompletionRange];
         }
@@ -100,6 +102,7 @@
     }].array;
 
     self.mpx_selectionManager.finalizedSelections = newSelections;
+    [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 - (BOOL)mpx_shouldAutoCompleteAtLocation:(NSUInteger)location
