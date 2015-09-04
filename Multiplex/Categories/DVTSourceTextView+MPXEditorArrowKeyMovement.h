@@ -8,6 +8,6 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@interface DVTSourceTextView (MPXSwizzling)
+@interface DVTSourceTextView (MPXEditorArrowKeyMovement)
 
 @end
