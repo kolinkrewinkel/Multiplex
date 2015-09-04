@@ -180,6 +180,12 @@
 
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
+
+        // Don't attempt to indent if at the end of the file.
+        if (NSMaxRange(range) == self.textStorage.length) {
+            return selection;
+        }
+
         NSRange shiftedRange = NSMakeRange(NSMaxRange(range), [newlineString length]);
 
         NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:shiftedRange];
