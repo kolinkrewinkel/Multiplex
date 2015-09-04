@@ -145,6 +145,7 @@
                                             selector:@selector(blinkCursors:)
                                             userInfo:nil
                                              repeats:YES];
+    self.blinkTimer.tolerance = self.blinkTimer.timeInterval * 0.05;
 
     [[NSRunLoop mainRunLoop] addTimer:self.blinkTimer forMode:NSRunLoopCommonModes];
 }
