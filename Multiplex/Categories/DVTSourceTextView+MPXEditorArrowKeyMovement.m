@@ -90,19 +90,28 @@
         // You can't move down a line from the end of the text.
         // We don't bother calculating the line range to save time and to avoid spreading the special logic because the
         // max of the selection is at an index that is technically beyond the *existing contents* of the text storage.
-        if (NSMaxRange(previousAbsoluteRange) == self.textStorage.length) {
+        if (NSMaxRange(previousAbsoluteRange) == self.textStorage.length
+            && selectionAffinity == NSSelectionAffinityDownstream) {
             return [MPXSelection selectionWithRange:NSMakeRange(NSMaxRange(previousAbsoluteRange), 0)];
         }
 
         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
-        NSRange previousLineRange = ({
-            NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(previousAbsoluteRange)];
+        NSRange previousLineRange;
+        NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(previousAbsoluteRange)];
 
-            NSRange range;
-            [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex
-                                            effectiveRange:&range];
-            range;
-        });
+        if (glyphIndex == [layoutManager numberOfGlyphs]) {
+            if (layoutManager.extraLineFragmentTextContainer) {
+                NSRange newLineRange;
+                NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:previousAbsoluteRange.location - 1];
+                [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex effectiveRange:&newLineRange];
+
+                return [MPXSelection selectionWithRange:NSMakeRange(newLineRange.location, 0)];
+            } else {
+                glyphIndex--;
+            }
+        }
+
+        [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex effectiveRange:&previousLineRange];
 
         // The index of the selection relative to the start of the line in the entire string
         NSUInteger previousRelativeIndex = NSMaxRange(previousAbsoluteRange) - previousLineRange.location;
