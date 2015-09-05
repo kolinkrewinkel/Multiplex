@@ -18,28 +18,34 @@
 
 @implementation DVTSourceTextView (MPXEditorArrowKeyMovement)
 
-- (void)mpx_offsetSelectionsDefaultingLengthsToZero:(NSInteger)amount modifySelection:(BOOL)modifySelection
+- (void)mpx_moveLeftModifyingSelection:(BOOL)modifySelection
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange existingRange = selection.range;
 
-        // Start the new range from the existing point, resetting the length to 0.
-        NSRange newRange = existingRange;
-        newRange.length = 0;
+        // Ensure the location is positive/rational.
+        NSUInteger newLocation = existingRange.location > 0 ? existingRange.location - 1 : 0;
+        NSRange newRange = NSMakeRange(newLocation, 0);
 
-        // Push the range forward or move it backwards.
-        if (amount > 0) {
-            newRange.location = NSMaxRange(existingRange) + amount;
-        } else {
-            newRange.location = existingRange.location + amount;
+        // The selection should reach out and touch where it originated from.
+        if (modifySelection) {
+            newRange = NSUnionRange(existingRange, newRange);
         }
 
-        // Validate the range at the edges
-        if (newRange.location == NSUIntegerMax) {
-            newRange.location = 0;
-        } else if (newRange.location > [self.textStorage length]) {
-            newRange.location = self.textStorage.length - 1;
-        }
+        return [MPXSelection selectionWithRange:newRange];
+    }];
+}
+
+- (void)mpx_moveRightModifyingSelection:(BOOL)modifySelection
+{
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+        NSRange existingRange = selection.range;
+
+        // Ensure the location is within the length of the text storage.
+        NSUInteger newLocation =
+        existingRange.location < self.textStorage.length - 1 ? existingRange.location + 1 : self.textStorage.length;
+
+        NSRange newRange = NSMakeRange(newLocation, 0);
 
         // The selection should reach out and touch where it originated from.
         if (modifySelection) {
@@ -60,11 +66,6 @@
     [self mpx_moveLeftModifyingSelection:YES];
 }
 
-- (void)mpx_moveLeftModifyingSelection:(BOOL)modifySelection
-{
-    [self mpx_offsetSelectionsDefaultingLengthsToZero:-1 modifySelection:modifySelection];
-}
-
 - (void)moveRight:(id)sender
 {
     [self mpx_moveRightModifyingSelection:NO];
@@ -73,11 +74,6 @@
 - (void)moveRightAndModifySelection:(id)sender
 {
     [self mpx_moveRightModifyingSelection:YES];
-}
-
-- (void)mpx_moveRightModifyingSelection:(BOOL)modifySelection
-{
-    [self mpx_offsetSelectionsDefaultingLengthsToZero:1 modifySelection:modifySelection];
 }
 
 #pragma mark Up and Down/Line-Movements
