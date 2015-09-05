@@ -8,6 +8,7 @@
 
 @import MPXFoundation;
 @import MPXSelectionCore;
+@import ReactiveCocoa;
 
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTTextCompletionController.h>
@@ -17,11 +18,8 @@
 
 #import <libextobjc/EXTSynthesize.h>
 
-#import <ReactiveCocoa/ReactiveCocoa.h>
-
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
-#import "MPXEditorSelectionBridge.h"
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
