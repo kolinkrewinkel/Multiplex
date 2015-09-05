@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXEditorDocumentMovement.h"
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -16,11 +16,10 @@
 
 @implementation DVTSourceTextView (MPXEditorDocumentMovement)
 
+#pragma mark - Logic
+
 - (void)mpx_moveToRange:(NSRange)newRange modifyingSelection:(BOOL)modifySelection
 {
-    // It would be possible to just take the longest range and unionize, but this is the most uniform approach.
-    // Iterate over, join them to the start, and let the filter take care of joining them all into one.
-    // In cases where the selection isn't being modified, they'll all just be set to 0,0 and they'll be de-duplicated.
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange previousAbsoluteRange = selection.range;
         NSRange newAbsoluteRange = newRange;
@@ -42,6 +41,8 @@
 {
     [self mpx_moveToRange:NSMakeRange([self.textStorage length] - 1, 0) modifyingSelection:modifySelection];
 }
+
+#pragma mark - Forwarding Methods
 
 - (void)moveToBeginningOfDocument:(id)sender
 {

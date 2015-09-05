@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.h
+//  DVTSourceTextView+MPXEditorDocumentMovement.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
