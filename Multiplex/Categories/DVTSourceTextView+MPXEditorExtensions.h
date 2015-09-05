@@ -8,13 +8,6 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-typedef NS_ENUM(NSInteger, CATRelativePosition) {
-    CATRelativePositionTop,
-    CATRelativePositionLeft,
-    CATRelativePositionRight,
-    CATRelativePositionBottom
-};
-
 @class MPXEditorSelectionBridge;
 @class MPXSelection;
 @class MPXSelectionManager;
