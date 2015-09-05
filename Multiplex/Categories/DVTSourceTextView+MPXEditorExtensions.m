@@ -10,6 +10,8 @@
 @import MPXSelectionCore;
 @import ReactiveCocoa;
 
+#import <DVTFoundation/DVTTextPreferences.h>
+
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTTextCompletionController.h>
 #import <DVTKit/DVTTextStorage.h>
@@ -192,6 +194,36 @@
     } sequentialModification:YES];
 
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
+}
+
+- (BOOL)handleInsertTab
+{
+    BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
+    self.mpx_trimTrailingWhitespace = NO;
+
+    NSString *tabString = [self mpx_tabString];
+    [self insertText:tabString];
+
+    self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
+
+    return YES;
+}
+
+- (NSString *)mpx_tabString
+{
+    DVTTextPreferences *preferences = [DVTTextPreferences preferences];
+    if (preferences.useTabsToIndent) {
+        return @"\t";
+    }
+
+    NSMutableString *spaceTabString = [NSMutableString string];
+
+    NSUInteger spaceCount = preferences.tabWidth;
+    for (NSUInteger spacesAdded = 0; spacesAdded < spaceCount; spacesAdded++) {
+        [spaceTabString appendString:@" "];
+    }
+
+    return spaceTabString;
 }
 
 - (BOOL)mpx_shouldTrimTrailingWhitespace
