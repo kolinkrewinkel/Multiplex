@@ -91,10 +91,19 @@
         // "Previous" refers exclusively to time, not location.
         NSRange previousAbsoluteRange = selection.range;
 
+        // You can't move down a line from the end of the text.
+        // We don't bother calculating the line range to save time and to avoid spreading the special logic because the
+        // max of the selection is at an index that is technically beyond the *existing contents* of the text storage.
+        if (NSMaxRange(previousAbsoluteRange) == self.textStorage.length) {
+            return [MPXSelection selectionWithRange:NSMakeRange(NSMaxRange(previousAbsoluteRange), 0)];
+        }
+
         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
         NSRange previousLineRange = ({
+            NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(previousAbsoluteRange)];
+
             NSRange range;
-            [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousAbsoluteRange)
+            [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex
                                             effectiveRange:&range];
             range;
         });
@@ -121,10 +130,12 @@
             NSRange range;
 
             if (selectionAffinity == NSSelectionAffinityUpstream) {
-                [layoutManager lineFragmentRectForGlyphAtIndex:previousLineRange.location - 1
+                NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:previousLineRange.location - 1];
+                [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex
                                                 effectiveRange:&range];
             } else {
-                [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(previousLineRange)
+                NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(previousLineRange)];
+                [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex
                                                 effectiveRange:&range];
             }
 
