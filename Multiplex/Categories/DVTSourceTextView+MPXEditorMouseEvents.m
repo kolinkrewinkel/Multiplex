@@ -135,12 +135,12 @@
 
         [[NSRunLoop mainRunLoop] addTimer:self.mpx_definitionLongPressTimer forMode:NSDefaultRunLoopMode];
     } else {
+        self.mpx_shouldCloseGroupOnNextChange = [self.mpx_selectionManager.finalizedSelections count] > 0;
+
         // Because the click was singular, the other selections will *not* come back under any circumstances.
         // Thus, it must be finalized at the point where it's at is if it's a zero-length selection.
         // Otherwise, they'll be re-added during dragging.
         self.mpx_selectionManager.finalizedSelections = @[selection];
-
-        self.mpx_shouldCloseGroupOnNextChange = YES;
 
         // In the event the user drags, however, it needs to unfinalized so that it can be extended again.
         [self.mpx_selectionManager setTemporarySelections:@[selection]];

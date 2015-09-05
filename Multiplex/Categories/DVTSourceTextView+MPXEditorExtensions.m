@@ -73,6 +73,7 @@
 
     if (!self.mpx_inUndoGroup) {
         self.mpx_inUndoGroup = YES;
+        self.mpx_shouldCloseGroupOnNextChange = NO;
 
         [self.undoManager beginUndoGrouping];
 
