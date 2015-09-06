@@ -86,10 +86,7 @@
         }];
     }
 
-    BOOL showingCompletions = self.completionController.showingCompletions;
-    if (showingCompletions) {
-        [self.completionController textViewShouldInsertText:self];
-    }
+    [self.completionController textViewShouldInsertText:self];
 
     // Sequential (negative) offset of characters added.
     __block NSInteger totalDelta = 0;
@@ -124,10 +121,13 @@
                                                      origin:newInsertionPointRange.location];
     } sequentialModification:YES];
 
+
     [self.mpx_textViewSelectionDecorator startBlinking];
 
-    if (showingCompletions) {
-        [self.completionController _textViewTextDidChange:self];
+    [self.completionController _textViewTextDidChange:self];
+
+    if (!self.completionController.currentSession) {
+        [self.completionController textViewDidInsertText];
     }
 }
 
