@@ -86,10 +86,9 @@
         }];
     }
 
-    if (self.selectedRange.location != NSNotFound) {
-        [self.completionController textViewShouldInsertText:insertString];
-
-//        [self adjustTypeOverCompletionForEditedRange:NSMakeRange(self.selectedRange.location, [insertString length]) changeInLength:[insertString length]];
+    BOOL showingCompletions = self.completionController.showingCompletions;
+    if (showingCompletions) {
+        [self.completionController textViewShouldInsertText:self];
     }
 
     // Sequential (negative) offset of characters added.
@@ -127,13 +126,8 @@
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 
-    if (self.selectedRange.location != NSNotFound) {
-        [self.completionController textViewDidInsertText];
-        [self.completionController.currentSession showCompletionsExplicitly:YES];
-
-        DVTTextCompletionInlinePreviewController *inlinePreviewController =
-        (DVTTextCompletionInlinePreviewController *)[self.completionController.currentSession valueForKey:@"inlinePreviewController"];
-        [inlinePreviewController showInlinePreview];
+    if (showingCompletions) {
+        [self.completionController _textViewTextDidChange:self];
     }
 }
 
