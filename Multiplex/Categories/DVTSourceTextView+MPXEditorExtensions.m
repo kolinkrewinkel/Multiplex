@@ -124,11 +124,8 @@
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 
+    [self.completionController textViewDidInsertText];
     [self.completionController _textViewTextDidChange:self];
-
-    if (!self.completionController.currentSession) {
-        [self.completionController textViewDidInsertText];
-    }
 }
 
 - (void)deleteBackward:(id)sender
