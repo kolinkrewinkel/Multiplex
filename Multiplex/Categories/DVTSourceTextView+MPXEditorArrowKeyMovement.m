@@ -29,10 +29,27 @@
 
         // The selection should reach out and touch where it originated from.
         if (modifySelection) {
-            newRange = NSUnionRange(existingRange, newRange);
+            switch (selection.selectionAffinity) {
+                case NSSelectionAffinityUpstream:
+                    newRange = NSMakeRange(existingRange.location - 1, existingRange.length + 1);
+                    break;
+                case NSSelectionAffinityDownstream:
+
+                    if (existingRange.length > 0) {
+                        newRange = NSMakeRange(existingRange.location, existingRange.length - 1);
+                    } else {
+                        newRange = NSMakeRange(existingRange.location - 1, existingRange.length + 1);
+                    }
+
+                    break;
+            }
+
+
         }
 
-        return [MPXSelection selectionWithRange:newRange];
+        return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                      interLineDesiredIndex:selection.origin
+                                                     origin:selection.origin];
     }];
 }
 
@@ -41,18 +58,22 @@
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange existingRange = selection.range;
 
-        // Ensure the location is within the length of the text storage.
-        NSUInteger newLocation =
-        existingRange.location < self.textStorage.length - 1 ? existingRange.location + 1 : self.textStorage.length;
+        NSRange newRange = NSMakeRange(existingRange.location + 1, 0);
 
-        NSRange newRange = NSMakeRange(newLocation, 0);
-
-        // The selection should reach out and touch where it originated from.
         if (modifySelection) {
-            newRange = NSUnionRange(existingRange, newRange);
+            switch (selection.selectionAffinity) {
+                case NSSelectionAffinityUpstream:
+                    newRange = NSMakeRange(existingRange.location + 1, existingRange.length - 1);
+                    break;
+                case NSSelectionAffinityDownstream:
+                    newRange = NSMakeRange(existingRange.location, existingRange.length + 1);
+                    break;
+            }
         }
 
-        return [MPXSelection selectionWithRange:newRange];
+        return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                      interLineDesiredIndex:selection.origin
+                                                     origin:selection.origin];
     }];
 }
 
@@ -87,25 +108,37 @@
         // "Previous" refers exclusively to time, not location.
         NSRange previousAbsoluteRange = selection.range;
 
+        NSUInteger locationToMoveLineFrom = NSUIntegerMax;
+        switch (selection.selectionAffinity) {
+            case NSSelectionAffinityUpstream:
+                locationToMoveLineFrom = previousAbsoluteRange.location;
+                break;
+            case NSSelectionAffinityDownstream:
+                locationToMoveLineFrom = NSMaxRange(previousAbsoluteRange);
+                break;
+        }
+
         // You can't move down a line from the end of the text.
         // We don't bother calculating the line range to save time and to avoid spreading the special logic because the
         // max of the selection is at an index that is technically beyond the *existing contents* of the text storage.
-        if (NSMaxRange(previousAbsoluteRange) == self.textStorage.length
+        if (locationToMoveLineFrom == self.textStorage.length
             && selectionAffinity == NSSelectionAffinityDownstream) {
-            return [MPXSelection selectionWithRange:NSMakeRange(NSMaxRange(previousAbsoluteRange), 0)];
+            return [MPXSelection selectionWithRange:NSMakeRange(locationToMoveLineFrom, 0)];
         }
 
         // Effective range is used because lineRangeForRange does not handle the custom linebreaking/word-wrapping that the text view does.
         NSRange previousLineRange;
-        NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:NSMaxRange(previousAbsoluteRange)];
+        NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:locationToMoveLineFrom];
 
         if (glyphIndex == [layoutManager numberOfGlyphs]) {
             if (layoutManager.extraLineFragmentTextContainer) {
                 NSRange newLineRange;
-                NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:previousAbsoluteRange.location - 1];
+                NSUInteger glyphIndex = [layoutManager glyphIndexForCharacterAtIndex:locationToMoveLineFrom - 1];
                 [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex effectiveRange:&newLineRange];
 
-                return [MPXSelection selectionWithRange:NSMakeRange(newLineRange.location, 0)];
+                return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newLineRange.location, 0)
+                                              interLineDesiredIndex:selection.interLineDesiredIndex
+                                                             origin:locationToMoveLineFrom];
             } else {
                 glyphIndex--;
             }
@@ -114,7 +147,7 @@
         [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex effectiveRange:&previousLineRange];
 
         // The index of the selection relative to the start of the line in the entire string
-        NSUInteger previousRelativeIndex = NSMaxRange(previousAbsoluteRange) - previousLineRange.location;
+        NSUInteger previousRelativeIndex = locationToMoveLineFrom - previousLineRange.location;
 
         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
         if (selection.interLineDesiredIndex != previousRelativeIndex
@@ -156,7 +189,9 @@
                 newAbsoluteRange = NSUnionRange(previousAbsoluteRange, newAbsoluteRange);
             }
 
-            return [MPXSelection selectionWithRange:newAbsoluteRange];
+            return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
+                                          interLineDesiredIndex:NSNotFound
+                                                         origin:locationToMoveLineFrom];
         }
 
         NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
@@ -167,7 +202,7 @@
         // This will place it at the end of the line, aiming to be placed at the original position.
         return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
                                       interLineDesiredIndex:previousRelativeIndex
-                                                     origin:newAbsoluteRange.location];
+                                                     origin:locationToMoveLineFrom];
     }];
 }
 
