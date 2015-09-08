@@ -87,6 +87,35 @@
 
 - (void)moveUpAndModifySelection:(id)sender
 {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+        if (selection.insertionIndex == 0) {
+            return selection;
+        }
+
+        NSRange lineRange = [self lineRangeForCharacterIndex:selection.insertionIndex];
+        NSUInteger beginningOfLine = lineRange.location;
+
+        if (beginningOfLine == 0) {
+            NSRange newRange = [selection modifySelectionUpstreamByAmount:selection.insertionIndex];
+            return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                          indexWantedWithinLine:0
+                                                         origin:selection.origin];
+        }
+
+        NSRange lineAboveRange = [self lineRangeForCharacterIndex:beginningOfLine - 1];
+
+        NSUInteger location = [self locationForSelection:selection movedFromLine:lineRange toLine:lineAboveRange];
+        NSRange range = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - location];
+
+        NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
+        if (indexWantedWithinLine == MPXNoStoredLineIndex) {
+            indexWantedWithinLine = selection.insertionIndex - lineRange.location;
+        }
+
+        return [[MPXSelection alloc] initWithSelectionRange:range
+                                      indexWantedWithinLine:indexWantedWithinLine
+                                                     origin:selection.origin];
+    }];
 }
 
 - (void)moveDown:(id)sender
