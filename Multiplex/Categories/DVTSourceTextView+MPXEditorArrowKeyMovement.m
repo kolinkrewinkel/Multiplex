@@ -76,6 +76,20 @@
 
 - (void)moveDown:(id)sender
 {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+        NSRange lineRange = [self lineRangeForCharacterIndex:selection.insertionIndex];
+        NSUInteger endOfLine = NSMaxRange(lineRange);
+
+        if (endOfLine == self.textStorage.length - 1) {
+            NSRange newRange = NSMakeRange(endOfLine, 0);
+            return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                          indexWantedWithinLine:MPXNoStoredLineIndex
+                                                         origin:newRange.location];
+        }
+
+        NSRange lineBelowRange = [self lineRangeForCharacterIndex:endOfLine];
+        return [self selection:selection movedFromLine:lineRange toLine:lineBelowRange];
+    }];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
