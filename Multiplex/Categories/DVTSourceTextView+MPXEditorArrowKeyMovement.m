@@ -153,7 +153,7 @@
         NSUInteger newIndex = MAX(selection.insertionIndex - 1, 0);
         return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
                                       indexWantedWithinLine:selection.indexWantedWithinLine
-                                                     origin:selection.origin];
+                                                     origin:newIndex];
     }];
 }
 
@@ -182,7 +182,7 @@
         NSUInteger newIndex = MIN(selection.insertionIndex + 1, self.textStorage.length);
         return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
                                       indexWantedWithinLine:selection.indexWantedWithinLine
-                                                     origin:selection.origin];
+                                                     origin:newIndex];
     }];
 }
 
