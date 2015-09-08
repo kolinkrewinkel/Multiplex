@@ -54,7 +54,7 @@
 
     NSArray *finalizedSelections = self.mpx_selectionManager.finalizedSelections;
     MPXSelection *draggingSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
-                                                             indexWantedWithinLine:NSUIntegerMax
+                                                             indexWantedWithinLine:MPXNoStoredLineIndex
                                                                             origin:self.mpx_rangeInProgressStart.range.location];
 
     [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];

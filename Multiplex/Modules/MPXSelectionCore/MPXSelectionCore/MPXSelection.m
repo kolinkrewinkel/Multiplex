@@ -37,7 +37,7 @@
 
 - (instancetype)initWithSelectionRange:(NSRange)range
 {
-    return [self initWithSelectionRange:range indexWantedWithinLine:NSNotFound origin:range.location];
+    return [self initWithSelectionRange:range indexWantedWithinLine:MPXNoStoredLineIndex origin:range.location];
 }
 
 + (instancetype)selectionWithRange:(NSRange)range

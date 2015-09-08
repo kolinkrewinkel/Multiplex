@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Kolin Krewinkel. All rights reserved.
 //
 
+static const NSUInteger MPXNoStoredLineIndex = NSUIntegerMax;
+
 @import Foundation;
 
 /**
