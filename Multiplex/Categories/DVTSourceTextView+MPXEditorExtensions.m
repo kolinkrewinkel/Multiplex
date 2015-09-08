@@ -108,7 +108,7 @@
         NSRange lineRange;
         (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange) effectiveRange:&lineRange];
 
-        NSUInteger relativeLinePosition = selection.interLineDesiredIndex;
+        NSUInteger relativeLinePosition = selection.indexWantedWithinLine;
 
         if (relativeLinePosition == NSNotFound) {
             relativeLinePosition = NSMaxRange(offsetRange) - lineRange.location;
@@ -117,7 +117,7 @@
         // Move cursor (or range-selection) to the end of what was just added with 0-length.
         NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
-                                      interLineDesiredIndex:relativeLinePosition
+                                      indexWantedWithinLine:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
     } sequentialModification:YES];
 

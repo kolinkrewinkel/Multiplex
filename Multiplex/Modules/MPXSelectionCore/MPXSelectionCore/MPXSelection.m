@@ -11,7 +11,7 @@
 @interface MPXSelection ()
 
 @property (nonatomic) NSRange range;
-@property (nonatomic) NSUInteger interLineDesiredIndex;
+@property (nonatomic) NSUInteger indexWantedWithinLine;
 @property (nonatomic) NSUInteger origin;
 
 @end
@@ -21,12 +21,12 @@
 #pragma mark - Designated Initializer
 
 - (instancetype)initWithSelectionRange:(NSRange)range
-                 interLineDesiredIndex:(NSUInteger)interLineDesiredIndex
+                 indexWantedWithinLine:(NSUInteger)indexWantedWithinLine
                                 origin:(NSUInteger)origin
 {
     if (self = [self init]) {
         self.range = range;
-        self.interLineDesiredIndex = interLineDesiredIndex;
+        self.indexWantedWithinLine = indexWantedWithinLine;
         self.origin = origin;
     }
 
@@ -37,7 +37,7 @@
 
 - (instancetype)initWithSelectionRange:(NSRange)range
 {
-    return [self initWithSelectionRange:range interLineDesiredIndex:NSNotFound origin:range.location];
+    return [self initWithSelectionRange:range indexWantedWithinLine:NSNotFound origin:range.location];
 }
 
 + (instancetype)selectionWithRange:(NSRange)range
@@ -46,6 +46,16 @@
 }
 
 #pragma mark - Getters/Setters
+
+- (NSUInteger)caretIndex
+{
+    switch (self.selectionAffinity) {
+        case NSSelectionAffinityUpstream:
+            return self.range.location;
+        case NSSelectionAffinityDownstream:
+            return NSMaxRange(self.range);
+    }
+}
 
 - (NSSelectionAffinity)selectionAffinity
 {
@@ -66,7 +76,7 @@
 
     MPXSelection *otherSelection = (MPXSelection *)object;
 
-    return (otherSelection.interLineDesiredIndex == self.interLineDesiredIndex
+    return (otherSelection.indexWantedWithinLine == self.indexWantedWithinLine
             && NSEqualRanges(otherSelection.range, self.range));
 }
 
@@ -85,14 +95,9 @@
     return [NSString stringWithFormat:@"<%@: range: %@, interline index: %lu, origin: %lu>",
             NSStringFromClass([self class]),
             NSStringFromRange(self.range),
-            (unsigned long)self.interLineDesiredIndex,
+            (unsigned long)self.indexWantedWithinLine,
             (unsigned long)self.origin];
 
-}
-
-- (void)dealloc
-{
-    [self.caretView removeFromSuperview];
 }
 
 @end

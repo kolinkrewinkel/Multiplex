@@ -48,7 +48,7 @@
         }
 
         return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                      interLineDesiredIndex:selection.origin
+                                      indexWantedWithinLine:selection.origin
                                                      origin:selection.origin];
     }];
 }
@@ -72,7 +72,7 @@
         }
 
         return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                      interLineDesiredIndex:selection.origin
+                                      indexWantedWithinLine:selection.origin
                                                      origin:selection.origin];
     }];
 }
@@ -137,7 +137,7 @@
                 [layoutManager lineFragmentRectForGlyphAtIndex:glyphIndex effectiveRange:&newLineRange];
 
                 return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newLineRange.location, 0)
-                                              interLineDesiredIndex:selection.interLineDesiredIndex
+                                              indexWantedWithinLine:selection.indexWantedWithinLine
                                                              origin:locationToMoveLineFrom];
             } else {
                 glyphIndex--;
@@ -150,9 +150,9 @@
         NSUInteger previousRelativeIndex = locationToMoveLineFrom - previousLineRange.location;
 
         // Where the cursor is placed is not where it originally came from, so we should aim to place it there.
-        if (selection.interLineDesiredIndex != previousRelativeIndex
-            && selection.interLineDesiredIndex != NSNotFound) {
-            previousRelativeIndex = selection.interLineDesiredIndex;
+        if (selection.indexWantedWithinLine != previousRelativeIndex
+            && selection.indexWantedWithinLine != NSNotFound) {
+            previousRelativeIndex = selection.indexWantedWithinLine;
         }
 
         // The selection is in the first/zero-th line, so there is no above line to find.
@@ -190,19 +190,23 @@
             }
 
             return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
-                                          interLineDesiredIndex:NSNotFound
-                                                         origin:locationToMoveLineFrom];
+                                          indexWantedWithinLine:previousRelativeIndex
+                                                         origin:selection.origin];
         }
 
         NSRange newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
         if (modifySelection) {
-            newAbsoluteRange = NSUnionRange(previousAbsoluteRange, newAbsoluteRange);
+            if (selectionAffinity == NSSelectionAffinityUpstream) {
+                newAbsoluteRange = NSMakeRange(newLineRange.location, NSMaxRange(previousAbsoluteRange) - newLineRange.location);
+            } else {
+
+            }
         }
 
         // This will place it at the end of the line, aiming to be placed at the original position.
         return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
-                                      interLineDesiredIndex:previousRelativeIndex
-                                                     origin:locationToMoveLineFrom];
+                                      indexWantedWithinLine:previousRelativeIndex
+                                                     origin:selection.origin];
     }];
 }
 
