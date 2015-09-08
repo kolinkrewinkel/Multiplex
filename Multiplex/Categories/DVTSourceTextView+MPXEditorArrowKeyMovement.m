@@ -56,24 +56,7 @@
 - (void)mpx_moveRightModifyingSelection:(BOOL)modifySelection
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSRange existingRange = selection.range;
-
-        NSRange newRange = NSMakeRange(existingRange.location + 1, 0);
-
-        if (modifySelection) {
-            switch (selection.selectionAffinity) {
-                case NSSelectionAffinityUpstream:
-                    newRange = NSMakeRange(existingRange.location + 1, existingRange.length - 1);
-                    break;
-                case NSSelectionAffinityDownstream:
-                    newRange = NSMakeRange(existingRange.location, existingRange.length + 1);
-                    break;
-            }
-        }
-
-        return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                      indexWantedWithinLine:selection.origin
-                                                     origin:selection.origin];
+        return [selection modifySelectionAboutOriginDownstreamByAmount:1];
     }];
 }
 

@@ -45,6 +45,28 @@
     return [[[self alloc] init] initWithSelectionRange:range];
 }
 
+#pragma mark - Mutations
+
+- (MPXSelection *)modifySelectionAboutOriginDownstreamByAmount:(NSUInteger)amountToMoveBy
+{
+    NSRange newRange;
+
+    switch (self.selectionAffinity) {
+        case NSSelectionAffinityUpstream: {
+            newRange = NSMakeRange(self.range.location + amountToMoveBy, self.range.length - amountToMoveBy);
+            break;
+        }
+        case NSSelectionAffinityDownstream: {
+            newRange = NSMakeRange(self.range.location, self.range.length + amountToMoveBy);
+            break;
+        }
+    }
+
+    return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                  indexWantedWithinLine:self.indexWantedWithinLine
+                                                 origin:self.origin];
+}
+
 #pragma mark - Getters/Setters
 
 - (NSUInteger)insertionIndex

@@ -24,6 +24,10 @@
 - (instancetype)initWithSelectionRange:(NSRange)range;
 + (instancetype)selectionWithRange:(NSRange)range;
 
+#pragma mark - Mutation
+
+- (MPXSelection *)modifySelectionAboutOriginDownstreamByAmount:(NSUInteger)amountToMoveBy;
+
 #pragma mark - Attributes
 
 @property (nonatomic, readonly) NSRange range;
