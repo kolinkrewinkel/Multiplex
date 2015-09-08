@@ -58,9 +58,7 @@
     DVTTextStorage *textStorage = self.textView.textStorage;
 
     // Reset the background color of all the source text.
-    NSColor *defaultBackgroundColor = textStorage.fontAndColorTheme.sourceTextBackgroundColor;
-    [self.textView.layoutManager setTemporaryAttributes:@{NSBackgroundColorAttributeName: defaultBackgroundColor}
-                                      forCharacterRange:NSMakeRange(0, textStorage.length)];
+    [self.textView.layoutManager setTemporaryAttributes:@{} forCharacterRange:NSMakeRange(0, textStorage.length)];
 
     // Remove any onscreen cursors
     for (RACTuple *tuple in self.caretViews) {
