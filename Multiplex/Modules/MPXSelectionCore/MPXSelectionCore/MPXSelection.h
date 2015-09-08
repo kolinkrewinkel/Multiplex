@@ -28,8 +28,8 @@ static const NSUInteger MPXNoStoredLineIndex = NSUIntegerMax;
 
 #pragma mark - Mutation
 
-- (MPXSelection *)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy;
-- (MPXSelection *)modifySelectionDownstreamByAmount:(NSUInteger)amountToExpandOrContractBy;
+- (NSRange)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy;
+- (NSRange)modifySelectionDownstreamByAmount:(NSUInteger)amountToExpandOrContractBy;
 
 #pragma mark - Attributes
 

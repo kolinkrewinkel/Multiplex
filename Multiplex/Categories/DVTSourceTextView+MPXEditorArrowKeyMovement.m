@@ -20,7 +20,7 @@
 
 #pragma mark - Convenience
 
-- (MPXSelection *)selection:(MPXSelection *)selection movedFromLine:(NSRange)fromLine toLine:(NSRange)toLine
+- (NSUInteger)locationForSelection:(MPXSelection *)selection movedFromLine:(NSRange)fromLine toLine:(NSRange)toLine
 {
     NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
 
@@ -29,13 +29,28 @@
     }
 
     if (toLine.length > indexWantedWithinLine) {
-        NSUInteger location = toLine.location + indexWantedWithinLine;
+        return toLine.location + indexWantedWithinLine;
+    }
+
+    return NSMaxRange(toLine) - 1;
+}
+
+- (MPXSelection *)selection:(MPXSelection *)selection movedFromLine:(NSRange)fromLine toLine:(NSRange)toLine
+{
+    NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
+
+    if (indexWantedWithinLine == MPXNoStoredLineIndex) {
+        indexWantedWithinLine = selection.insertionIndex - fromLine.location;
+    }
+
+    NSUInteger location = [self locationForSelection:selection movedFromLine:fromLine toLine:toLine];
+
+    if (toLine.length > indexWantedWithinLine) {
         return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(location, 0)
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:location];
     }
 
-    NSUInteger location = NSMaxRange(toLine) - 1;
     return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(location, 0)
                                   indexWantedWithinLine:indexWantedWithinLine
                                                  origin:location];
@@ -94,6 +109,35 @@
 
 - (void)moveDownAndModifySelection:(id)sender
 {
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+        if (selection.insertionIndex == self.textStorage.length) {
+            return selection;
+        }
+
+        NSRange lineRange = [self lineRangeForCharacterIndex:selection.insertionIndex];
+        NSUInteger endOfLine = NSMaxRange(lineRange);
+
+        if (endOfLine == self.textStorage.length) {
+            NSRange newRange = [selection modifySelectionDownstreamByAmount:endOfLine - selection.insertionIndex];
+            return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                          indexWantedWithinLine:lineRange.length
+                                                         origin:selection.origin];
+        }
+
+        NSRange lineBelowRange = [self lineRangeForCharacterIndex:endOfLine];
+
+        NSUInteger location = [self locationForSelection:selection movedFromLine:lineRange toLine:lineBelowRange];
+        NSRange range = [selection modifySelectionDownstreamByAmount:location - selection.insertionIndex];
+
+        NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
+        if (indexWantedWithinLine == MPXNoStoredLineIndex) {
+            indexWantedWithinLine = selection.insertionIndex - lineRange.location;
+        }
+
+        return [[MPXSelection alloc] initWithSelectionRange:range
+                                      indexWantedWithinLine:indexWantedWithinLine
+                                                     origin:selection.origin];
+    }];
 }
 
 #pragma mark - Left/Right Movements
@@ -121,7 +165,9 @@
 - (void)moveLeftAndModifySelection:(id)sender
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        return [selection modifySelectionUpstreamByAmount:1];
+        return [[MPXSelection alloc] initWithSelectionRange:[selection modifySelectionUpstreamByAmount:1]
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:selection.origin];
     }];
 }
 
@@ -148,7 +194,9 @@
 - (void)moveRightAndModifySelection:(id)sender
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        return [selection modifySelectionDownstreamByAmount:1];
+        return [[MPXSelection alloc] initWithSelectionRange:[selection modifySelectionDownstreamByAmount:1]
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:selection.origin];
     }];
 }
 

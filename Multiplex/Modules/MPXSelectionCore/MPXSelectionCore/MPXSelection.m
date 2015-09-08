@@ -47,13 +47,19 @@
 
 #pragma mark - Mutations
 
-- (MPXSelection *)modifySelectionDownstreamByAmount:(NSUInteger)amountToExpandOrContractBy
+- (NSRange)modifySelectionDownstreamByAmount:(NSUInteger)amountToExpandOrContractBy
 {
     NSRange newRange;
     switch (self.selectionAffinity) {
         case NSSelectionAffinityUpstream: {
-            newRange = NSMakeRange(self.range.location + amountToExpandOrContractBy,
-                                   self.range.length - amountToExpandOrContractBy);
+            if (amountToExpandOrContractBy > self.range.length) {
+                NSUInteger delta = amountToExpandOrContractBy - self.range.length;
+                newRange = NSMakeRange(self.origin, delta);
+            } else {
+                newRange = NSMakeRange(self.range.location + amountToExpandOrContractBy,
+                                       self.range.length - amountToExpandOrContractBy);
+            }
+
             break;
         }
         case NSSelectionAffinityDownstream: {
@@ -62,12 +68,10 @@
         }
     }
 
-    return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                  indexWantedWithinLine:self.indexWantedWithinLine
-                                                 origin:self.origin];
+    return newRange;
 }
 
-- (MPXSelection *)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy
+- (NSRange)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy
 {
     NSRange newRange;
     switch (self.selectionAffinity) {
@@ -88,9 +92,7 @@
         }
     }
 
-    return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                  indexWantedWithinLine:self.indexWantedWithinLine
-                                                 origin:self.origin];
+    return newRange;
 }
 
 #pragma mark - Getters/Setters
