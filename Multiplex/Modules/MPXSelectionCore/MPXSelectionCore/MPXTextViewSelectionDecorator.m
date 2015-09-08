@@ -71,17 +71,10 @@
     RACSequence *selectionSequence = [visualSelections rac_sequence];
 
     self.caretViews = [[selectionSequence map:^RACTuple *(MPXSelection *selection) {
-        NSRange range = [selection range];
-        if ([selection selectionAffinity] == NSSelectionAffinityDownstream) {
-            range = NSMakeRange(NSMaxRange(range), 0);
-        } else {
-            range = NSMakeRange(range.location, 0);
-        }
+        NSUInteger caretIndex = selection.caretIndex;
 
-        NSRange glyphRange = [self.textView.layoutManager glyphRangeForCharacterRange:range
-                                                                 actualCharacterRange:nil];
-
-        NSRect glyphRect = [self.textView.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphRange.location, 0)
+        NSUInteger glyphIndex = [self.textView.layoutManager glyphIndexForCharacterAtIndex:caretIndex];
+        NSRect glyphRect = [self.textView.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphIndex, 0)
                                                                   inTextContainer:self.textView.textContainer];
 
         CGRect unroundedCaretRect = CGRectOffset(CGRectMake(glyphRect.origin.x, glyphRect.origin.y, 1.f/self.textView.window.screen.backingScaleFactor, CGRectGetHeight(glyphRect)),
