@@ -20,6 +20,27 @@
 
 #pragma mark - Convenience
 
+- (MPXSelection *)selection:(MPXSelection *)selection movedFromLine:(NSRange)fromLine toLine:(NSRange)toLine
+{
+    NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
+
+    if (indexWantedWithinLine == MPXNoStoredLineIndex) {
+        indexWantedWithinLine = selection.insertionIndex - fromLine.location;
+    }
+
+    if (toLine.length > indexWantedWithinLine) {
+        NSUInteger location = toLine.location + indexWantedWithinLine;
+        return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(location, 0)
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:location];
+    }
+
+    NSUInteger location = NSMaxRange(toLine) - 1;
+    return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(location, 0)
+                                  indexWantedWithinLine:indexWantedWithinLine
+                                                 origin:location];
+}
+
 - (NSRange)lineRangeForCharacterIndex:(NSUInteger)characterIndex
 {
     NSUInteger glyphIndex = [self.layoutManager glyphIndexForCharacterAtIndex:characterIndex];
@@ -37,23 +58,28 @@
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange lineRange = [self lineRangeForCharacterIndex:selection.insertionIndex];
 
-        
+        if (lineRange.location == 0) {
+            NSRange newRange = NSMakeRange(0, 0);
+            return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                          indexWantedWithinLine:MPXNoStoredLineIndex
+                                                         origin:newRange.location];
+        }
+
+        NSRange lineAboveRange = [self lineRangeForCharacterIndex:lineRange.location - 1];
+        return [self selection:selection movedFromLine:lineRange toLine:lineAboveRange];
     }];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    [self mpx_moveSelectionsUpModifyingSelection:YES];
 }
 
 - (void)moveDown:(id)sender
 {
-    [self mpx_moveSelectionsDownModifyingSelection:NO];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    [self mpx_moveSelectionsDownModifyingSelection:YES];
 }
 
 #pragma mark - Left/Right Movements
