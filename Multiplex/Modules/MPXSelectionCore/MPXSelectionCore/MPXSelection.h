@@ -44,7 +44,7 @@
  * Position at which caret should be drawn (in absolute terms), as well as where mutations should take place from for
  * expansions and contractions of the selection.
  */
-@property (nonatomic, readonly) NSUInteger caretIndex;
+@property (nonatomic, readonly) NSUInteger insertionIndex;
 
 /**
  * The direction the selection is moving, based on comparing the current range to `origin.`

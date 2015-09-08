@@ -108,7 +108,7 @@
         // "Previous" refers exclusively to time, not location.
         NSRange previousAbsoluteRange = selection.range;
 
-        NSUInteger locationToMoveLineFrom = selection.caretIndex;
+        NSUInteger locationToMoveLineFrom = selection.insertionIndex;
 
         // You can't move down a line from the end of the text.
         // We don't bother calculating the line range to save time and to avoid spreading the special logic because the

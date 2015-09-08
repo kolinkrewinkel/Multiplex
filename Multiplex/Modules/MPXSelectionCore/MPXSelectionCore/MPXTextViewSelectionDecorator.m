@@ -71,7 +71,7 @@
     RACSequence *selectionSequence = [visualSelections rac_sequence];
 
     self.caretViews = [[selectionSequence map:^RACTuple *(MPXSelection *selection) {
-        NSUInteger caretIndex = selection.caretIndex;
+        NSUInteger caretIndex = selection.insertionIndex;
 
         NSUInteger glyphIndex = [self.textView.layoutManager glyphIndexForCharacterAtIndex:caretIndex];
         NSRect glyphRect = [self.textView.layoutManager boundingRectForGlyphRange:NSMakeRange(glyphIndex, 0)

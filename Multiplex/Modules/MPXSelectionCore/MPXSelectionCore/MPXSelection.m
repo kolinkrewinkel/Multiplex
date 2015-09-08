@@ -47,7 +47,7 @@
 
 #pragma mark - Getters/Setters
 
-- (NSUInteger)caretIndex
+- (NSUInteger)insertionIndex
 {
     switch (self.selectionAffinity) {
         case NSSelectionAffinityUpstream:
