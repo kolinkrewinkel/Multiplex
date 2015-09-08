@@ -109,15 +109,17 @@ static NSArray *MPXSortedSelections(NSArray *selections)
         [indexSet addIndexesInRange:selection.range];
     }
 
+
     NSMutableSet *selections = [[NSMutableSet alloc] init];
     [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        NSPredicate *matchingPredicate =
+
+        NSPredicate *sameSelectionPredicate =
         [NSPredicate predicateWithBlock:^BOOL(MPXSelection *_Nonnull potentialMatch,
                                               NSDictionary<NSString *,id> * _Nullable bindings) {
             return NSEqualRanges(potentialMatch.range, range);
         }];
 
-        MPXSelection *existingProvidedSelection = [[ranges filteredArrayUsingPredicate:matchingPredicate] firstObject];
+        MPXSelection *existingProvidedSelection = [[ranges filteredArrayUsingPredicate:sameSelectionPredicate] firstObject];
         if (existingProvidedSelection) {
             [selections addObject:existingProvidedSelection];
         } else {
@@ -129,7 +131,19 @@ static NSArray *MPXSortedSelections(NSArray *selections)
         if (selection.range.length == 0
             && ![indexSet containsIndexesInRange:NSMakeRange(selection.range.location, 1)]
             && ![indexSet containsIndexesInRange:NSMakeRange(selection.range.location - 1, 1)]) {
-            [selections addObject:selection];
+
+            NSPredicate *sameSelectionPredicate =
+            [NSPredicate predicateWithBlock:^BOOL(MPXSelection *_Nonnull potentialMatch,
+                                                  NSDictionary<NSString *,id> * _Nullable bindings) {
+                return NSEqualRanges(potentialMatch.range, selection.range);
+            }];
+
+            MPXSelection *existingProvidedSelection = [[ranges filteredArrayUsingPredicate:sameSelectionPredicate] firstObject];
+            if (existingProvidedSelection) {
+                [selections addObject:existingProvidedSelection];
+            } else {
+                [selections addObject:selection];
+            }
         }
     }
 
