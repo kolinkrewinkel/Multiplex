@@ -47,17 +47,43 @@
 
 #pragma mark - Mutations
 
-- (MPXSelection *)modifySelectionAboutOriginDownstreamByAmount:(NSUInteger)amountToMoveBy
+- (MPXSelection *)modifySelectionDownstreamByAmount:(NSUInteger)amountToExpandOrContractBy
 {
     NSRange newRange;
-
     switch (self.selectionAffinity) {
         case NSSelectionAffinityUpstream: {
-            newRange = NSMakeRange(self.range.location + amountToMoveBy, self.range.length - amountToMoveBy);
+            newRange = NSMakeRange(self.range.location + amountToExpandOrContractBy,
+                                   self.range.length - amountToExpandOrContractBy);
             break;
         }
         case NSSelectionAffinityDownstream: {
-            newRange = NSMakeRange(self.range.location, self.range.length + amountToMoveBy);
+            newRange = NSMakeRange(self.range.location, self.range.length + amountToExpandOrContractBy);
+            break;
+        }
+    }
+
+    return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                  indexWantedWithinLine:self.indexWantedWithinLine
+                                                 origin:self.origin];
+}
+
+- (MPXSelection *)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy
+{
+    NSRange newRange;
+    switch (self.selectionAffinity) {
+        case NSSelectionAffinityUpstream: {
+            newRange = NSMakeRange(self.range.location - amountToExpandOrContractBy,
+                                   self.range.length + amountToExpandOrContractBy);
+            break;
+        }
+        case NSSelectionAffinityDownstream: {
+            if (amountToExpandOrContractBy > self.range.length) {
+                NSUInteger insertionPointChange = amountToExpandOrContractBy - self.range.length;
+                newRange = NSMakeRange(self.range.location - insertionPointChange, insertionPointChange);
+            } else {
+                newRange = NSMakeRange(self.range.location, self.range.length - amountToExpandOrContractBy);
+            }
+
             break;
         }
     }

@@ -26,7 +26,8 @@
 
 #pragma mark - Mutation
 
-- (MPXSelection *)modifySelectionAboutOriginDownstreamByAmount:(NSUInteger)amountToMoveBy;
+- (MPXSelection *)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy;
+- (MPXSelection *)modifySelectionDownstreamByAmount:(NSUInteger)amountToExpandOrContractBy;
 
 #pragma mark - Attributes
 

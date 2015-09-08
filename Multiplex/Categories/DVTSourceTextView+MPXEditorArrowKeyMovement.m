@@ -21,34 +21,13 @@
 - (void)mpx_moveLeftModifyingSelection:(BOOL)modifySelection
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSRange existingRange = selection.range;
-
-        // Ensure the location is positive/rational.
-        NSUInteger newLocation = existingRange.location > 0 ? existingRange.location - 1 : 0;
-        NSRange newRange = NSMakeRange(newLocation, 0);
-
-        // The selection should reach out and touch where it originated from.
         if (modifySelection) {
-            switch (selection.selectionAffinity) {
-                case NSSelectionAffinityUpstream:
-                    newRange = NSMakeRange(existingRange.location - 1, existingRange.length + 1);
-                    break;
-                case NSSelectionAffinityDownstream:
-
-                    if (existingRange.length > 0) {
-                        newRange = NSMakeRange(existingRange.location, existingRange.length - 1);
-                    } else {
-                        newRange = NSMakeRange(existingRange.location - 1, existingRange.length + 1);
-                    }
-
-                    break;
-            }
-
-
+            return [selection modifySelectionUpstreamByAmount:1];
         }
 
-        return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                      indexWantedWithinLine:selection.origin
+        NSUInteger newIndex = MAX(selection.insertionIndex - 1, 0);
+        return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
+                                      indexWantedWithinLine:selection.indexWantedWithinLine
                                                      origin:selection.origin];
     }];
 }
@@ -56,7 +35,14 @@
 - (void)mpx_moveRightModifyingSelection:(BOOL)modifySelection
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        return [selection modifySelectionAboutOriginDownstreamByAmount:1];
+        if (modifySelection) {
+            return [selection modifySelectionDownstreamByAmount:1];
+        }
+
+        NSUInteger newIndex = MIN(selection.insertionIndex + 1, self.textStorage.length);
+        return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
+                                      indexWantedWithinLine:selection.indexWantedWithinLine
+                                                     origin:selection.origin];
     }];
 }
 
