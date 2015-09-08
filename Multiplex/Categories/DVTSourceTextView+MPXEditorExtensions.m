@@ -131,15 +131,15 @@
 - (void)deleteBackward:(id)sender
 {
     // Sequential (negative) offset of characters added.
-    __block NSInteger totalDelta = 0;
+    __block NSUInteger totalDelta = 0;
 
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         // Update the base range with the delta'd amount of change from previous mutations.
         NSRange range = [selection range];
-        NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
+        NSRange offsetRange = NSMakeRange(range.location - totalDelta, range.length);
 
         NSRange deletingRange = NSMakeRange(0, 0);
-        if (offsetRange.length == 0) {
+        if (offsetRange.location > 0 && offsetRange.length == 0) {
             deletingRange = NSMakeRange(offsetRange.location - 1, 1);
         } else {
             deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
@@ -153,7 +153,7 @@
         MPXSelection *newSelection = [MPXSelection selectionWithRange:newInsertionPointRange];
 
         // Increment/decrement the delta by how much we trimmed.
-        totalDelta -= deletingRange.length;
+        totalDelta += deletingRange.length;
 
         return newSelection;
     }];
