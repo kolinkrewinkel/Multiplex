@@ -98,7 +98,7 @@
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
             NSString *nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
 
-            for (NSString *typeoverString in @[@"]", @"}", @")", @"\""]) {
+            for (NSString *typeoverString in @[@"]", @"}", @")", @"\"", @"'", @";"]) {
                 if (![insertString isEqualToString:typeoverString]) {
                     continue;
                 }
