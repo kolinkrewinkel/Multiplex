@@ -105,6 +105,16 @@
         NSInteger delta = range.length - insertStringLength;
         totalDelta -= delta;
 
+        NSString *matchingBrace = [self followupStringToMakePair:insertString];
+        if (matchingBrace) {
+            NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + [insertString length], 0);
+            [self.textStorage replaceCharactersInRange:matchingBraceRange
+                                            withString:matchingBrace
+                                       withUndoManager:self.undoManager];
+
+            totalDelta -= [matchingBrace length];
+        }
+
         NSRange lineRange;
         (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange) effectiveRange:&lineRange];
 
