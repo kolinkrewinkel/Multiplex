@@ -253,4 +253,21 @@
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
+- (NSString *)followupStringToMakePair:(NSString *)originalInsertString
+{
+    if ([originalInsertString length] != 1) {
+        return nil;
+    }
+
+    if ([originalInsertString isEqualToString:@"["]) {
+        return @"]";
+    } else if ([originalInsertString isEqualToString:@"{"]) {
+        return @"}";
+    } else if ([originalInsertString isEqualToString:@"("]) {
+        return @")";
+    }
+
+    return nil;
+}
+
 @end
