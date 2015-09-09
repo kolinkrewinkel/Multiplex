@@ -73,6 +73,10 @@
 
 - (NSRange)modifySelectionUpstreamByAmount:(NSUInteger)amountToExpandOrContractBy
 {
+    if (self.range.location == 0) {
+        return self.range;
+    }
+
     NSRange newRange;
     switch (self.selectionAffinity) {
         case NSSelectionAffinityUpstream: {

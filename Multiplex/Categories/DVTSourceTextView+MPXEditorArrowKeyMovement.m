@@ -223,7 +223,12 @@
 - (void)moveRightAndModifySelection:(id)sender
 {
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        return [[MPXSelection alloc] initWithSelectionRange:[selection modifySelectionDownstreamByAmount:1]
+        if (NSMaxRange(selection.range) == self.textStorage.length) {
+            return selection;
+        }
+
+        NSRange newRange = [selection modifySelectionDownstreamByAmount:1];
+        return [[MPXSelection alloc] initWithSelectionRange:newRange
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:selection.origin];
     }];
