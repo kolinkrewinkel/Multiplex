@@ -94,6 +94,29 @@
         NSRange range = selection.range;
         NSUInteger insertStringLength = [insertString length];
 
+        BOOL shouldInsertChars = YES;
+        if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
+            NSString *nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
+
+            for (NSString *typeoverString in @[@"]", @"}", @")", @"\""]) {
+                if (![insertString isEqualToString:typeoverString]) {
+                    continue;
+                }
+
+                if ([nextChar isEqualToString:typeoverString]) {
+                    shouldInsertChars = NO;
+                    break;
+                }
+            }
+        }
+
+        if (!shouldInsertChars) {
+            NSUInteger newIndex = selection.insertionIndex + 1;
+            return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
+                                          indexWantedWithinLine:MPXNoStoredLineIndex
+                                                         origin:newIndex];
+        }
+
         // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point
         // correspond to the relative offset made by inserting a # of chars.)
         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
