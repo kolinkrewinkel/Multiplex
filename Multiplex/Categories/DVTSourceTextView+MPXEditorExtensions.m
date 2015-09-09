@@ -89,7 +89,7 @@
     [self.completionController textViewShouldInsertText:self];
 
     // Sequential (negative) offset of characters added.
-    __block NSInteger totalDelta = 0;
+    __block NSUInteger totalDelta = 0;
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
         NSUInteger insertStringLength = [insertString length];
@@ -102,17 +102,17 @@
 
         // Offset the following ones by noting the original length and updating for the replacement's length, moving
         // cursors following forward/backward.
-        NSInteger delta = range.length - insertStringLength;
-        totalDelta -= delta;
+        NSUInteger delta = insertStringLength - range.length;
+        totalDelta += delta;
 
         NSString *matchingBrace = [self followupStringToMakePair:insertString];
         if (matchingBrace) {
-            NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + [insertString length], 0);
+            NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
                                             withString:matchingBrace
                                        withUndoManager:self.undoManager];
 
-            totalDelta -= [matchingBrace length];
+            totalDelta += [matchingBrace length];
         }
 
         NSRange lineRange;
