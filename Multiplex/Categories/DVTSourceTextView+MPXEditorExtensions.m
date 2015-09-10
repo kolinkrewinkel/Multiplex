@@ -27,7 +27,6 @@
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
 @synthesizeAssociation(DVTSourceTextView, mpx_shouldCloseGroupOnNextChange);
-@synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionBridge);
 @synthesizeAssociation(DVTSourceTextView, mpx_trimTrailingWhitespace);
 
 #pragma mark - Initializer
