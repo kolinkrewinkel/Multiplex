@@ -96,7 +96,6 @@
 
         BOOL shouldInsertChars = YES;
         BOOL indent = NO;
-        NSInteger cursorAdjustment = 0;
 
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
             NSString *nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
@@ -116,7 +115,6 @@
                 NSString *currChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex - 1, 1)];
                 if ([nextChar isEqualToString:@"}"] && [currChar isEqualToString:@"{"] && [insertString isEqualToString:@"\n"]) {
                     modifiedInsertString = @"\n\n";
-                    cursorAdjustment = -1;
                     indent = YES;
                 }
             }
