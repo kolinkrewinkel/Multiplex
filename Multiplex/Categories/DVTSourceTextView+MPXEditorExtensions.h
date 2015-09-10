@@ -8,7 +8,6 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@class MPXEditorSelectionBridge;
 @class MPXSelection;
 @class MPXSelectionManager;
 
@@ -27,7 +26,6 @@
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
-@property (nonatomic) MPXEditorSelectionBridge *mpx_textViewSelectionBridge;
 
 @property (nonatomic) BOOL mpx_shouldCloseGroupOnNextChange;
 @property (nonatomic) BOOL mpx_inUndoGroup;
