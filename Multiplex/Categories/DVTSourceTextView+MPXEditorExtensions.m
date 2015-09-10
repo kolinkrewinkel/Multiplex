@@ -92,9 +92,12 @@
     __block NSUInteger totalDelta = 0;
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         NSRange range = selection.range;
-        NSUInteger insertStringLength = [insertString length];
+        NSString *modifiedInsertString = insertString;
 
         BOOL shouldInsertChars = YES;
+        BOOL indent = NO;
+        NSInteger cursorAdjustment = 0;
+
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
             NSString *nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
 
@@ -106,6 +109,15 @@
                 if ([nextChar isEqualToString:typeoverString]) {
                     shouldInsertChars = NO;
                     break;
+                }
+            }
+            
+            if (selection.insertionIndex - 1 > 0) {
+                NSString *currChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex - 1, 1)];
+                if ([nextChar isEqualToString:@"}"] && [currChar isEqualToString:@"{"] && [insertString isEqualToString:@"\n"]) {
+                    modifiedInsertString = @"\n\n";
+                    cursorAdjustment = -1;
+                    indent = YES;
                 }
             }
         }
@@ -121,14 +133,21 @@
         // correspond to the relative offset made by inserting a # of chars.)
         NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
 
-        [self.textStorage replaceCharactersInRange:offsetRange withString:insertString withUndoManager:self.undoManager];
+        [self.textStorage replaceCharactersInRange:offsetRange withString:modifiedInsertString withUndoManager:self.undoManager];
+        
+        NSUInteger delta = [modifiedInsertString length] - range.length;
+       
+        if (indent) {
+            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:NSMakeRange(offsetRange.location, [modifiedInsertString length])];
+            delta = indentedRange.length - range.length;
+            offsetRange = NSMakeRange((NSMaxRange(indentedRange) - [modifiedInsertString length]) - 1, 0);
+        }
 
         // Offset the following ones by noting the original length and updating for the replacement's length, moving
         // cursors following forward/backward.
-        NSUInteger delta = insertStringLength - range.length;
         totalDelta += delta;
 
-        NSString *matchingBrace = [self followupStringToMakePair:insertString];
+        NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];
         if (matchingBrace) {
             NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
@@ -148,7 +167,8 @@
         }
 
         // Move cursor (or range-selection) to the end of what was just added with 0-length.
-        NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + insertStringLength, 0);
+        NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + [modifiedInsertString length], 0);
+
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
                                       indexWantedWithinLine:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
@@ -198,24 +218,12 @@
 {
     BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
 
-    NSString *newlineString = @"\n";
-    [self insertText:newlineString];
-
     self.mpx_trimTrailingWhitespace = NO;
 
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSRange range = selection.range;
+    NSString *newlineString = @"\n";
 
-        // Don't attempt to indent if at the end of the file.
-        if (NSMaxRange(range) == self.textStorage.length) {
-            return selection;
-        }
-
-        NSRange shiftedRange = NSMakeRange(NSMaxRange(range), [newlineString length]);
-
-        NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:shiftedRange];
-        return [MPXSelection selectionWithRange:NSMakeRange(indentedRange.location, 0)];
-    } sequentialModification:YES];
+    [self insertText:newlineString];
+ // NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:shiftedRange];
 
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
 }
