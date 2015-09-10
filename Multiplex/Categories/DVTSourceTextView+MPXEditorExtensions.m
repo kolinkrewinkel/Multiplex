@@ -217,12 +217,7 @@
     BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
 
     self.mpx_trimTrailingWhitespace = NO;
-
-    NSString *newlineString = @"\n";
-
-    [self insertText:newlineString];
- // NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:shiftedRange];
-
+    [self insertText:@"\n"];
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
 }
 
