@@ -12,7 +12,9 @@
 
 #import <DVTFoundation/DVTTextPreferences.h>
 
+#import <DVTKit/DVTDefaultSourceLanguageService.h>
 #import <DVTKit/DVTLayoutManager.h>
+#import <DVTKit/DVTSourceLanguageService.h>
 #import <DVTKit/DVTTextCompletionController.h>
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTTextCompletionSession.h>
@@ -95,6 +97,32 @@
 
         BOOL shouldInsertChars = YES;
         BOOL indent = NO;
+
+        DVTSourceLanguageService *maybeLanguageService = self.textStorage.languageService;
+        if ([maybeLanguageService isKindOfClass:[DVTDefaultSourceLanguageService class]]) {
+            DVTDefaultSourceLanguageService *languageService = (DVTDefaultSourceLanguageService *)maybeLanguageService;
+            if (selection.insertionIndex > 0
+                && [languageService isIncompletionPlaceholderAtLocation:selection.insertionIndex - 1]) {
+                NSRange effectiveRange;
+
+                NSRange placeholderRange = [self rangeOfPlaceholderFromCharacterIndex:selection.range.location - 1
+                                                                              forward:YES
+                                                                                 wrap:NO
+                                                                                limit:NSMaxRange(selection.range)];
+
+                NSRange placeholderContentsRange = NSMakeRange(placeholderRange.location + 2, placeholderRange.length - 4);
+                [languageService expandPlaceholderInRange:placeholderRange
+                                            suggestedText:[self.string substringWithRange:placeholderContentsRange]
+                                           effectiveRange:&effectiveRange];
+
+                [self.textStorage replaceCharactersInRange:placeholderRange withString:[self.string substringWithRange:placeholderContentsRange]];
+
+                NSRange newSelectionRange = NSMakeRange(placeholderRange.location, placeholderContentsRange.length);
+                return [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
+                                              indexWantedWithinLine:MPXNoStoredLineIndex
+                                                             origin:newSelectionRange.location];
+            }
+        }
 
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
             NSString *nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];

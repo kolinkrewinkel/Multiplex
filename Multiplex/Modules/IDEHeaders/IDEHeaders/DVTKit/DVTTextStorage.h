@@ -9,7 +9,7 @@
 #import "DVTSourceBufferProvider-Protocol.h"
 #import "DVTSourceLanguageServiceDelegate-Protocol.h"
 
-@class DVTFontAndColorTheme, DVTObservingToken, DVTSourceCodeLanguage, DVTSourceLandmarkItem, DVTSourceLanguageService<DVTSourceLanguageSourceModelService>, DVTSourceLanguageService<DVTSourceLanguageSyntaxTypeService>, DVTSourceModel, NSDictionary, NSMutableAttributedString, NSString, NSTimer, _LazyInvalidationHelper;
+@class DVTFontAndColorTheme, DVTObservingToken, DVTSourceCodeLanguage, DVTSourceLandmarkItem, DVTSourceModel, NSDictionary, NSMutableAttributedString, NSString, NSTimer, _LazyInvalidationHelper;
 
 @interface DVTTextStorage : NSTextStorage <DVTSourceBufferProvider, DVTSourceLanguageServiceDelegate>
 {
