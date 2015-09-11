@@ -103,21 +103,16 @@
             DVTDefaultSourceLanguageService *languageService = (DVTDefaultSourceLanguageService *)maybeLanguageService;
             if (selection.insertionIndex > 0
                 && [languageService isIncompletionPlaceholderAtLocation:selection.insertionIndex - 1]) {
-                NSRange effectiveRange;
-
                 NSRange placeholderRange = [self rangeOfPlaceholderFromCharacterIndex:selection.range.location - 1
                                                                               forward:YES
                                                                                  wrap:NO
                                                                                 limit:NSMaxRange(selection.range)];
 
-                NSRange placeholderContentsRange = NSMakeRange(placeholderRange.location + 2, placeholderRange.length - 4);
-                [languageService expandPlaceholderInRange:placeholderRange
-                                            suggestedText:[self.string substringWithRange:placeholderContentsRange]
-                                           effectiveRange:&effectiveRange];
+                self.selectedRange = placeholderRange;
 
-                [self.textStorage replaceCharactersInRange:placeholderRange withString:[self.string substringWithRange:placeholderContentsRange]];
+                [self replaceSelectedTokenWithTokenText];
 
-                NSRange newSelectionRange = NSMakeRange(placeholderRange.location, placeholderContentsRange.length);
+                NSRange newSelectionRange = NSMakeRange(0, 0);
                 return [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
                                               indexWantedWithinLine:MPXNoStoredLineIndex
                                                              origin:newSelectionRange.location];
