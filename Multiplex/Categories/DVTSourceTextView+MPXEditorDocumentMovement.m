@@ -28,7 +28,9 @@
             newAbsoluteRange = NSUnionRange(previousAbsoluteRange, newAbsoluteRange);
         }
 
-        return [MPXSelection selectionWithRange:newAbsoluteRange];
+        return [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:selection.insertionIndex];
     }];
 }
 
