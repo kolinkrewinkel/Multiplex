@@ -156,11 +156,18 @@
         [self.textStorage replaceCharactersInRange:offsetRange withString:modifiedInsertString withUndoManager:self.undoManager];
         
         NSUInteger delta = [modifiedInsertString length] - range.length;
-       
+
+        NSRange rangeOfInsertedText = NSMakeRange(offsetRange.location, [modifiedInsertString length]);
+
         if (indent) {
-            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:NSMakeRange(offsetRange.location, [modifiedInsertString length])];
+            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:rangeOfInsertedText];
             delta = indentedRange.length - range.length;
             offsetRange = NSMakeRange((NSMaxRange(indentedRange) - [modifiedInsertString length]) - 1, 0);
+        } else if ([modifiedInsertString isEqualToString:@"\n"]) {
+            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:NSMakeRange(offsetRange.location,
+                                                                                            offsetRange.length + [modifiedInsertString length] + 1)];
+
+            offsetRange = NSMakeRange(NSMaxRange(indentedRange) - 2, 0);
         }
 
         // Offset the following ones by noting the original length and updating for the replacement's length, moving
