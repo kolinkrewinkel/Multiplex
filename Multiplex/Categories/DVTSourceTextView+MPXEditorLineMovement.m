@@ -47,8 +47,14 @@
         if (modifySelection) {
             cursorRange = NSUnionRange(previousAbsoluteRange, cursorRange);
         }
+        
+        if (NSEqualRanges(cursorRange, selection.range)) {
+            return selection;
+        }
 
-        return [MPXSelection selectionWithRange:cursorRange];
+        return [[MPXSelection alloc] initWithSelectionRange:cursorRange
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:selection.insertionIndex];
     }];
 }
 
