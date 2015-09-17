@@ -118,10 +118,13 @@
                                                              origin:newSelectionRange.location];
             }
         }
-
+        
+        NSString *nextChar = nil;
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
-            NSString *nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
+            nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
+        }
 
+        if (nextChar) {
             for (NSString *typeoverString in @[@"]", @"}", @")", @"\"", @"'", @";"]) {
                 if (![insertString isEqualToString:typeoverString]) {
                     continue;
@@ -175,7 +178,7 @@
         totalDelta += delta;
 
         NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];
-        if (matchingBrace) {
+        if (matchingBrace && ([nextChar isEqualToString:@" "] || [nextChar isEqualToString:@"\n"])) {
             NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
                                             withString:matchingBrace
