@@ -131,8 +131,32 @@
     if (!clipboardContents) {
         return;
     }
+    
+    NSArray *clipboardLines = [clipboardContents componentsSeparatedByString:@"\n"];
+    if ([clipboardLines count] == 1 || [clipboardLines count] != [self.mpx_selectionManager.finalizedSelections count]) {
+        [self insertText:clipboardContents];
+        return;
+    }
+    
+    NSEnumerator *clipboardEnumerator = [clipboardLines objectEnumerator];
 
-    [self insertText:clipboardContents];
+    __block NSInteger offset = 0;
+    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+        NSRange range = selection.range;
+        NSRange offsetRange = NSMakeRange(range.location + offset, range.length);
+        NSString *clipboardItemToBeInserted = [clipboardEnumerator nextObject];
+
+        [self.textStorage replaceCharactersInRange:offsetRange
+                                        withString:clipboardItemToBeInserted
+                                   withUndoManager:self.undoManager];
+        
+        NSRange newRange = NSMakeRange(offsetRange.location + [clipboardItemToBeInserted length], 0);
+        offset -= range.length - [clipboardItemToBeInserted length];
+
+        return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:newRange.location];
+    } sequentialModification:YES];
 }
 
 @end
