@@ -702,7 +702,7 @@
 				33B3A3FC18CD36BF00AA64C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		33B3A3FD18CD36BF00AA64C8 /* Build configuration list for PBXNativeTarget "MultiplexPlugin" */ = {
 			isa = XCConfigurationList;
@@ -711,7 +711,7 @@
 				33B3A3FF18CD36BF00AA64C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
