@@ -156,6 +156,13 @@
 
 - (void)updateTextViewSelectedRange
 {
+    // If there's only one selection, always show it in the breadcrumb bar and have it be the basis for autocompletion.
+    if ([self.caretViews count] == 1) {
+        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = [self.caretViews firstObject];
+        self.textView.selectedRange = selection.range;
+        return;
+    }
+    
     MPXSelection *visibleSelection = [self firstVisibleSelectionInTextView];
     if (visibleSelection && [self.textView.string length] > 0) {
         if (!NSEqualRanges(self.textView.selectedRange, visibleSelection.range)) {
