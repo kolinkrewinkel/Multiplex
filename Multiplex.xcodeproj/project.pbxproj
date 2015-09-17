@@ -191,7 +191,6 @@
 			isa = PBXGroup;
 			children = (
 				33D9FE891B8AE32400A9CD4D /* Categories */,
-				33DACEC61B94D379008C4908 /* Classes */,
 				33D9FF1D1B8BC6EC00A9CD4D /* Modules */,
 				33B3A3F718CD36BE00AA64C8 /* MultiplexPlugin.h */,
 				33B3A3F818CD36BE00AA64C8 /* MultiplexPlugin.m */,
@@ -275,13 +274,6 @@
 				33D9FFC81B8BD24300A9CD4D /* MPXFoundationTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		33DACEC61B94D379008C4908 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Classes;
 			sourceTree = "<group>";
 		};
 		357F8AF843B94FDF3417124E /* Pods */ = {
