@@ -40,7 +40,7 @@
         return [self.textStorage.contents attributedSubstringFromRange:range];
     }];
 
-    return [[NSSet setWithArray:[allSelectedAttributedStrings array]] allObjects];
+    return [allSelectedAttributedStrings array];
 }
 
 #pragma mark - NSResponder
