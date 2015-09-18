@@ -41,14 +41,27 @@
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
         NSUInteger wordIndex = [textStorage nextWordFromIndex:seekingFromIndex forward:wordForward];
 
-        NSRange newRange = NSMakeRange(wordIndex, 0);
+        NSRange newRange;
+        
+        if (wordForward) {
+            newRange = [selection modifySelectionDownstreamByAmount:wordIndex - selection.insertionIndex];
+        } else {
+            newRange = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - wordIndex];
+        }
 
+        NSUInteger origin = NSUIntegerMax;
+        
         // Unionize the ranges if we're expanding the selection.
         if (modifySelection) {
             newRange = NSUnionRange(selectionRange, newRange);
+            origin = selection.insertionIndex;
+        } else {
+            origin = newRange.location;
         }
 
-        return [MPXSelection selectionWithRange:newRange];
+        return [[MPXSelection alloc] initWithSelectionRange:newRange
+                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                     origin:origin];
     }];
 }
 
