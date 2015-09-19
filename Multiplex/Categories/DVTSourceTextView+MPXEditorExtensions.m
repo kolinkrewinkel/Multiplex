@@ -107,11 +107,13 @@
                                                                                  wrap:NO
                                                                                 limit:NSMaxRange(selection.range)];
 
+                // This is an awful hack to make -replaceSelectedTokenWithTokenText expand the right token.
                 self.selectedRange = placeholderRange;
-
                 [self replaceSelectedTokenWithTokenText];
 
-                NSRange newSelectionRange = NSMakeRange(0, 0);
+                // -replaceSelectedTokenWithTokenText will then assign the result of expanding the token to
+                // -selectedRange, so we read from that.
+                NSRange newSelectionRange = self.selectedRange;
                 return [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
                                               indexWantedWithinLine:MPXNoStoredLineIndex
                                                              origin:newSelectionRange.location];
