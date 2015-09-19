@@ -68,13 +68,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      ignoresPersistentStateOnLaunch = "NO"
-      debugDocumentVersioning = "YES"
+      ignoresPersistentStateOnLaunch = "YES"
+      debugDocumentVersioning = "NO"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES"
+      enableGPUFrameCaptureMode = "2"
+      enableGPUValidationMode = "1"
+      allowLocationSimulation = "NO"
       viewDebuggingEnabled = "No">
       <PathRunnable
          runnableDebuggingMode = "0"
+         BundleIdentifier = "com.apple.dt.Xcode"
          FilePath = "/Applications/Xcode.app">
       </PathRunnable>
       <MacroExpansion>
