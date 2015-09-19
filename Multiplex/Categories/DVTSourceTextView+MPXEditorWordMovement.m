@@ -30,13 +30,18 @@
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
         NSUInteger wordIndex = [textStorage nextWordFromIndex:selection.insertionIndex forward:wordForward];
 
-        NSRange newRange;        
-        if (wordForward) {
-            newRange = [selection modifySelectionDownstreamByAmount:wordIndex - selection.insertionIndex];
+        NSRange newRange;
+        
+        if (modifySelection) {
+            if (wordForward) {
+                newRange = [selection modifySelectionDownstreamByAmount:wordIndex - selection.insertionIndex];
+            } else {
+                newRange = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - wordIndex];
+            }
         } else {
-            newRange = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - wordIndex];
+            newRange = NSMakeRange(wordIndex, 0);
         }
-
+        
         NSUInteger origin = NSUIntegerMax;
         
         // Unionize the ranges if we're expanding the selection.
