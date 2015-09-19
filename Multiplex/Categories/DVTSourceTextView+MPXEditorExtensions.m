@@ -63,10 +63,35 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
     [findMenu addItem:[NSMenuItem separatorItem]];
         
     NSMenuItem *quickAddNextItem = [[NSMenuItem alloc] initWithTitle:kMPXQuickAddNextMenuItemTitle
-                                                              action:nil
+                                                              action:@selector(mpx_quickAddNext:)
                                                        keyEquivalent:@"D"];
     quickAddNextItem.target = self;
     [findMenu addItem:quickAddNextItem];
+}
+
+- (void)mpx_quickAddNext:(id)sender
+{
+    
+}
+
+- (NSString *)mpx_stringForQuickAddNext
+{
+    NSString *stringToMatch = nil;
+    for (MPXSelection *selection in self.mpx_selectionManager.visualSelections) {
+        NSString *selectionString = [self.string substringWithRange:selection.range];
+        
+        if (!stringToMatch) {
+            stringToMatch = selectionString;
+            continue;
+        }
+        
+        if (![stringToMatch isEqualToString:selectionString]) {
+            stringToMatch = nil;
+            break;
+        }
+    }
+
+    return stringToMatch;
 }
 
 - (void)undo:(id)sender
@@ -330,6 +355,8 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
     SEL theAction = item.action;
     if (theAction == @selector(copy:) || theAction == @selector(cut:)) {
         return [self.mpx_selectionManager.visualSelections count] > 0;
+    } else if (theAction == @selector(mpx_quickAddNext:)) {
+        return [self mpx_stringForQuickAddNext] != nil;
     }
 
     return [self mpx_validateMenuItem:item];
