@@ -25,6 +25,8 @@
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
+static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
+
 @implementation DVTSourceTextView (MPXEditorExtensions)
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
 @synthesizeAssociation(DVTSourceTextView, mpx_inUndoGroup);
@@ -45,6 +47,26 @@
     self.selectedTextAttributes = @{};
 
     self.mpx_trimTrailingWhitespace = self.shouldTrimTrailingWhitespace;
+    
+    [self mpx_addQuickAddNextMenuItem];
+}
+
+- (void)mpx_addQuickAddNextMenuItem
+{
+    NSMenuItem *findMenuItem = [[NSApp mainMenu] itemWithTitle:@"Find"];
+    NSMenu *findMenu = findMenuItem.submenu;
+    if ([findMenu itemWithTitle:kMPXQuickAddNextMenuItemTitle]) {
+        return;
+    }
+    
+    // Add a divider between the native stuff and Multiplex's.
+    [findMenu addItem:[NSMenuItem separatorItem]];
+        
+    NSMenuItem *quickAddNextItem = [[NSMenuItem alloc] initWithTitle:kMPXQuickAddNextMenuItemTitle
+                                                              action:nil
+                                                       keyEquivalent:@"D"];
+    quickAddNextItem.target = self;
+    [findMenu addItem:quickAddNextItem];
 }
 
 - (void)undo:(id)sender
