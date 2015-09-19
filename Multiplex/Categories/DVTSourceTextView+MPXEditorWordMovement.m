@@ -25,24 +25,12 @@
     BOOL wordForward = affinity == NSSelectionAffinityDownstream;
 
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSRange selectionRange = selection.range;
-
-        // Going forward, we should seek the next word from the end of the range.
-        NSUInteger seekingFromIndex = NSMaxRange(selectionRange);
-
-        if (wordForward == NO) {
-            // However, when traversing in reverse, we should use the minimum
-            // of the range as the guidepost.
-            seekingFromIndex = selectionRange.location;
-        }
-
         // Get the new word index from the text storage.
         // The "nextWord..." method is specific to the DVTTextStorage class.
         DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-        NSUInteger wordIndex = [textStorage nextWordFromIndex:seekingFromIndex forward:wordForward];
+        NSUInteger wordIndex = [textStorage nextWordFromIndex:selection.insertionIndex forward:wordForward];
 
-        NSRange newRange;
-        
+        NSRange newRange;        
         if (wordForward) {
             newRange = [selection modifySelectionDownstreamByAmount:wordIndex - selection.insertionIndex];
         } else {
@@ -53,8 +41,7 @@
         
         // Unionize the ranges if we're expanding the selection.
         if (modifySelection) {
-            newRange = NSUnionRange(selectionRange, newRange);
-            origin = selection.insertionIndex;
+            origin = selection.origin != NSUIntegerMax ? selection.origin : selection.insertionIndex;
         } else {
             origin = newRange.location;
         }
