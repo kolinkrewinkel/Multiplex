@@ -80,6 +80,17 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
     for (MPXSelection *selection in self.mpx_selectionManager.visualSelections) {
         NSString *selectionString = [self.string substringWithRange:selection.range];
         
+        // Find the word it's in if the selection is just a caret.
+        if (selectionString.length == 0) {
+            NSRange wordRange = [self.textStorage currentWordAtIndex:selection.range.location];
+
+            if (wordRange.length == 0) {
+                selectionString = nil;
+            } else {
+                selectionString = [self.string substringWithRange:wordRange];
+            }
+        }
+        
         if (!stringToMatch) {
             stringToMatch = selectionString;
             continue;
