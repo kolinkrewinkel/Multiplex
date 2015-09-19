@@ -96,7 +96,6 @@
         NSString *modifiedInsertString = insertString;
 
         BOOL shouldInsertChars = YES;
-        BOOL indent = NO;
 
         DVTSourceLanguageService *maybeLanguageService = self.textStorage.languageService;
         if ([maybeLanguageService isKindOfClass:[DVTDefaultSourceLanguageService class]]) {
@@ -140,7 +139,6 @@
                 NSString *currChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex - 1, 1)];
                 if ([nextChar isEqualToString:@"}"] && [currChar isEqualToString:@"{"] && [insertString isEqualToString:@"\n"]) {
                     modifiedInsertString = @"\n\n";
-                    indent = YES;
                 }
             }
         }
@@ -162,15 +160,28 @@
 
         NSRange rangeOfInsertedText = NSMakeRange(offsetRange.location, [modifiedInsertString length]);
 
-        if (indent) {
-            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:rangeOfInsertedText];
-            delta = indentedRange.length - range.length;
-            offsetRange = NSMakeRange((NSMaxRange(indentedRange) - [modifiedInsertString length]) - 1, 0);
-        } else if ([modifiedInsertString isEqualToString:@"\n"]) {
-            NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:NSMakeRange(offsetRange.location,
-                                                                                            offsetRange.length + [modifiedInsertString length] + 1)];
+        if ([modifiedInsertString rangeOfString:@"\n"].length > 0) {
+            NSArray *linesToIndent = [modifiedInsertString componentsSeparatedByString:@"\n"];
+            if (nextChar) {
+                linesToIndent = [linesToIndent arrayByAddingObject:nextChar];
+            }
 
-            offsetRange = NSMakeRange(NSMaxRange(indentedRange) - 2, 0);
+            NSUInteger index = rangeOfInsertedText.location;
+            for (NSString *line in linesToIndent) {
+                NSString *lineIncludingNewline = line;
+                if (![line isEqualToString:nextChar]) {
+                    lineIncludingNewline = [line stringByAppendingString:@"\n"];
+                }
+
+                NSRange lineRange = NSMakeRange(index, [lineIncludingNewline length]);
+                NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
+
+                if (indentedRange.location != lineRange.location && lineRange.location <= offsetRange.location + [modifiedInsertString length]) {
+                    offsetRange.location += (indentedRange.location - lineRange.location) - 1;
+                }
+
+                index = NSMaxRange(indentedRange);
+            }
         }
 
         // Offset the following ones by noting the original length and updating for the replacement's length, moving
