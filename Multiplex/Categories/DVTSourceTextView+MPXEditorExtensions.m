@@ -57,21 +57,50 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
     NSMenu *findMenu = findMenuItem.submenu;
     if ([findMenu itemWithTitle:kMPXQuickAddNextMenuItemTitle]) {
         return;
-    }
-    
+    }    
+        
     // Add a divider between the native stuff and Multiplex's.
     [findMenu addItem:[NSMenuItem separatorItem]];
         
     NSMenuItem *quickAddNextItem = [[NSMenuItem alloc] initWithTitle:kMPXQuickAddNextMenuItemTitle
                                                               action:@selector(mpx_quickAddNext:)
                                                        keyEquivalent:@"D"];
+    quickAddNextItem.keyEquivalent = @"d";
+    quickAddNextItem.keyEquivalentModifierMask = NSCommandKeyMask; 
     quickAddNextItem.target = self;
     [findMenu addItem:quickAddNextItem];
+    
+    NSMenuItem *editMenuItem = [[NSApp mainMenu] itemWithTitle:@"Edit"];
+    NSMenu *editMenu = editMenuItem.submenu;
+
+    NSMenuItem *duplicateItem = [editMenu itemWithTitle:@"Duplicate"];
+    duplicateItem.keyEquivalentModifierMask = NSCommandKeyMask | NSAlternateKeyMask;
 }
 
 - (void)mpx_quickAddNext:(id)sender
 {
+    NSArray *visualSelections = self.mpx_selectionManager.visualSelections; 
+    MPXSelection *lastSelection = [visualSelections lastObject];
     
+    NSUInteger locationToSearchFrom = lastSelection.insertionIndex;
+    if (lastSelection.range.length == 0) {
+        locationToSearchFrom = [self.textStorage currentWordAtIndex:lastSelection.insertionIndex].location;
+    }
+
+    NSRange searchWithinRange = NSMakeRange(locationToSearchFrom, self.string.length - locationToSearchFrom);
+    
+    NSString *stringToSearchFor = [self mpx_stringForQuickAddNext];    
+    NSRange nextRange = [self.string rangeOfString:stringToSearchFor options:0 range:searchWithinRange]; 
+    
+    if (nextRange.length == 0) {
+        return;
+    }
+    
+    MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:nextRange
+                                                        indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                       origin:nextRange.location];       
+    self.mpx_selectionManager.finalizedSelections = [visualSelections arrayByAddingObject:newSelection];
+    [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 - (NSString *)mpx_stringForQuickAddNext
