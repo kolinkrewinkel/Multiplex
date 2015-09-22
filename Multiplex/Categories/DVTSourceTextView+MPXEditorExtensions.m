@@ -262,13 +262,9 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
             [modifiedInsertString enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
                 NSRange lineRange = NSMakeRange(index + [linebreakChar length], [line length] + [linebreakChar length]);
                 NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
-                
-                NSLog(@"Indented line: %@ to %@", NSStringFromRange(lineRange), NSStringFromRange(indentedRange));
-                
+                                
                 if (NSMaxRange(rangeOfInsertedText) >= lineRange.location) {
-                    NSUInteger lineLocationDelta = indentedRange.location - lineRange.location;
-                    NSLog(@"Adjusted selection range by: %llu from %@", (unsigned long long)lineLocationDelta, NSStringFromRange(rangeOfInsertedText));
-                    rangeOfInsertedText.location += lineLocationDelta;
+                    rangeOfInsertedText.location += indentedRange.location - lineRange.location;
                 }
                 
                 index = NSMaxRange(indentedRange);
