@@ -206,9 +206,14 @@ static NSString *kMPXNewlineString = @"\n";
                 // -replaceSelectedTokenWithTokenText will then assign the result of expanding the token to
                 // -selectedRange, so we read from that.
                 NSRange newSelectionRange = self.selectedRange;
-                return [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
-                                              indexWantedWithinLine:MPXNoStoredLineIndex
-                                                             origin:newSelectionRange.location];
+                
+                if ([modifiedInsertString isEqualToString:kMPXNewlineString]) {
+                    return [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
+                                                  indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                 origin:newSelectionRange.location];
+                }
+                
+                range = newSelectionRange;
             }
         }
         
