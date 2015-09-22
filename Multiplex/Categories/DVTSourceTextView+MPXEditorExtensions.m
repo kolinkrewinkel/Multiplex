@@ -356,6 +356,30 @@ static NSString *kMPXNewlineString = @"\n";
 
 - (BOOL)handleInsertTab
 {
+    if ([self.mpx_selectionManager.finalizedSelections count] == 1) {
+        MPXSelection *selection = [self.mpx_selectionManager.finalizedSelections firstObject];
+        
+        // Use the actual line to allow skipping to a placeholder that's only soft word-wrapped.
+        NSRange lineRange = [self.string lineRangeForRange:selection.range];
+    
+        // Get the next placeholder within the line.
+        NSRange placeholderOnSameLine = [self rangeOfPlaceholderFromCharacterIndex:selection.range.location
+                                                                           forward:YES
+                                                                              wrap:NO
+                                                                             limit:NSMaxRange(lineRange)];
+        
+        if (placeholderOnSameLine.length > 0) {
+            [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {               
+                // Select the entirety of the next placeholder for quick typing-over/deletion.
+                return [[MPXSelection alloc] initWithSelectionRange:placeholderOnSameLine
+                                              indexWantedWithinLine:MPXNoStoredLineIndex
+                                                             origin:placeholderOnSameLine.location];
+            } sequentialModification:NO];
+
+            return YES;
+        }
+    }
+    
     BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
     self.mpx_trimTrailingWhitespace = NO;
 
