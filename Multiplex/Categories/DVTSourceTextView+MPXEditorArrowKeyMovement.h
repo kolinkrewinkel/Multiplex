@@ -8,6 +8,8 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
+/**
+ * Handles movement using the up/down/left/right arrow keys.
+ */
 @interface DVTSourceTextView (MPXEditorArrowKeyMovement)
-
 @end

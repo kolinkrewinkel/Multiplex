@@ -13,39 +13,40 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-
 #import "DVTSourceTextView+MPXEditorArrowKeyMovement.h"
 
 @implementation DVTSourceTextView (MPXEditorArrowKeyMovement)
 
 #pragma mark - Convenience
 
-- (NSUInteger)locationForSelection:(MPXSelection *)selection movedFromLine:(NSRange)fromLine toLine:(NSRange)toLine
+static NSUInteger MPXLocationForSelection(MPXSelection *selection, NSRange fromLineRange, NSRange toLineRange)
 {
     NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
 
+    // If a previously stored index doesn't exist, get its position within the line.
     if (indexWantedWithinLine == MPXNoStoredLineIndex) {
-        indexWantedWithinLine = selection.insertionIndex - fromLine.location;
+        indexWantedWithinLine = selection.insertionIndex - fromLineRange.location;
     }
 
-    if (toLine.length > indexWantedWithinLine) {
-        return toLine.location + indexWantedWithinLine;
+    // Only try and place it within the line if it can fit within the new line's length.
+    if (toLineRange.length > indexWantedWithinLine) {
+        return toLineRange.location + indexWantedWithinLine;
     }
 
-    return NSMaxRange(toLine) - 1;
+    // Default to showing it at the end of the line.
+    return NSMaxRange(toLineRange) - 1;
 }
 
-- (MPXSelection *)selection:(MPXSelection *)selection movedFromLine:(NSRange)fromLine toLine:(NSRange)toLine
+static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineRange, NSRange toLineRange)
 {
     NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
 
     if (indexWantedWithinLine == MPXNoStoredLineIndex) {
-        indexWantedWithinLine = selection.insertionIndex - fromLine.location;
+        indexWantedWithinLine = selection.insertionIndex - fromLineRange.location;
     }
 
-    NSUInteger location = [self locationForSelection:selection movedFromLine:fromLine toLine:toLine];
-
-    if (toLine.length > indexWantedWithinLine) {
+    NSUInteger location = MPXLocationForSelection(selection, fromLineRange, toLineRange);
+    if (toLineRange.length > indexWantedWithinLine) {
         return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(location, 0)
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:location];
@@ -81,7 +82,7 @@
         }
 
         NSRange lineAboveRange = [self lineRangeForCharacterIndex:lineRange.location - 1];
-        return [self selection:selection movedFromLine:lineRange toLine:lineAboveRange];
+        return MPXSelectionMove(selection, lineRange, lineAboveRange);
     }];
 }
 
@@ -104,7 +105,7 @@
 
         NSRange lineAboveRange = [self lineRangeForCharacterIndex:beginningOfLine - 1];
 
-        NSUInteger location = [self locationForSelection:selection movedFromLine:lineRange toLine:lineAboveRange];
+        NSUInteger location = MPXLocationForSelection(selection, lineRange, lineAboveRange);
         NSRange range = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - location];
 
         NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
@@ -132,7 +133,7 @@
         }
 
         NSRange lineBelowRange = [self lineRangeForCharacterIndex:endOfLine];
-        return [self selection:selection movedFromLine:lineRange toLine:lineBelowRange];
+        return MPXSelectionMove(selection, lineRange, lineBelowRange);
     }];
 }
 
@@ -155,7 +156,7 @@
 
         NSRange lineBelowRange = [self lineRangeForCharacterIndex:endOfLine];
 
-        NSUInteger location = [self locationForSelection:selection movedFromLine:lineRange toLine:lineBelowRange];
+        NSUInteger location = MPXLocationForSelection(selection, lineRange, lineBelowRange);
         NSRange range = [selection modifySelectionDownstreamByAmount:location - selection.insertionIndex];
 
         NSUInteger indexWantedWithinLine = selection.indexWantedWithinLine;
