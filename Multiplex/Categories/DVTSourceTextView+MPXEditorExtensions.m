@@ -183,7 +183,8 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
         NSString *modifiedInsertString = insertString;
 
         BOOL shouldInsertChars = YES;
-
+        BOOL indentNextLine = NO;
+        
         DVTSourceLanguageService *maybeLanguageService = self.textStorage.languageService;
         if ([maybeLanguageService isKindOfClass:[DVTDefaultSourceLanguageService class]]) {
             DVTDefaultSourceLanguageService *languageService = (DVTDefaultSourceLanguageService *)maybeLanguageService;
@@ -228,6 +229,7 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
                 NSString *currChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex - 1, 1)];
                 if ([nextChar isEqualToString:@"}"] && [currChar isEqualToString:@"{"] && [insertString isEqualToString:@"\n"]) {
                     modifiedInsertString = @"\n\n";
+                    indentNextLine = YES;
                 }
             }
         }
@@ -250,27 +252,16 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
         NSRange rangeOfInsertedText = NSMakeRange(offsetRange.location, [modifiedInsertString length]);
 
         if ([modifiedInsertString rangeOfString:@"\n"].length > 0) {
-            NSArray *linesToIndent = [modifiedInsertString componentsSeparatedByString:@"\n"];
-            if (nextChar) {
-                linesToIndent = [linesToIndent arrayByAddingObject:nextChar];
-            }
-
-            NSUInteger index = rangeOfInsertedText.location;
-            for (NSString *line in linesToIndent) {
-                NSString *lineIncludingNewline = line;
-                if (![line isEqualToString:nextChar]) {
-                    lineIncludingNewline = [line stringByAppendingString:@"\n"];
-                }
-
-                NSRange lineRange = NSMakeRange(index, [lineIncludingNewline length]);
+            
+            NSString *linebreakChar = @"\n";
+            
+            __block NSUInteger index = rangeOfInsertedText.location;    
+            [modifiedInsertString enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
+                NSRange lineRange = NSMakeRange(index + [linebreakChar length], [line length] + [linebreakChar length]);
                 NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
-
-                if (indentedRange.location != lineRange.location && lineRange.location <= offsetRange.location + [modifiedInsertString length]) {
-                    offsetRange.location += (indentedRange.location - lineRange.location) - 1;
-                }
-
+                
                 index = NSMaxRange(indentedRange);
-            }
+            }];           
         }
 
         // Offset the following ones by noting the original length and updating for the replacement's length, moving
@@ -297,7 +288,7 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
         }
 
         // Move cursor (or range-selection) to the end of what was just added with 0-length.
-        NSRange newInsertionPointRange = NSMakeRange(offsetRange.location + [modifiedInsertString length], 0);
+        NSRange newInsertionPointRange = NSMakeRange(NSMaxRange(rangeOfInsertedText), 0);
 
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
                                       indexWantedWithinLine:relativeLinePosition
