@@ -26,6 +26,7 @@
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
 static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
+static NSString *kMPXNewlineString = @"\n";
 
 @implementation DVTSourceTextView (MPXEditorExtensions)
 @synthesizeAssociation(DVTSourceTextView, mpx_selectionManager);
@@ -230,7 +231,7 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
             
             if (selection.insertionIndex - 1 > 0) {
                 NSString *currChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex - 1, 1)];
-                if ([nextChar isEqualToString:@"}"] && [currChar isEqualToString:@"{"] && [insertString isEqualToString:@"\n"]) {
+                if ([nextChar isEqualToString:@"}"] && [currChar isEqualToString:@"{"] && [insertString isEqualToString:kMPXNewlineString]) {
                     modifiedInsertString = @"\n\n";
                     offsetForCursor = 1;
                     indentNextLine = YES;
@@ -254,13 +255,10 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
         NSUInteger delta = [modifiedInsertString length] - range.length;
 
         __block NSRange rangeOfInsertedText = NSMakeRange(offsetRange.location, [modifiedInsertString length]);
-        if ([modifiedInsertString rangeOfString:@"\n"].length > 0) {
-            
-            NSString *linebreakChar = @"\n";
-            
+        if ([modifiedInsertString rangeOfString:kMPXNewlineString].length > 0) {                        
             __block NSUInteger index = rangeOfInsertedText.location;    
             [modifiedInsertString enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
-                NSRange lineRange = NSMakeRange(index + [linebreakChar length], [line length] + [linebreakChar length]);
+                NSRange lineRange = NSMakeRange(index + [kMPXNewlineString length], [line length] + [kMPXNewlineString length]);
                 NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
                                 
                 if (NSMaxRange(rangeOfInsertedText) >= lineRange.location) {
@@ -276,7 +274,7 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
         totalDelta += delta;
 
         NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];
-        if (matchingBrace && ([nextChar isEqualToString:@" "] || [nextChar isEqualToString:@"\n"])) {
+        if (matchingBrace && ([nextChar isEqualToString:@" "] || [nextChar isEqualToString:kMPXNewlineString])) {
             NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
                                             withString:matchingBrace
@@ -347,7 +345,7 @@ static NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
     BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
 
     self.mpx_trimTrailingWhitespace = NO;
-    [self insertText:@"\n"];
+    [self insertText:kMPXNewlineString];
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
 }
 
