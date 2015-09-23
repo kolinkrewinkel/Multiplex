@@ -64,7 +64,7 @@ static NSArray *MPXSortedSelections(NSArray *selections)
 
     return [sortedSelections map:^MPXSelection *(MPXSelection *selection) {
         NSRange range1 = [selection range];
-        __block NSRange rangeToAdd = range1;
+        NSRange rangeToAdd = range1;
 
         // Preprocess the range to adjust for placeholders.
         NSRange trailingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
@@ -79,14 +79,14 @@ static NSArray *MPXSortedSelections(NSArray *selections)
 
         if (trailingPlaceholder.location != NSNotFound) {
             NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
-            if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0)) {
+            if (intersection.length > 0) {
                 rangeToAdd = NSUnionRange(rangeToAdd, trailingPlaceholder);
             }
         }
 
         if (leadingPlaceholder.location != NSNotFound && !NSEqualRanges(leadingPlaceholder, trailingPlaceholder)) {
             NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
-            if (intersection.location != NSNotFound && !(intersection.location == 0 && intersection.length == 0)) {
+            if (intersection.length > 0) {
                 rangeToAdd = NSUnionRange(rangeToAdd, leadingPlaceholder);
             }
         }
