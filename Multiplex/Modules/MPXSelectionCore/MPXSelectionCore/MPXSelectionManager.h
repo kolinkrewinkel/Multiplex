@@ -62,5 +62,12 @@
  */
 - (void)setTemporarySelections:(NSArray *)temporarySelections;
 
+/**
+ * Should be called before setting/applying a selection to make sure that placeholders are properly moved around or 
+ * included.
+ */
+- (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray *)selections
+                                          movementDirection:(NSSelectionAffinity)movementDirection
+                                            modifySelection:(BOOL)modifySelection;
 
 @end

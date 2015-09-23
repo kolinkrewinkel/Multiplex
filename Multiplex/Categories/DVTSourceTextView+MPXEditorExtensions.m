@@ -303,7 +303,7 @@ static NSString *kMPXNewlineString = @"\n";
         return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
                                       indexWantedWithinLine:relativeLinePosition
                                                      origin:newInsertionPointRange.location];
-    } sequentialModification:YES];
+    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
 
 
     [self.mpx_textViewSelectionDecorator startBlinking];
@@ -374,7 +374,7 @@ static NSString *kMPXNewlineString = @"\n";
                 return [[MPXSelection alloc] initWithSelectionRange:placeholderOnSameLine
                                               indexWantedWithinLine:MPXNoStoredLineIndex
                                                              origin:placeholderOnSameLine.location];
-            } sequentialModification:NO];
+            } sequentialModification:NO modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
 
             return YES;
         }
@@ -434,14 +434,24 @@ static NSString *kMPXNewlineString = @"\n";
 
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
 {
-    [self mpx_mapAndFinalizeSelectedRanges:mapBlock sequentialModification:NO];
+    [self mpx_mapAndFinalizeSelectedRanges:mapBlock
+                    sequentialModification:NO
+               modifyingExistingSelections:NO
+                         movementDirection:NSSelectionAffinityDownstream];
 }
 
 - (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
                   sequentialModification:(BOOL)sequentialModification
+             modifyingExistingSelections:(BOOL)modifySelection
+                       movementDirection:(NSSelectionAffinity)movementDirection;
 {
     NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
-    self.mpx_selectionManager.finalizedSelections = mappedValues;
+    NSArray *placeholderFixedValues =
+    [self.mpx_selectionManager preprocessedPlaceholderSelectionsForSelections:mappedValues
+                                                            movementDirection:movementDirection
+                                                              modifySelection:modifySelection];
+    
+    self.mpx_selectionManager.finalizedSelections = placeholderFixedValues;
 
     [self.mpx_textViewSelectionDecorator startBlinking];
 }

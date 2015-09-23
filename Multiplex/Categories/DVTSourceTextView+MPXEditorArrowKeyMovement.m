@@ -83,7 +83,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
 
         NSRange lineAboveRange = [self lineRangeForCharacterIndex:lineRange.location - 1];
         return MPXSelectionMove(selection, lineRange, lineAboveRange);
-    }];
+    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityUpstream];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
@@ -116,7 +116,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
         return [[MPXSelection alloc] initWithSelectionRange:range
                                       indexWantedWithinLine:indexWantedWithinLine
                                                      origin:selection.origin];
-    }];
+    } sequentialModification:YES modifyingExistingSelections:YES movementDirection:NSSelectionAffinityUpstream];
 }
 
 - (void)moveDown:(id)sender
@@ -134,7 +134,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
 
         NSRange lineBelowRange = [self lineRangeForCharacterIndex:endOfLine];
         return MPXSelectionMove(selection, lineRange, lineBelowRange);
-    }];
+    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
@@ -167,7 +167,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
         return [[MPXSelection alloc] initWithSelectionRange:range
                                       indexWantedWithinLine:indexWantedWithinLine
                                                      origin:selection.origin];
-    }];
+    } sequentialModification:YES modifyingExistingSelections:YES movementDirection:NSSelectionAffinityDownstream];
 }
 
 #pragma mark - Left/Right Movements
@@ -184,7 +184,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
         return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
                                       indexWantedWithinLine:selection.indexWantedWithinLine
                                                      origin:newIndex];
-    }];
+    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityUpstream];
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
@@ -198,7 +198,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
         return [[MPXSelection alloc] initWithSelectionRange:[selection modifySelectionUpstreamByAmount:1]
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:selection.origin];
-    }];
+    } sequentialModification:YES modifyingExistingSelections:YES movementDirection:NSSelectionAffinityUpstream];
 }
 
 - (void)moveForward:(id)sender
@@ -213,7 +213,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
         return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
                                       indexWantedWithinLine:selection.indexWantedWithinLine
                                                      origin:newIndex];
-    }];
+    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
@@ -232,7 +232,7 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
         return [[MPXSelection alloc] initWithSelectionRange:newRange
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:selection.origin];
-    }];
+    } sequentialModification:YES modifyingExistingSelections:YES movementDirection:NSSelectionAffinityDownstream];
 }
 
 @end

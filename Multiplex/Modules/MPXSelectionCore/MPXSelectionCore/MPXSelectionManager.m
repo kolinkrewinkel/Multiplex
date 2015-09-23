@@ -55,53 +55,69 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     }];
 }
 
-- (RACSequence *)selectionsWithFixedPlaceholdersForSortedSelections:(RACSequence *)sortedSelections
+- (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray *)selections
+                                          movementDirection:(NSSelectionAffinity)movementDirection
+                                            modifySelection:(BOOL)modifySelection
 {
     // For testing contexts where a textView is not available.
     if (!self.textView) {
-        return sortedSelections;
+        return selections;
     }
-
-    return [sortedSelections map:^MPXSelection *(MPXSelection *selection) {
+    
+    return [[[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection) {
         NSRange range1 = [selection range];
         NSRange rangeToAdd = range1;
+        NSUInteger selectionOrigin = selection.origin;
+        
+        switch (movementDirection) {
+            case NSSelectionAffinityUpstream: {
+                NSRange leadingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:selection.insertionIndex
+                                                                                         forward:NO
+                                                                                            wrap:NO
+                                                                                           limit:0];
 
-        // Preprocess the range to adjust for placeholders.
-        NSRange trailingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:NSMaxRange(rangeToAdd)
-                                                                                  forward:NO
-                                                                                     wrap:NO
-                                                                                    limit:0];
+                if (leadingPlaceholder.location != NSNotFound) {
+                    NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
+                    if (intersection.length > 0 && modifySelection && selection.insertionIndex < NSMaxRange(leadingPlaceholder)) {
+                        rangeToAdd = [selection modifySelectionUpstreamByAmount:leadingPlaceholder.length - 1];
+                    } else if (intersection.location != 0 && intersection.length == 0 && NSMaxRange(rangeToAdd) < NSMaxRange(leadingPlaceholder)) {
+                        rangeToAdd = NSMakeRange(leadingPlaceholder.location, 0);
+                    }
+                }
+                
+                break;
+            }
+            case NSSelectionAffinityDownstream: {
+                NSRange trailingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:selection.insertionIndex - 1
+                                                                                          forward:YES
+                                                                                             wrap:NO
+                                                                                            limit:0];
 
-        NSRange leadingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:rangeToAdd.location
-                                                                                 forward:YES
-                                                                                    wrap:NO
-                                                                                   limit:0];
+                if (trailingPlaceholder.location != NSNotFound) {
+                    NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
+                    if (intersection.length > 0 && modifySelection && selection.insertionIndex > trailingPlaceholder.location) {
+                        rangeToAdd = [selection modifySelectionDownstreamByAmount:trailingPlaceholder.length - 1];
+                    } else if (intersection.location != 0 && intersection.length == 0 && rangeToAdd.location > trailingPlaceholder.location) {
+                        rangeToAdd = NSMakeRange(NSMaxRange(trailingPlaceholder), 0);
+                    }
+                }
 
-        if (trailingPlaceholder.location != NSNotFound) {
-            NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
-            if (intersection.length > 0) {
-                rangeToAdd = NSUnionRange(rangeToAdd, trailingPlaceholder);
+                break;
             }
         }
-
-        if (leadingPlaceholder.location != NSNotFound && !NSEqualRanges(leadingPlaceholder, trailingPlaceholder)) {
-            NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
-            if (intersection.length > 0) {
-                rangeToAdd = NSUnionRange(rangeToAdd, leadingPlaceholder);
-            }
-        }
-
-        return [MPXSelection selectionWithRange:rangeToAdd];
-    }];
+                                     
+        return [[MPXSelection alloc] initWithSelectionRange:rangeToAdd
+                                      indexWantedWithinLine:selection.indexWantedWithinLine
+                                                     origin:selectionOrigin];
+    }] array];
 }
 
 - (NSArray *)fixedSelections:(NSArray *)ranges
 {
     NSArray *sortedSelections = MPXSortedSelections(ranges);
-    RACSequence *placeholderFixedSelections = [self selectionsWithFixedPlaceholdersForSortedSelections:sortedSelections.rac_sequence];
 
     NSMutableIndexSet *indexSet = [[NSMutableIndexSet alloc] init];
-    for (MPXSelection *selection in placeholderFixedSelections) {
+    for (MPXSelection *selection in sortedSelections) {
         if (selection.range.length == 0) {
             continue;
         }
@@ -127,7 +143,7 @@ static NSArray *MPXSortedSelections(NSArray *selections)
         }
     }];
 
-    for (MPXSelection *selection in placeholderFixedSelections) {
+    for (MPXSelection *selection in sortedSelections) {
         if (selection.range.length == 0
             && ![indexSet containsIndexesInRange:NSMakeRange(selection.range.location, 1)]
             && ![indexSet containsIndexesInRange:NSMakeRange(selection.range.location - 1, 1)]) {

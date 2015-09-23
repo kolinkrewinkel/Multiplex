@@ -156,7 +156,7 @@
         return [[MPXSelection alloc] initWithSelectionRange:newRange
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:newRange.location];
-    } sequentialModification:YES];
+    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
 }
 
 @end
