@@ -468,6 +468,12 @@ static NSString *kMPXNewlineString = @"\n";
         return @"}";
     } else if ([originalInsertString isEqualToString:@"("]) {
         return @")";
+    } else if ([originalInsertString isEqualToString:@"\""]) {
+        return @"\"";
+    } else if ([originalInsertString isEqualToString:@"'"]) {
+        return @"'";
+    } else if ([originalInsertString isEqualToString:@"<"]) {
+        return @">";
     }
 
     return nil;
