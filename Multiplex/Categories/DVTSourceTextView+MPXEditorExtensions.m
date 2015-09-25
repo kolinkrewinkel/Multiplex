@@ -88,10 +88,10 @@ static NSString *kMPXNewlineString = @"\n";
         locationToSearchFrom = [self.textStorage currentWordAtIndex:lastSelection.insertionIndex].location;
     }
 
-    NSRange searchWithinRange = NSMakeRange(locationToSearchFrom, self.string.length - locationToSearchFrom);
+    NSRange searchWithinRange = NSMakeRange(locationToSearchFrom, self.textStorage.string.length - locationToSearchFrom);
     
     NSString *stringToSearchFor = [self mpx_stringForQuickAddNext];    
-    NSRange nextRange = [self.string rangeOfString:stringToSearchFor options:0 range:searchWithinRange]; 
+    NSRange nextRange = [self.textStorage.string rangeOfString:stringToSearchFor options:0 range:searchWithinRange]; 
     
     if (nextRange.length == 0) {
         return;
