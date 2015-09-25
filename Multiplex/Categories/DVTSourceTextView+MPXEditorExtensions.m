@@ -278,8 +278,8 @@ static NSString *kMPXNewlineString = @"\n";
         // cursors following forward/backward.
         totalDelta += delta;
 
-        NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];
-        if (matchingBrace && ([nextChar isEqualToString:@" "] || [nextChar isEqualToString:kMPXNewlineString])) {
+        NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];       
+        if (matchingBrace && [[[NSCharacterSet alphanumericCharacterSet] invertedSet] characterIsMember:[nextChar characterAtIndex:0]]) {
             NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
                                             withString:matchingBrace
