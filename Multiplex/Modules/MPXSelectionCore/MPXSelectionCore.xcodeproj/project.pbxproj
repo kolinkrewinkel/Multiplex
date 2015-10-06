@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */; settings = {ASSET_TAGS = (); }; };
+		335011B41BB5E5D9004D0A5D /* MPXSelectionMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */; settings = {ASSET_TAGS = (); }; };
 		336CDE581B8BDE680046D6AB /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */; };
 		33D9FF331B8BC72600A9CD4D /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */; };
 		33D9FF381B8BC72600A9CD4D /* MPXSelectionManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FF371B8BC72600A9CD4D /* MPXSelectionManagerTests.m */; };
@@ -53,6 +55,8 @@
 
 /* Begin PBXFileReference section */
 		0129EFFE524F157D47700FDC /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionMutation.h; sourceTree = "<group>"; };
+		335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionMutation.m; sourceTree = "<group>"; };
 		336CDE551B8BDE680046D6AB /* libextobjc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libextobjc.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/libextobjc.framework"; sourceTree = "<group>"; };
 		336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/ReactiveCocoa.framework"; sourceTree = "<group>"; };
 		338A237B1B8BD4B800CC6C1F /* Pods.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/Pods.framework"; sourceTree = "<group>"; };
@@ -139,6 +143,8 @@
 		33D9FF2A1B8BC72500A9CD4D /* MPXSelectionCore */ = {
 			isa = PBXGroup;
 			children = (
+				335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */,
+				335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */,
 				33D9FF2D1B8BC72500A9CD4D /* Info.plist */,
 				33D9FF5D1B8BCD7C00A9CD4D /* MPXSelection.h */,
 				33D9FF5E1B8BCD7C00A9CD4D /* MPXSelection.m */,
@@ -178,6 +184,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33D9FF9A1B8BD16A00A9CD4D /* MPXSelectionCore.h in Headers */,
+				335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */,
 				33D9FF5F1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h in Headers */,
 				33D9FF611B8BCD7C00A9CD4D /* MPXSelectionManager.h in Headers */,
 				33D9FF631B8BCD7C00A9CD4D /* MPXSelection.h in Headers */,
@@ -340,6 +347,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33D9FF641B8BCD7C00A9CD4D /* MPXSelection.m in Sources */,
+				335011B41BB5E5D9004D0A5D /* MPXSelectionMutation.m in Sources */,
 				33D9FF621B8BCD7C00A9CD4D /* MPXSelectionManager.m in Sources */,
 				33D9FF601B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.m in Sources */,
 			);

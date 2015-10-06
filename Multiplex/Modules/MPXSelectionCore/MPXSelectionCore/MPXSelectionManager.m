@@ -11,6 +11,7 @@
 
 #import "MPXSelection.h"
 #import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
 
 @interface MPXSelectionManager ()
 
@@ -193,6 +194,28 @@ static NSArray *MPXSortedSelections(NSArray *selections)
 
     [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
     [self.selectionDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
+}
+
+- (void)mapSelectionsWithBlock:(MPXSelectionMutationBlock)mutationBlock
+{
+    NSMutableArray<MPXSelection *> *selections = [[NSMutableArray alloc] init];
+    NSMutableArray<MPXSelectionMutation *> *processedMutations = [[NSMutableArray alloc] init]; 
+    for (MPXSelection *selection in self.finalizedSelections) {
+
+        // Adjust the selection for the mutations that have occurred previously.
+        MPXSelection *precedingMutationAdjustedSelection = selection;
+        
+        for (MPXSelectionMutation *precedingMutation in processedMutations) {
+            precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:selection];
+        }
+        
+        MPXSelectionMutation *mutation = mutationBlock(precedingMutationAdjustedSelection);
+        [processedMutations addObject:mutation];
+        
+        [selections addObject:mutation.finalSelection];
+    }
+    
+    self.finalizedSelections = selections;
 }
 
 @end

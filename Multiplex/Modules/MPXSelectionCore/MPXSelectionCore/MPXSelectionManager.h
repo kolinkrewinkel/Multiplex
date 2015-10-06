@@ -6,7 +6,10 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@class MPXSelectionMutation;
+typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selectionToModify);
+
+@import Foundation;
 
 @class MPXSelectionManager;
 @protocol MPXSelectionManagerSelectionChangeDelegate <NSObject>
@@ -69,5 +72,10 @@
 - (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray *)selections
                                           movementDirection:(NSSelectionAffinity)movementDirection
                                             modifySelection:(BOOL)modifySelection;
+
+/**
+ * Preferred method of remapping selections to automatically handle offsetting.
+ */
+- (void)mapSelectionsWithBlock:(MPXSelectionMutationBlock)mutationBlock;
 
 @end
