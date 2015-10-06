@@ -17,4 +17,5 @@ FOUNDATION_EXPORT const unsigned char MPXFoundationVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <MPXFoundation/PublicHeader.h>
 #import <MPXSelectionCore/MPXSelection.h>
 #import <MPXSelectionCore/MPXSelectionManager.h>
+#import <MPXSelectionCore/MPXSelectionMutation.h>
 #import <MPXSelectionCore/MPXTextViewSelectionDecorator.h>

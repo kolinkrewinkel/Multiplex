@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */; settings = {ASSET_TAGS = (); }; };
+		335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		335011B41BB5E5D9004D0A5D /* MPXSelectionMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */; settings = {ASSET_TAGS = (); }; };
 		336CDE581B8BDE680046D6AB /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */; };
 		33D9FF331B8BC72600A9CD4D /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */; };
@@ -184,8 +184,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				33D9FF9A1B8BD16A00A9CD4D /* MPXSelectionCore.h in Headers */,
-				335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */,
 				33D9FF5F1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h in Headers */,
+				335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */,
 				33D9FF611B8BCD7C00A9CD4D /* MPXSelectionManager.h in Headers */,
 				33D9FF631B8BCD7C00A9CD4D /* MPXSelection.h in Headers */,
 			);

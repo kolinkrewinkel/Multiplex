@@ -102,6 +102,8 @@
     }
 
     [self updateTextViewSelectedRange];
+    
+    [self startBlinking];   
 }
 
 - (void)setCursorsVisible:(BOOL)visible

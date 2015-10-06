@@ -9,9 +9,17 @@
 #import "MPXSelectionMutation.h"
 #import "MPXSelection.h"
 
+@interface MPXSelectionMutation ()
+
+@property (nonatomic) MPXSelection *initialSelection;
+@property (nonatomic) MPXSelection *finalSelection;
+
+@end
+
 @implementation MPXSelectionMutation
 
-- (instancetype)initWithInitialSelection:(MPXSelection *)initialSelection finalSelection:(MPXSelection *)finalSelection
+- (instancetype)initWithInitialSelection:(MPXSelection *)initialSelection
+                          finalSelection:(MPXSelection *)finalSelection
 {
     if (self = [super init]) {
         self.initialSelection = initialSelection;
@@ -24,7 +32,9 @@
 - (MPXSelection *)adjustTrailingSelection:(MPXSelection *)selection
 {
     // The change in length for this mutation.
-    NSUInteger delta = self.finalSelection.range.length - self.initialSelection.range.length;
+    NSUInteger changeInLength = self.finalSelection.range.length - self.initialSelection.range.length;
+    NSUInteger changeInLocation = self.finalSelection.range.location - self.initialSelection.range.location;
+    NSUInteger delta = changeInLength + changeInLocation;
     
     NSRange trailingRange = selection.range;
     return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(trailingRange.location + delta, trailingRange.length)

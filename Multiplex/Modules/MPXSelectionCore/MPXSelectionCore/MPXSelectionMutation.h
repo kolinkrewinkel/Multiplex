@@ -14,8 +14,8 @@
 - (instancetype)initWithInitialSelection:(MPXSelection *)initialSelection
                           finalSelection:(MPXSelection *)finalSelection;
 
-@property (nonatomic) MPXSelection *initialSelection;
-@property (nonatomic) MPXSelection *finalSelection;
+@property (nonatomic, readonly) MPXSelection *initialSelection;
+@property (nonatomic, readonly) MPXSelection *finalSelection;
 
 - (MPXSelection *)adjustTrailingSelection:(MPXSelection *)selection;
 

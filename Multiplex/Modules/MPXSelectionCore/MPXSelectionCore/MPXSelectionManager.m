@@ -196,17 +196,22 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     [self.selectionDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
-- (void)mapSelectionsWithBlock:(MPXSelectionMutationBlock)mutationBlock
+- (void)mapSelectionsWithMovementDirection:(NSSelectionAffinity)movementDirection
+                       modifyingSelections:(BOOL)modifySelections
+                              mutatingText:(BOOL)mutatingText
+                                usingBlock:(MPXSelectionMutationBlock)mutationBlock;
 {
     NSMutableArray<MPXSelection *> *selections = [[NSMutableArray alloc] init];
     NSMutableArray<MPXSelectionMutation *> *processedMutations = [[NSMutableArray alloc] init]; 
-    for (MPXSelection *selection in self.finalizedSelections) {
 
+    for (MPXSelection *selection in self.finalizedSelections) {
         // Adjust the selection for the mutations that have occurred previously.
         MPXSelection *precedingMutationAdjustedSelection = selection;
         
-        for (MPXSelectionMutation *precedingMutation in processedMutations) {
-            precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:selection];
+        if (mutatingText) {
+            for (MPXSelectionMutation *precedingMutation in processedMutations) {
+                precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:selection];
+            }
         }
         
         MPXSelectionMutation *mutation = mutationBlock(precedingMutationAdjustedSelection);
@@ -215,7 +220,10 @@ static NSArray *MPXSortedSelections(NSArray *selections)
         [selections addObject:mutation.finalSelection];
     }
     
-    self.finalizedSelections = selections;
+    // Adjust the selections for placeholders that they may need to include or move around.   
+    self.finalizedSelections = [self preprocessedPlaceholderSelectionsForSelections:selections
+                                                                  movementDirection:movementDirection
+                                                                    modifySelection:modifySelections];
 }
 
 @end

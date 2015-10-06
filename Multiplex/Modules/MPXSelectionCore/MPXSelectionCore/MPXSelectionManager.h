@@ -76,6 +76,9 @@ typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selecti
 /**
  * Preferred method of remapping selections to automatically handle offsetting.
  */
-- (void)mapSelectionsWithBlock:(MPXSelectionMutationBlock)mutationBlock;
+- (void)mapSelectionsWithMovementDirection:(NSSelectionAffinity)movementDirection
+                       modifyingSelections:(BOOL)modifySelections
+                              mutatingText:(BOOL)mutatingText
+                                usingBlock:(MPXSelectionMutationBlock)mutationBlock;
 
 @end

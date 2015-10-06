@@ -208,12 +208,20 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
 
 - (void)moveRight:(id)sender
 {
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSUInteger newIndex = MIN(selection.insertionIndex + 1, self.textStorage.length);
-        return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
-                                      indexWantedWithinLine:selection.indexWantedWithinLine
-                                                     origin:newIndex];
-    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *fromSelection) {
+        NSUInteger newIndex = MIN(fromSelection.insertionIndex + 1, self.textStorage.length);
+        
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
+                                                            indexWantedWithinLine:fromSelection.indexWantedWithinLine
+                                                                           origin:newIndex];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:fromSelection finalSelection:newSelection];            
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:NO
+                                                     mutatingText:NO
+                                                       usingBlock:transformBlock];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender

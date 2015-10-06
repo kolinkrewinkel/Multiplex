@@ -452,8 +452,6 @@ static NSString *kMPXNewlineString = @"\n";
                                                               modifySelection:modifySelection];
     
     self.mpx_selectionManager.finalizedSelections = placeholderFixedValues;
-
-    [self.mpx_textViewSelectionDecorator startBlinking];
 }
 
 - (NSString *)followupStringToMakePair:(NSString *)originalInsertString
