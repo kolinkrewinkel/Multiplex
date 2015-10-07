@@ -12,10 +12,13 @@
 @interface MPXSelectionMutation : NSObject
 
 - (instancetype)initWithInitialSelection:(MPXSelection *)initialSelection
-                          finalSelection:(MPXSelection *)finalSelection;
+                          finalSelection:(MPXSelection *)finalSelection
+                             mutatedText:(BOOL)mutatedText;
 
 @property (nonatomic, readonly) MPXSelection *initialSelection;
 @property (nonatomic, readonly) MPXSelection *finalSelection;
+
+@property (nonatomic, readonly) BOOL mutatedText;
 
 - (MPXSelection *)adjustTrailingSelection:(MPXSelection *)selection;
 

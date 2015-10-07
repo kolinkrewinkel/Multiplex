@@ -198,7 +198,6 @@ static NSArray *MPXSortedSelections(NSArray *selections)
 
 - (void)mapSelectionsWithMovementDirection:(NSSelectionAffinity)movementDirection
                        modifyingSelections:(BOOL)modifySelections
-                              mutatingText:(BOOL)mutatingText
                                 usingBlock:(MPXSelectionMutationBlock)mutationBlock;
 {
     NSMutableArray<MPXSelection *> *selections = [[NSMutableArray alloc] init];
@@ -208,10 +207,8 @@ static NSArray *MPXSortedSelections(NSArray *selections)
         // Adjust the selection for the mutations that have occurred previously.
         MPXSelection *precedingMutationAdjustedSelection = selection;
         
-        if (mutatingText) {
-            for (MPXSelectionMutation *precedingMutation in processedMutations) {
-                precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:selection];
-            }
+        for (MPXSelectionMutation *precedingMutation in processedMutations) {
+            precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:selection];
         }
         
         MPXSelectionMutation *mutation = mutationBlock(precedingMutationAdjustedSelection);

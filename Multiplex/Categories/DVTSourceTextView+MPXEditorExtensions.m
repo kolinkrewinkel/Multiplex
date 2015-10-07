@@ -39,14 +39,14 @@ static NSString *kMPXNewlineString = @"\n";
 - (void)mpx_commonInitDVTSourceTextView
 {
     [self mpx_commonInitDVTSourceTextView];
-
+    
     self.mpx_textViewSelectionDecorator = [[MPXTextViewSelectionDecorator alloc] initWithTextView:self];
-
+    
     self.mpx_selectionManager = [[MPXSelectionManager alloc] initWithTextView:self];
     self.mpx_selectionManager.visualizationDelegate = self.mpx_textViewSelectionDecorator;
-
+    
     self.selectedTextAttributes = @{};
-
+    
     self.mpx_trimTrailingWhitespace = self.shouldTrimTrailingWhitespace;
     
     [self mpx_addQuickAddNextMenuItem];
@@ -59,10 +59,10 @@ static NSString *kMPXNewlineString = @"\n";
     if ([findMenu itemWithTitle:kMPXQuickAddNextMenuItemTitle]) {
         return;
     }    
-        
+    
     // Add a divider between the native stuff and Multiplex's.
     [findMenu addItem:[NSMenuItem separatorItem]];
-        
+    
     NSMenuItem *quickAddNextItem = [[NSMenuItem alloc] initWithTitle:kMPXQuickAddNextMenuItemTitle
                                                               action:@selector(mpx_quickAddNext:)
                                                        keyEquivalent:@"D"];
@@ -73,7 +73,7 @@ static NSString *kMPXNewlineString = @"\n";
     
     NSMenuItem *editMenuItem = [[NSApp mainMenu] itemWithTitle:@"Edit"];
     NSMenu *editMenu = editMenuItem.submenu;
-
+    
     NSMenuItem *duplicateItem = [editMenu itemWithTitle:@"Duplicate"];
     duplicateItem.keyEquivalentModifierMask = NSCommandKeyMask | NSAlternateKeyMask;
 }
@@ -87,7 +87,7 @@ static NSString *kMPXNewlineString = @"\n";
     if (lastSelection.range.length == 0) {
         locationToSearchFrom = [self.textStorage currentWordAtIndex:lastSelection.insertionIndex].location;
     }
-
+    
     NSRange searchWithinRange = NSMakeRange(locationToSearchFrom, self.textStorage.string.length - locationToSearchFrom);
     
     NSString *stringToSearchFor = [self mpx_stringForQuickAddNext];    
@@ -113,7 +113,7 @@ static NSString *kMPXNewlineString = @"\n";
         // Find the word it's in if the selection is just a caret.
         if (selectionString.length == 0) {
             NSRange wordRange = [self.textStorage currentWordAtIndex:selection.range.location];
-
+            
             if (wordRange.length == 0) {
                 selectionString = nil;
             } else {
@@ -131,7 +131,7 @@ static NSString *kMPXNewlineString = @"\n";
             break;
         }
     }
-
+    
     return stringToMatch;
 }
 
@@ -141,7 +141,7 @@ static NSString *kMPXNewlineString = @"\n";
         self.mpx_inUndoGroup = NO;
         [self.undoManager endUndoGrouping];
     }
-
+    
     [self.undoManager undoNestedGroup];
 }
 
@@ -153,33 +153,31 @@ static NSString *kMPXNewlineString = @"\n";
     if (![insertObject isKindOfClass:[NSString class]]) {
         return;
     }
-
+    
     NSString *insertString = (NSString *)insertObject;
-
+    
     if (self.mpx_shouldCloseGroupOnNextChange && self.mpx_inUndoGroup) {
         self.mpx_inUndoGroup = NO;
         [self.undoManager endUndoGrouping];
         self.mpx_shouldCloseGroupOnNextChange = NO;
     }
-
+    
     if (!self.mpx_inUndoGroup) {
         self.mpx_inUndoGroup = YES;
         self.mpx_shouldCloseGroupOnNextChange = NO;
-
+        
         [self.undoManager beginUndoGrouping];
-
+        
         NSArray *currState = self.mpx_selectionManager.finalizedSelections;
         [self.undoManager registerUndoWithTarget:self handler:^(id  _Nonnull target) {
             self.mpx_selectionManager.finalizedSelections = currState;
             [self.mpx_textViewSelectionDecorator startBlinking];
         }];
     }
-
+    
     [self.completionController textViewShouldInsertText:self];
-
-    // Sequential (negative) offset of characters added.
-    __block NSUInteger totalDelta = 0;
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
         NSRange range = selection.range;
         NSString *modifiedInsertString = insertString;
         
@@ -198,19 +196,22 @@ static NSString *kMPXNewlineString = @"\n";
                                                                               forward:YES
                                                                                  wrap:NO
                                                                                 limit:NSMaxRange(selection.range)];
-
+                
                 // This is an awful hack to make -replaceSelectedTokenWithTokenText expand the right token.
                 self.selectedRange = placeholderRange;
                 [self replaceSelectedTokenWithTokenText];
-
+                
                 // -replaceSelectedTokenWithTokenText will then assign the result of expanding the token to
                 // -selectedRange, so we read from that.
                 NSRange newSelectionRange = self.selectedRange;
                 
                 if ([modifiedInsertString isEqualToString:kMPXNewlineString]) {
-                    return [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
-                                                  indexWantedWithinLine:MPXNoStoredLineIndex
-                                                                 origin:newSelectionRange.location];
+                    MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newSelectionRange
+                                                                        indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                                       origin:newSelectionRange.location];
+                    return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                                   finalSelection:newSelection
+                                                                      mutatedText:YES];
                 }
                 
                 range = newSelectionRange;
@@ -221,13 +222,13 @@ static NSString *kMPXNewlineString = @"\n";
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
             nextChar = [self.textStorage.string substringWithRange:NSMakeRange(selection.insertionIndex, 1)];
         }
-
+        
         if (nextChar) {
             for (NSString *typeoverString in @[@"]", @"}", @")", @"\"", @"'", @";"]) {
                 if (![insertString isEqualToString:typeoverString]) {
                     continue;
                 }
-
+                
                 if ([nextChar isEqualToString:typeoverString]) {
                     shouldInsertChars = NO;
                     break;
@@ -243,29 +244,28 @@ static NSString *kMPXNewlineString = @"\n";
                 }
             }
         }
-
+        
         if (!shouldInsertChars) {
             NSUInteger newIndex = selection.insertionIndex + 1;
-            return [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
-                                          indexWantedWithinLine:MPXNoStoredLineIndex
-                                                         origin:newIndex];
+            MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
+                                                                indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                               origin:newIndex];
+            return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                           finalSelection:newSelection
+                                                              mutatedText:NO];
         }
-
-        // Offset by the previous mutations made (+/- doesn't matter, as long as the different maths at each point
-        // correspond to the relative offset made by inserting a # of chars.)
-        NSRange offsetRange = NSMakeRange(range.location + totalDelta, range.length);
-
-        [self.textStorage replaceCharactersInRange:offsetRange withString:modifiedInsertString withUndoManager:self.undoManager];
+                
+        [self.textStorage replaceCharactersInRange:range withString:modifiedInsertString withUndoManager:self.undoManager];
         
         NSUInteger delta = [modifiedInsertString length] - range.length;
-
-        __block NSRange rangeOfInsertedText = NSMakeRange(offsetRange.location, [modifiedInsertString length]);
+        
+        __block NSRange rangeOfInsertedText = NSMakeRange(range.location, [modifiedInsertString length]);
         if ([modifiedInsertString rangeOfString:kMPXNewlineString].length > 0) {                        
             __block NSUInteger index = rangeOfInsertedText.location;    
             [modifiedInsertString enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
                 NSRange lineRange = NSMakeRange(index + [kMPXNewlineString length], [line length] + [kMPXNewlineString length]);
                 NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
-                                
+                
                 if (NSMaxRange(rangeOfInsertedText) >= lineRange.location) {
                     rangeOfInsertedText.location += indentedRange.location - lineRange.location;
                 }
@@ -273,41 +273,39 @@ static NSString *kMPXNewlineString = @"\n";
                 index = NSMaxRange(indentedRange);
             }];           
         }
-
-        // Offset the following ones by noting the original length and updating for the replacement's length, moving
-        // cursors following forward/backward.
-        totalDelta += delta;
-
+        
         NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];       
         if (matchingBrace && [[[NSCharacterSet alphanumericCharacterSet] invertedSet] characterIsMember:[nextChar characterAtIndex:0]]) {
-            NSRange matchingBraceRange = NSMakeRange(NSMaxRange(offsetRange) + delta, 0);
+            NSRange matchingBraceRange = NSMakeRange(NSMaxRange(range) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
                                             withString:matchingBrace
                                        withUndoManager:self.undoManager];
-
-            totalDelta += [matchingBrace length];
         }
-
+        
         NSRange lineRange;
-        (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(offsetRange) effectiveRange:&lineRange];
-
+        (void)[self.layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(range) effectiveRange:&lineRange];
+        
         NSUInteger relativeLinePosition = selection.indexWantedWithinLine;
-
+        
         if (relativeLinePosition == NSNotFound) {
-            relativeLinePosition = NSMaxRange(offsetRange) - lineRange.location;
+            relativeLinePosition = NSMaxRange(range) - lineRange.location;
         }
-
+        
         // Move cursor (or range-selection) to the end of what was just added with 0-length.
         NSRange newInsertionPointRange = NSMakeRange(NSMaxRange(rangeOfInsertedText) - offsetForCursor, 0);
-
-        return [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
-                                      indexWantedWithinLine:relativeLinePosition
-                                                     origin:newInsertionPointRange.location];
-    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
-
-
-    [self.mpx_textViewSelectionDecorator startBlinking];
-
+        
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
+                                                            indexWantedWithinLine:relativeLinePosition
+                                                                           origin:newInsertionPointRange.location];
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:YES];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
+    
     [self.completionController textViewDidInsertText];
     [self.completionController _textViewTextDidChange:self];
 }
@@ -316,29 +314,29 @@ static NSString *kMPXNewlineString = @"\n";
 {
     // Sequential (negative) offset of characters added.
     __block NSUInteger totalDelta = 0;
-
+    
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         // Update the base range with the delta'd amount of change from previous mutations.
         NSRange range = [selection range];
         NSRange offsetRange = NSMakeRange(range.location - totalDelta, range.length);
-
+        
         NSRange deletingRange = NSMakeRange(0, 0);
         if (offsetRange.location > 0 && offsetRange.length == 0) {
             deletingRange = NSMakeRange(offsetRange.location - 1, 1);
         } else {
             deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
         }
-
+        
         // Delete the characters
         [self insertText:@"" replacementRange:deletingRange];
-
+        
         // New range for the beam (to the beginning of the range we replaced)
         NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
         MPXSelection *newSelection = [MPXSelection selectionWithRange:newInsertionPointRange];
-
+        
         // Increment/decrement the delta by how much we trimmed.
         totalDelta += deletingRange.length;
-
+        
         return newSelection;
     }];
 }
@@ -348,7 +346,7 @@ static NSString *kMPXNewlineString = @"\n";
 - (void)insertNewline:(id)sender
 {
     BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
-
+    
     self.mpx_trimTrailingWhitespace = NO;
     [self insertText:kMPXNewlineString];
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
@@ -361,7 +359,7 @@ static NSString *kMPXNewlineString = @"\n";
         
         // Use the actual line to allow skipping to a placeholder that's only soft word-wrapped.
         NSRange lineRange = [self.string lineRangeForRange:selection.range];
-    
+        
         // Get the next placeholder within the line.
         NSRange placeholderOnSameLine = [self rangeOfPlaceholderFromCharacterIndex:selection.range.location
                                                                            forward:YES
@@ -375,19 +373,19 @@ static NSString *kMPXNewlineString = @"\n";
                                               indexWantedWithinLine:MPXNoStoredLineIndex
                                                              origin:placeholderOnSameLine.location];
             } sequentialModification:NO modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
-
+            
             return YES;
         }
     }
     
     BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
     self.mpx_trimTrailingWhitespace = NO;
-
+    
     NSString *tabString = [self mpx_tabString];
     [self insertText:tabString];
-
+    
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
-
+    
     return YES;
 }
 
@@ -397,14 +395,14 @@ static NSString *kMPXNewlineString = @"\n";
     if (preferences.useTabsToIndent) {
         return @"\t";
     }
-
+    
     NSMutableString *spaceTabString = [NSMutableString string];
-
+    
     NSUInteger spaceCount = preferences.tabWidth;
     for (NSUInteger spacesAdded = 0; spacesAdded < spaceCount; spacesAdded++) {
         [spaceTabString appendString:@" "];
     }
-
+    
     return spaceTabString;
 }
 
@@ -423,7 +421,7 @@ static NSString *kMPXNewlineString = @"\n";
     } else if (theAction == @selector(mpx_quickAddNext:)) {
         return [self mpx_stringForQuickAddNext] != nil;
     }
-
+    
     return [self mpx_validateMenuItem:item];
 }
 
@@ -459,7 +457,7 @@ static NSString *kMPXNewlineString = @"\n";
     if ([originalInsertString length] != 1) {
         return nil;
     }
-
+    
     if ([originalInsertString isEqualToString:@"["]) {
         return @"]";
     } else if ([originalInsertString isEqualToString:@"{"]) {
@@ -473,7 +471,7 @@ static NSString *kMPXNewlineString = @"\n";
     } else if ([originalInsertString isEqualToString:@"<"]) {
         return @">";
     }
-
+    
     return nil;
 }
 

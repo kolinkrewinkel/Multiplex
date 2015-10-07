@@ -215,12 +215,13 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
                                                             indexWantedWithinLine:fromSelection.indexWantedWithinLine
                                                                            origin:newIndex];
         
-        return [[MPXSelectionMutation alloc] initWithInitialSelection:fromSelection finalSelection:newSelection];            
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:fromSelection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];            
     };
     
     [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
                                               modifyingSelections:NO
-                                                     mutatingText:NO
                                                        usingBlock:transformBlock];
 }
 

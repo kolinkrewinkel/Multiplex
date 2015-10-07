@@ -78,7 +78,6 @@ typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selecti
  */
 - (void)mapSelectionsWithMovementDirection:(NSSelectionAffinity)movementDirection
                        modifyingSelections:(BOOL)modifySelections
-                              mutatingText:(BOOL)mutatingText
                                 usingBlock:(MPXSelectionMutationBlock)mutationBlock;
 
 @end

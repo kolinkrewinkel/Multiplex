@@ -14,16 +14,21 @@
 @property (nonatomic) MPXSelection *initialSelection;
 @property (nonatomic) MPXSelection *finalSelection;
 
+@property (nonatomic) BOOL mutatedText;
+
 @end
 
 @implementation MPXSelectionMutation
 
 - (instancetype)initWithInitialSelection:(MPXSelection *)initialSelection
                           finalSelection:(MPXSelection *)finalSelection
+                             mutatedText:(BOOL)mutatedText
 {
     if (self = [super init]) {
         self.initialSelection = initialSelection;
         self.finalSelection = finalSelection;
+
+        self.mutatedText = mutatedText;
     }
     
     return self;
@@ -31,6 +36,10 @@
 
 - (MPXSelection *)adjustTrailingSelection:(MPXSelection *)selection
 {
+    if (!self.mutatedText) {
+        return selection;
+    }
+    
     // The change in length for this mutation.
     NSUInteger changeInLength = self.finalSelection.range.length - self.initialSelection.range.length;
     NSUInteger changeInLocation = self.finalSelection.range.location - self.initialSelection.range.location;
