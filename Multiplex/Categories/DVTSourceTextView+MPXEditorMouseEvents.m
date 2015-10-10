@@ -89,10 +89,10 @@
     NSInteger clickCount = theEvent.clickCount;
     NSRange resultRange = NSMakeRange(NSNotFound, 0);
     DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-
+    
     switch (clickCount) {
-            // Selects only the single point at the approximate location of the cursor
         case 1:
+            // Selects only the single point at the approximate location of the cursor           
             resultRange = NSMakeRange(index, 0);
             break;
         case 2: {
@@ -100,7 +100,7 @@
                 [self mpx_mouseDown:theEvent];
                 return;
             }
-
+            
             resultRange = [textStorage doubleClickAtIndex:index];
             break;
         }
