@@ -27,8 +27,7 @@
     [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
         // Get the new word index from the text storage.
         // The "nextWord..." method is specific to the DVTTextStorage class.
-        DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
-        NSUInteger wordIndex = [textStorage nextWordFromIndex:selection.insertionIndex forward:wordForward];
+        NSUInteger wordIndex = [self.textStorage nextWordFromIndex:selection.insertionIndex forward:wordForward];
 
         NSRange newRange;
         

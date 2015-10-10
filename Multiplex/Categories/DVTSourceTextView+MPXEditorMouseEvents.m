@@ -88,7 +88,6 @@
 
     NSInteger clickCount = theEvent.clickCount;
     NSRange resultRange = NSMakeRange(NSNotFound, 0);
-    DVTTextStorage *textStorage = (DVTTextStorage *)self.textStorage;
     
     switch (clickCount) {
         case 1:
@@ -101,11 +100,11 @@
                 return;
             }
             
-            resultRange = [textStorage doubleClickAtIndex:index];
+            resultRange = [self.textStorage doubleClickAtIndex:index];
             break;
         }
         case 3:
-            resultRange = [textStorage.string lineRangeForRange:NSMakeRange(index, 0)];
+            resultRange = [self.textStorage.string lineRangeForRange:NSMakeRange(index, 0)];
             break;
         default:
             return;
