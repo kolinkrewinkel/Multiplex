@@ -21,6 +21,7 @@
 #import "DVTSourceTextView+MPXEditorMouseEvents.h"
 
 @implementation DVTSourceTextView (MPXEditorMouseEvents)
+@synthesizeAssociation(DVTSourceTextView, mpx_altPopoverTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
 
@@ -58,13 +59,21 @@
     [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];
 }
 
-- (void)mpx_mouseDown:(NSEvent *)theEvent
-{
-    BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
-    if (altKeyHeld) {        
-        return;
-    }
+- (void)mpx_showAltPopover:(NSTimer *)sender
+{    
+    RACTuple *tuple = sender.userInfo;
+    RACTupleUnpack(NSNumber *nIndex, NSEvent *event) = tuple;
     
+    [((id<DVTSourceTextViewDelegate>)self.delegate) textView:self
+                     didClickOnTemporaryLinkAtCharacterIndex:nIndex.unsignedIntegerValue
+                                                       event:event
+                                                  isAltEvent:YES];
+    
+    [sender invalidate];
+}
+
+- (void)mpx_mouseDown:(NSEvent *)theEvent
+{    
     NSUInteger index = ({
         CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
                                           fromView:nil];
@@ -72,6 +81,19 @@
     });
 
     if (index == NSNotFound) {
+        return;
+    }
+    
+    BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
+    if (altKeyHeld) {      
+        
+        self.mpx_altPopoverTimer = [NSTimer timerWithTimeInterval:1.0
+                                                           target:self
+                                                         selector:@selector(mpx_showAltPopover:)
+                                                         userInfo:RACTuplePack(@(index), theEvent)
+                                                          repeats:NO];
+        [[NSRunLoop mainRunLoop] addTimer:self.mpx_altPopoverTimer forMode:NSDefaultRunLoopMode];
+        
         return;
     }
 
@@ -129,6 +151,9 @@
 
 - (void)mpx_mouseUp:(NSEvent *)theEvent
 {
+    BOOL showedAltPopover = !self.mpx_altPopoverTimer.valid;
+    [self.mpx_altPopoverTimer invalidate];
+    
     NSUInteger index = ({
         CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
                                           fromView:nil];
@@ -137,21 +162,24 @@
     
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
     if (altKeyHeld) {        
-        NSEvent *event = [NSEvent mouseEventWithType:theEvent.type
-                                            location:theEvent.locationInWindow
-                                       modifierFlags:NSCommandKeyMask
-                                           timestamp:theEvent.timestamp
-                                        windowNumber:theEvent.windowNumber
-                                             context:theEvent.context
-                                         eventNumber:theEvent.eventNumber
-                                          clickCount:1
-                                            pressure:theEvent.pressure];
         
-        
-        [((id<DVTSourceTextViewDelegate>)self.delegate) textView:self
-                         didClickOnTemporaryLinkAtCharacterIndex:index
-                                                           event:event
-                                                      isAltEvent:NO];
+        if (!showedAltPopover) {
+            NSEvent *event = [NSEvent mouseEventWithType:theEvent.type
+                                                location:theEvent.locationInWindow
+                                           modifierFlags:NSCommandKeyMask
+                                               timestamp:theEvent.timestamp
+                                            windowNumber:theEvent.windowNumber
+                                                 context:theEvent.context
+                                             eventNumber:theEvent.eventNumber
+                                              clickCount:1
+                                                pressure:theEvent.pressure];
+            
+            
+            [((id<DVTSourceTextViewDelegate>)self.delegate) textView:self
+                             didClickOnTemporaryLinkAtCharacterIndex:index
+                                                               event:event
+                                                          isAltEvent:NO];
+        }
         
         return;
     }

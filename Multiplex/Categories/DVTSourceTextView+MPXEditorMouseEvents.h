@@ -16,6 +16,7 @@
 - (void)mpx_mouseDragged:(id)sender;
 - (void)mpx_updateTemporaryLinkUnderMouseForEvent:(NSEvent *)event;
 
+@property (nonatomic) NSTimer *mpx_altPopoverTimer;
 @property (nonatomic) MPXSelection *mpx_rangeInProgress;
 @property (nonatomic) MPXSelection *mpx_rangeInProgressStart;
 
