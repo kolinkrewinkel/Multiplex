@@ -200,9 +200,26 @@
         
         if (altKeyHeld) {
             if (event.type == NSMouseMoved) {
-                substituteEvent = [NSEvent mouseEventWithType:event.type location:event.locationInWindow modifierFlags:NSCommandKeyMask timestamp:event.timestamp windowNumber:event.windowNumber context:event.context eventNumber:event.eventNumber clickCount:event.clickCount pressure:event.pressure];
+                substituteEvent = [NSEvent mouseEventWithType:event.type
+                                                     location:event.locationInWindow
+                                                modifierFlags:NSCommandKeyMask
+                                                    timestamp:event.timestamp
+                                                 windowNumber:event.windowNumber
+                                                      context:event.context
+                                                  eventNumber:event.eventNumber
+                                                   clickCount:event.clickCount
+                                                     pressure:event.pressure];
             } else if (event.type == NSFlagsChanged) {
-                substituteEvent = [NSEvent keyEventWithType:event.type location:event.locationInWindow modifierFlags:NSCommandKeyMask timestamp:event.timestamp windowNumber:event.windowNumber context:event.context characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:event.keyCode];
+                substituteEvent = [NSEvent keyEventWithType:event.type
+                                                   location:event.locationInWindow
+                                              modifierFlags:NSCommandKeyMask
+                                                  timestamp:event.timestamp
+                                               windowNumber:event.windowNumber
+                                                    context:event.context
+                                                 characters:@""
+                                charactersIgnoringModifiers:@""
+                                                  isARepeat:NO
+                                                    keyCode:event.keyCode];
             }
         }
 
