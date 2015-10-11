@@ -8,6 +8,7 @@
 
 @interface NSTableView (DVTNSTableViewAdditions)
 - (void)dvt_scrollRowToVisibleCentered:(long long)arg1;
+- (void)dvt_scrollRowToVisibleTop:(long long)arg1;
 - (BOOL)dvt_autoscrollWithExternalDragEvent:(id)arg1 animate:(BOOL)arg2;
 @end
 

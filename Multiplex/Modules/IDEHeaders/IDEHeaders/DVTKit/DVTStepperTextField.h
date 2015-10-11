@@ -17,18 +17,18 @@
     float _v0;
     float _delta;
     BOOL _reachedStage2;
-    double _minValue;
-    double _maxValue;
-    double _increment;
+    float _minValue;
+    float _maxValue;
+    float _increment;
     struct CGRect _rectForPulse;
 }
 
 + (Class)cellClass;
 @property BOOL reachedStage2; // @synthesize reachedStage2=_reachedStage2;
 @property struct CGRect rectForPulse; // @synthesize rectForPulse=_rectForPulse;
-@property double increment; // @synthesize increment=_increment;
-@property double maxValue; // @synthesize maxValue=_maxValue;
-@property double minValue; // @synthesize minValue=_minValue;
+@property float increment; // @synthesize increment=_increment;
+@property float maxValue; // @synthesize maxValue=_maxValue;
+@property float minValue; // @synthesize minValue=_minValue;
 - (void)textDidEndEditing:(id)arg1;
 - (void)gestureRecognizerAction:(id)arg1;
 - (void)mouseUp:(id)arg1;
@@ -36,7 +36,7 @@
 - (BOOL)_eventLocationIsOverMinusOrPlusButton:(id)arg1;
 - (void)mouseDown:(id)arg1;
 - (void)beginMouseDragScrubbingWithEvent:(id)arg1;
-- (void)_setValueSendingAction:(double)arg1;
+- (void)_setValueSendingAction:(float)arg1;
 - (void)updateValueWithEvent:(id)arg1;
 - (float)checkBounds:(float)arg1;
 - (void)resetCursorRects;
@@ -45,8 +45,8 @@
 - (void)doCommandBySelector:(SEL)arg1;
 - (void)_increment;
 - (void)_decrement;
-- (double)_incrementToUse;
-@property(readonly) double defaultIncrement;
+- (float)_incrementToUse;
+@property(readonly) float defaultIncrement;
 - (BOOL)allowsVibrancy;
 - (BOOL)isOpaque;
 - (void)_setSelectable_transient:(BOOL)arg1;

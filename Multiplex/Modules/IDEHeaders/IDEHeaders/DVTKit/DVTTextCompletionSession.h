@@ -9,7 +9,7 @@
 #import "DVTInvalidation-Protocol.h"
 #import "DVTTextCompletionDataSourceDelegate-Protocol.h"
 
-@class DVTCompletingTextView, DVTObservingToken, DVTPerformanceMetric, DVTStackBacktrace, DVTTextCompletionInlinePreviewController, DVTTextCompletionListWindowController, NSArray, NSDictionary, NSMutableSet, NSString;
+@class DVTCompletingTextView, DVTObservingToken, DVTPerformanceMetric, DVTStackBacktrace, DVTTextCompletionInlinePreviewController, DVTTextCompletionListWindowController, NSArray, NSDictionary, NSString;
 
 @interface DVTTextCompletionSession : NSObject <DVTTextCompletionDataSourceDelegate, DVTInvalidation>
 {
@@ -37,17 +37,17 @@
     BOOL _fuzzyRefilter;
     NSDictionary *_currentCompletionContext;
     NSArray *_highlyLikelyCompletions;
-    NSMutableSet *_localVariables;
     long long _fuzzyMode;
 }
 
 + (void)_addToRecentCompletions:(id)arg1;
 + (id)notRecommendedStrikeThroughColor;
++ (long long)defaultTextCompletionMode;
++ (void)setDefaultTextCompletionMode:(long long)arg1;
 + (void)initialize;
 + (id)keyPathsForValuesAffectingReadyToShowCompletions;
-@property long long fuzzyMode; // @synthesize fuzzyMode=_fuzzyMode;
+@property(readonly) long long fuzzyMode; // @synthesize fuzzyMode=_fuzzyMode;
 @property BOOL fuzzyRefilter; // @synthesize fuzzyRefilter=_fuzzyRefilter;
-@property(retain) NSMutableSet *localVariables; // @synthesize localVariables=_localVariables;
 @property(copy) NSString *filteringPrefix; // @synthesize filteringPrefix=_filteringPrefix;
 @property(retain) NSArray *highlyLikelyCompletions; // @synthesize highlyLikelyCompletions=_highlyLikelyCompletions;
 @property(readonly, nonatomic) NSDictionary *currentCompletionContext; // @synthesize currentCompletionContext=_currentCompletionContext;
@@ -115,6 +115,7 @@
 - (id)_listWindowController;
 - (void)setPendingRequestState:(int)arg1;
 @property(readonly, getter=isShowingCompletions) BOOL showingCompletions;
+@property(readonly) BOOL shouldShowInlinePreview;
 - (id)initWithTextView:(id)arg1 atLocation:(unsigned long long)arg2 cursorLocation:(unsigned long long)arg3;
 - (id)init;
 

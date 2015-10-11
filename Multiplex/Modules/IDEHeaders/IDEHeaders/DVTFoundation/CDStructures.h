@@ -46,6 +46,7 @@ struct DVTMacroNameLookupCursor {
     id _field3;
     id _field4;
     struct DVTMacroValueAssignment *_field5;
+    id _field6;
 };
 
 struct DVTMacroValueAssignment;

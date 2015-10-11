@@ -9,7 +9,7 @@
 #import "DVTSourceBufferProvider-Protocol.h"
 #import "DVTSourceLanguageServiceDelegate-Protocol.h"
 
-@class DVTFontAndColorTheme, DVTObservingToken, DVTSourceCodeLanguage, DVTSourceLandmarkItem, DVTSourceLanguageService, DVTSourceModel, NSDictionary, NSMutableAttributedString, NSString, NSTimer, _LazyInvalidationHelper;
+@class DVTFontAndColorTheme, DVTObservingToken, DVTSourceCodeLanguage, DVTSourceLandmarkItem, DVTSourceLanguageService<DVTSourceLanguageSourceModelService>, DVTSourceLanguageService<DVTSourceLanguageSyntaxTypeService>, DVTSourceModel, NSDictionary, NSMutableAttributedString, NSString, NSTimer, _LazyInvalidationHelper;
 
 @interface DVTTextStorage : NSTextStorage <DVTSourceBufferProvider, DVTSourceLanguageServiceDelegate>
 {
@@ -214,9 +214,10 @@
 - (id)attributesAtIndex:(unsigned long long)arg1 longestEffectiveRange:(struct _NSRange *)arg2 inRange:(struct _NSRange)arg3;
 - (id)attributedSubstringFromRange:(struct _NSRange)arg1;
 - (id)attribute:(id)arg1 atIndex:(unsigned long long)arg2 effectiveRange:(struct _NSRange *)arg3;
+- (unsigned long long)length;
 - (id)attributesAtIndex:(unsigned long long)arg1 effectiveRange:(struct _NSRange *)arg2;
 - (id)contents;
-- (NSString *)string;
+- (id)string;
 
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;

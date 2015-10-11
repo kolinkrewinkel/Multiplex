@@ -19,7 +19,7 @@
     CDStruct_2b6e6e30 _rowGridLineInset;
 }
 
-@property BOOL alwaysDrawSeparatorLine; // @synthesize alwaysDrawSeparatorLine=_alwaysDrawSeparatorLine;
+@property(nonatomic) BOOL alwaysDrawSeparatorLine; // @synthesize alwaysDrawSeparatorLine=_alwaysDrawSeparatorLine;
 @property(retain) NSColor *rowGridLineColor; // @synthesize rowGridLineColor=_rowGridLineColor;
 @property CDStruct_2b6e6e30 rowGridLineInset; // @synthesize rowGridLineInset=_rowGridLineInset;
 @property(nonatomic) __weak id  mouseInsideDelegate; // @synthesize mouseInsideDelegate=_mouseInsideDelegate;

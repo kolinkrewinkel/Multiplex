@@ -15,18 +15,19 @@
     struct _NSRange _relativeLocation;
     DVTTextFold *_parent;
     NSMutableArray *_children;
-    NSString *_label;
     unsigned long long _foldStyle;
     NSTextAttachmentCell *_attachmentCell;
+    id _representedObject;
 }
 
 + (id)keyPathsForValuesAffectingReplacementRange;
-+ (id)keyPathsForValuesAffectingReplacementString;
++ (id)keyPathsForValuesAffectingDisplayString;
 + (id)foldsFromString:(id)arg1;
 + (id)decodeFold:(id)arg1 forParent:(id)arg2;
 + (Class)_webViewAttachmentCellClass;
 + (Class)_inlineTokenAttachmentCellClass;
 + (void)initialize;
+@property(retain) id representedObject; // @synthesize representedObject=_representedObject;
 @property(readonly) unsigned long long foldStyle; // @synthesize foldStyle=_foldStyle;
 - (struct _NSRange)fixedSelectionRangeForRange:(struct _NSRange)arg1 affinity:(unsigned long long)arg2 inTextView:(id)arg3;
 - (unsigned long long)foldingTypesetter:(id)arg1 shouldUseControlCharacterAction:(unsigned long long)arg2 remainingNominalParagraphRange:(struct _NSRange *)arg3 andParagraphSeparatorRange:(struct _NSRange *)arg4 charactarIndex:(unsigned long long)arg5 layoutManager:(id)arg6 string:(id)arg7;
@@ -35,8 +36,7 @@
 @property(readonly) NSAttributedString *foldedIconString;
 @property(readonly) NSTextAttachmentCell *attachmentCell; // @synthesize attachmentCell=_attachmentCell;
 @property(readonly) struct _NSRange replacementRange;
-@property(readonly) NSString *replacementString;
-@property(copy) NSString *label;
+@property(readonly) NSString *displayString;
 @property(readonly) NSMutableArray *children;
 @property(readonly) unsigned long long numberOfChildren;
 - (id)removeChildren:(id)arg1;
@@ -55,6 +55,7 @@
 - (id)inlineFoldsTouchingRange:(struct _NSRange)arg1;
 - (id)blockFoldsTouchingRange:(struct _NSRange)arg1;
 - (void)enumerateDescendantsWithOptions:(unsigned long long)arg1 usingBlock:(dispatch_block_t)arg2;
+- (BOOL)deleteAsToken;
 - (BOOL)isCharacterFoldedAtIndex:(unsigned long long)arg1;
 - (BOOL)rangeIsInsideAFold:(struct _NSRange)arg1;
 - (void)offsetBy:(long long)arg1;
@@ -65,7 +66,7 @@
 @property(readonly) NSString *stringValue;
 - (id)_pList;
 - (void)primitiveInvalidate;
-- (id)initWithRange:(struct _NSRange)arg1 style:(unsigned long long)arg2;
+- (id)initWithRepresentedObject:(id)arg1 range:(struct _NSRange)arg2 style:(unsigned long long)arg3;
 
 // Remaining properties
 @property(retain) DVTStackBacktrace *creationBacktrace;

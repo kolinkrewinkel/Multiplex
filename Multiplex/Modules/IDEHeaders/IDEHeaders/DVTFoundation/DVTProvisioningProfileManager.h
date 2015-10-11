@@ -17,7 +17,7 @@
 + (id)keyPathsForValuesAffectingAllProfiles;
 + (id)keyPathsForValuesAffectingAreProfilesLoaded;
 + (id)defaultManager;
-- (BOOL)installHostProfiles:(id)arg1 error:(id *)arg2;
+- (void)installHostProfiles:(id)arg1 callback:(dispatch_block_t)arg2;
 - (id)profileWithData:(id)arg1 error:(id *)arg2;
 - (id)profileWithURL:(id)arg1 error:(id *)arg2;
 @property(readonly) id provider; // @synthesize provider=_provider;

@@ -6,11 +6,13 @@
 
 #import "CDStructures.h"
 
-@class DVTFoldingLayoutManager;
+@class DVTFilePath, DVTFoldingLayoutManager, NSArray;
 
 @protocol DVTFoldingLayoutManagerDelegate <NSLayoutManagerDelegate>
+- (NSArray *)foldingTokenTypesForLayoutManager:(DVTFoldingLayoutManager *)arg1;
 
 @optional
+- (DVTFilePath *)directoryForLiteralFoldInLayoutManager:(DVTFoldingLayoutManager *)arg1;
 - (void)layoutManager:(DVTFoldingLayoutManager *)arg1 didUnfoldRange:(struct _NSRange)arg2;
 - (void)layoutManager:(DVTFoldingLayoutManager *)arg1 didFoldRange:(struct _NSRange)arg2;
 @end

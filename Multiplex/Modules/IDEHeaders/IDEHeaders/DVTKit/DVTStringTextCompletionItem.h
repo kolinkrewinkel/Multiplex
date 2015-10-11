@@ -16,6 +16,7 @@
     NSString *_localizedName;
     NSImage *_icon;
     double _priority;
+    double _fuzzyMatchingScore;
     long long _priorityBucket;
     unsigned long long _priorityComparatorKind;
 }
@@ -23,6 +24,7 @@
 @property unsigned long long priorityComparatorKind; // @synthesize priorityComparatorKind=_priorityComparatorKind;
 @property long long priorityBucket; // @synthesize priorityBucket=_priorityBucket;
 @property(retain) NSImage *icon; // @synthesize icon=_icon;
+@property double fuzzyMatchingScore; // @synthesize fuzzyMatchingScore=_fuzzyMatchingScore;
 @property double priority; // @synthesize priority=_priority;
 @property(copy) NSString *localizedName; // @synthesize localizedName=_localizedName;
 @property(copy) NSString *name; // @synthesize name=_name;

@@ -20,6 +20,7 @@
 @property(readonly, nonatomic, getter=isExecutable) BOOL executable; // @synthesize executable=_executable;
 @property(readonly, nonatomic) int executionCount; // @synthesize executionCount=_executionCount;
 - (id)description;
+- (void)updateWithExecutionCount:(int)arg1 executable:(BOOL)arg2 subRanges:(id)arg3;
 - (void)encodeWithCoder:(id)arg1;
 - (id)initWithCoder:(id)arg1;
 - (id)initWithExecutionCount:(int)arg1 executable:(BOOL)arg2 subRanges:(id)arg3;

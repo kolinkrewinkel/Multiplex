@@ -30,6 +30,7 @@
 + (id)dvt_navFrameworkIcon;
 + (id)dvt_navSourcesFolderIcon;
 + (id)dvt_navGroupIcon;
++ (id)dvt_genericiOSDeviceIcon;
 + (id)dvt_iOSApplicationIcon;
 + (id)_dvt_navGroupIconName;
 + (id)dvt_questionMarkIcon;

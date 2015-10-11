@@ -90,6 +90,8 @@
 - (void)showTodayViewForExtensions:(id)arg1 pid:(int)arg2;
 - (id)serviceHubProcessControlChannel;
 - (void)terminateWatchAppForCompanionIdentifier:(id)arg1 options:(id)arg2 completionSemaphore:(id)arg3;
+- (BOOL)_shouldAttemptToRetryWatchAppLaunchAttemptForLaunchError:(id)arg1;
+- (void)_attemptToLaunchWatchAppForCompanionIdentifier:(id)arg1 options:(id)arg2 completionblock:(dispatch_block_t)arg3 attempt:(unsigned long long)arg4;
 - (void)launchWatchAppForCompanionIdentifier:(id)arg1 options:(id)arg2 completionblock:(dispatch_block_t)arg3;
 - (void)willInstallWatchAppForCompanionIdentifier:(id)arg1 completionBlock:(dispatch_block_t)arg2;
 - (id)listenForInstallOfAppExtensionIdentifiers:(id)arg1 timeout:(double)arg2;

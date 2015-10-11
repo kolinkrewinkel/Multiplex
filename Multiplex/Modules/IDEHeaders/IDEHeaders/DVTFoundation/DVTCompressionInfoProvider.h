@@ -9,10 +9,12 @@
 @interface DVTCompressionInfoProvider : NSObject
 {
     dispatch_block_t _debugInfoForIndexQueryBlock;
+    dispatch_block_t _swiftGeneratedFunctionForIndexQueryBlock;
     dispatch_block_t _libraryNameForIndexQueryBlock;
 }
 
 @property(readonly) dispatch_block_t libraryNameForIndexQueryBlock; // @synthesize libraryNameForIndexQueryBlock=_libraryNameForIndexQueryBlock;
+@property(copy) dispatch_block_t swiftGeneratedFunctionForIndexQueryBlock; // @synthesize swiftGeneratedFunctionForIndexQueryBlock=_swiftGeneratedFunctionForIndexQueryBlock;
 @property(readonly) dispatch_block_t debugInfoForIndexQueryBlock; // @synthesize debugInfoForIndexQueryBlock=_debugInfoForIndexQueryBlock;
 - (id)initWithDebugInfoQueryBlock:(dispatch_block_t)arg1 libraryNameQueryBlock:(dispatch_block_t)arg2;
 

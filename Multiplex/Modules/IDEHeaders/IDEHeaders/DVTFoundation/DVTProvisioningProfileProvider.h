@@ -13,7 +13,8 @@
 }
 
 + (id)sharedProvider;
-- (BOOL)installHostProfiles:(id)arg1 error:(id *)arg2;
+- (id)profileWithUUID:(id)arg1;
+- (void)installHostProfiles:(id)arg1 callback:(dispatch_block_t)arg2;
 - (id)profileWithData:(id)arg1 error:(id *)arg2;
 - (id)profileWithURL:(id)arg1 error:(id *)arg2;
 - (BOOL)isProfileExpiringWithCodeSigningIdentity:(id)arg1 profileName:(id *)arg2;

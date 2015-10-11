@@ -7,7 +7,7 @@
 #import "CDStructures.h"
 
 
-@class NSDictionary, NSString, NSURLCredential;
+@class AKAppleIDSession, NSDictionary, NSString, NSURLCredential;
 
 @interface DVTDeveloperAccountCredentials : NSObject <NSCopying>
 {
@@ -27,7 +27,10 @@
 @property(readonly, nonatomic) NSURLCredential *URLCredential; // @synthesize URLCredential=_URLCredential;
 @property(readonly, nonatomic) NSString *username; // @synthesize username=_username;
 - (void)applyAuthenticationHeadersToRequest:(id)arg1;
-@property(readonly) NSDictionary *authenticationHeaders;
+@property(readonly, nonatomic) NSDictionary *authenticationHeaders;
+- (id)_authenticationHeadersForRequest:(id)arg1;
+- (id)_manuallyProvidedAuthenticationHeaders;
+@property(readonly, nonatomic) AKAppleIDSession *appleIDSession;
 - (BOOL)saveToKeychain:(struct OpaqueSecKeychainRef *)arg1 error:(id *)arg2;
 - (BOOL)isEqual:(id)arg1;
 - (unsigned long long)hash;
@@ -35,6 +38,7 @@
 - (id)initWithURLCredential:(id)arg1 username:(id)arg2;
 - (id)initWithURLCredential:(id)arg1;
 @property(readonly, nonatomic) BOOL isTokenBasedAuthentication;
+- (id)accountCredentialsWithPassword:(id)arg1 keychain:(struct OpaqueSecKeychainRef *)arg2 successfullyPersisted:(char *)arg3 error:(id *)arg4;
 
 @end
 

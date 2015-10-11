@@ -38,8 +38,8 @@
 - (void)unfoldRange:(struct _NSRange)arg1;
 - (void)unfoldAtCharacterIndex:(unsigned long long)arg1;
 - (void)unfoldAll;
-- (void)unfoldPlaceholdersInRange:(struct _NSRange)arg1;
-- (void)foldPlaceholderInRange:(struct _NSRange)arg1 withLabel:(id)arg2;
+- (void)unfoldInlineFoldsInRange:(struct _NSRange)arg1;
+- (void)foldInlineText:(id)arg1 inRange:(struct _NSRange)arg2 tokenType:(id)arg3;
 - (void)foldRange:(struct _NSRange)arg1;
 - (void)_applyFoldsRecursively:(id)arg1;
 - (void)primitiveInvalidate;

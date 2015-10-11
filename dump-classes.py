@@ -6,7 +6,7 @@ import sys
 import fileinput
 import re
 
-destination_path = 'Multiplex/FrameworkHeaders/'
+destination_path = 'Multiplex/Modules/IDEHeaders/IDEHeaders/'
 
 def dump_all_frameworks():
 	# 3 different directories contain all of the frameworks a plugin may interface with.

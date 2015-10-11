@@ -5,6 +5,7 @@
 //
 
 #import "CDStructures.h"
+#import "CDStructures-Protocol.h"
 
 @protocol DVTAccessoryViewAnnotationShowAnnotationTrack <NSObject>
 

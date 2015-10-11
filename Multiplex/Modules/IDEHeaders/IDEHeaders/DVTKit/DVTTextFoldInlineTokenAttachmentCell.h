@@ -28,6 +28,7 @@
 - (struct CGRect)titleRectForBounds:(struct CGRect)arg1;
 - (struct CGSize)cellSizeForBounds:(struct CGRect)arg1;
 - (long long)_typesetterBehavior;
+- (void)_updateFontForCurrentTheme;
 - (void)_themeColorsChanged:(id)arg1;
 - (id)copyWithZone:(struct _NSZone *)arg1;
 - (void)dealloc;

@@ -12,8 +12,10 @@
 {
 }
 
++ (id)keyPathsForValuesAffectingDisplayName;
 - (id)rolesForDeveloper:(id)arg1;
 - (void)pruneInstalledProvisioningProfiles;
+@property(readonly, nonatomic) NSString *displayName;
 
 // Remaining properties
 @property(retain, nonatomic) NSSet *appIDs; // @dynamic appIDs;

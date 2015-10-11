@@ -12,33 +12,34 @@
 
 @interface DVTMockProvisioningProfile : NSObject <DVTProvisioningProfile>
 {
-    BOOL _isUniversal;
-    NSString *_platform;
-    NSArray *_signingCertificates;
-    NSDate *_creationDate;
-    NSDate *_expirationDate;
-    NSString *_UUID;
-    NSString *_name;
-    NSDictionary *_entitlements;
-    NSSet *_supportedUDIDs;
-    NSString *_teamID;
-    NSString *_teamName;
-    NSArray *_appIdentifierPrefixes;
-    NSArray *_teamIdentifierPrefixes;
+    BOOL _isUniversalMock;
+    NSArray *_signingCertificatesMock;
+    NSDate *_creationDateMock;
+    NSDate *_expirationDateMock;
+    NSString *_UUIDMock;
+    NSString *_nameMock;
+    NSDictionary *_entitlementsMock;
+    NSSet *_supportedUDIDsMock;
+    NSString *_teamIDMock;
+    NSString *_teamNameMock;
+    NSArray *_appIdentifierPrefixesMock;
+    NSArray *_teamIdentifierPrefixesMock;
+    NSString *_platformMock;
 }
 
-@property(retain) NSArray *teamIdentifierPrefixes; // @synthesize teamIdentifierPrefixes=_teamIdentifierPrefixes;
-@property(retain) NSArray *appIdentifierPrefixes; // @synthesize appIdentifierPrefixes=_appIdentifierPrefixes;
-@property(retain) NSString *teamName; // @synthesize teamName=_teamName;
-@property(retain) NSString *teamID; // @synthesize teamID=_teamID;
-@property(retain) NSSet *supportedUDIDs; // @synthesize supportedUDIDs=_supportedUDIDs;
-@property BOOL isUniversal; // @synthesize isUniversal=_isUniversal;
-@property(retain) NSDictionary *entitlements; // @synthesize entitlements=_entitlements;
-@property(retain) NSString *name; // @synthesize name=_name;
-@property(retain) NSString *UUID; // @synthesize UUID=_UUID;
-@property(retain) NSDate *expirationDate; // @synthesize expirationDate=_expirationDate;
-@property(retain) NSDate *creationDate; // @synthesize creationDate=_creationDate;
-@property(retain) NSArray *signingCertificates; // @synthesize signingCertificates=_signingCertificates;
+@property(retain) NSString *platformMock; // @synthesize platformMock=_platformMock;
+@property(retain) NSArray *teamIdentifierPrefixesMock; // @synthesize teamIdentifierPrefixesMock=_teamIdentifierPrefixesMock;
+@property(retain) NSArray *appIdentifierPrefixesMock; // @synthesize appIdentifierPrefixesMock=_appIdentifierPrefixesMock;
+@property(retain) NSString *teamNameMock; // @synthesize teamNameMock=_teamNameMock;
+@property(retain) NSString *teamIDMock; // @synthesize teamIDMock=_teamIDMock;
+@property(retain) NSSet *supportedUDIDsMock; // @synthesize supportedUDIDsMock=_supportedUDIDsMock;
+@property BOOL isUniversalMock; // @synthesize isUniversalMock=_isUniversalMock;
+@property(retain) NSDictionary *entitlementsMock; // @synthesize entitlementsMock=_entitlementsMock;
+@property(retain) NSString *nameMock; // @synthesize nameMock=_nameMock;
+@property(retain) NSString *UUIDMock; // @synthesize UUIDMock=_UUIDMock;
+@property(retain) NSDate *expirationDateMock; // @synthesize expirationDateMock=_expirationDateMock;
+@property(retain) NSDate *creationDateMock; // @synthesize creationDateMock=_creationDateMock;
+@property(retain) NSArray *signingCertificatesMock; // @synthesize signingCertificatesMock=_signingCertificatesMock;
 - (id)longDescription;
 - (BOOL)matchesBundleIdentifier:(id)arg1;
 @property(readonly) BOOL isPushEnabled;
@@ -81,13 +82,29 @@
 - (BOOL)containsCertificate:(struct OpaqueSecCertificateRef *)arg1;
 @property(readonly) NSString *preferredFilenameExtension;
 @property(readonly) int version;
-@property(retain) NSString *platform; // @synthesize platform=_platform;
+@property(readonly) NSString *platform;
+@property(readonly) NSArray *teamIdentifierPrefixes;
+@property(readonly) NSArray *appIdentifierPrefixes;
+@property(readonly) NSString *teamName;
+@property(readonly) NSString *teamID;
+@property(readonly) NSSet *supportedUDIDs;
+@property(readonly) BOOL isUniversal;
+@property(readonly) NSDictionary *entitlements;
+@property(readonly) NSString *name;
+@property(readonly) NSString *UUID;
+@property(readonly) NSDate *expirationDate;
+@property(readonly) NSDate *creationDate;
+@property(readonly) NSArray *signingCertificates;
 @property(readonly) NSArray *identitySigningCertificates;
 - (BOOL)canBeInstalledOnDevice:(id)arg1;
 - (BOOL)canBeInstalledOnDeviceWithIdentifier:(id)arg1;
 - (BOOL)containsSigningCertificate:(id)arg1;
 - (void)validate;
 @property(readonly, copy) NSString *description;
+- (id)initWithDictionary:(id)arg1 certTable:(id)arg2;
+- (id)initWithDictionary:(id)arg1;
+- (id)initWithPlist:(id)arg1;
+- (id)init;
 
 // Remaining properties
 @property(readonly, copy) NSString *debugDescription;

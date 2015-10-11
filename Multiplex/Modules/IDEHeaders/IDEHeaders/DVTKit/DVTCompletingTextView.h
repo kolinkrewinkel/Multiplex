@@ -59,6 +59,7 @@
 - (void)_drawRect:(struct CGRect)arg1 clip:(BOOL)arg2;
 - (void)_drawOverlayRect:(struct CGRect)arg1;
 - (void)drawInsertionPointInRect:(struct CGRect)arg1 color:(id)arg2 turnedOn:(BOOL)arg3;
+- (id)selectedTextAttributes;
 - (void)moveDown:(id)arg1;
 - (void)setSelectedRange:(struct _NSRange)arg1;
 - (void)setSelectedRanges:(id)arg1 affinity:(unsigned long long)arg2 stillSelecting:(BOOL)arg3;
@@ -91,6 +92,7 @@
 - (void)doCommandBySelector:(SEL)arg1;
 - (void)layoutManager:(id)arg1 didUnfoldRange:(struct _NSRange)arg2;
 - (void)layoutManager:(id)arg1 didFoldRange:(struct _NSRange)arg2;
+- (id)foldingTokenTypesForLayoutManager:(id)arg1;
 - (void)_foldingLayoutManagerFoldsChanged:(id)arg1;
 - (id)layoutManager:(id)arg1 shouldUseTextBackgroundColor:(id)arg2 rectArray:(const struct CGRect *)arg3 count:(unsigned long long)arg4 forCharacterRange:(struct _NSRange)arg5;
 - (id)layoutManager:(id)arg1 shouldUseTemporaryAttributes:(id)arg2 forDrawingToScreen:(BOOL)arg3 atCharacterIndex:(unsigned long long)arg4 effectiveRange:(struct _NSRange *)arg5;

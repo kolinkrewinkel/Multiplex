@@ -12,6 +12,7 @@
 @interface DVTCodesignResolutionInputs : NSObject <NSCopying>
 {
     BOOL _requiresProvisioningProfile;
+    BOOL _usingTeamBasedSigning;
     DVTAppIDFeatures *_requiredFeatures;
     NSArray *_requiredCodesignableDevices;
     NSDictionary *_requiredEntitlements;
@@ -19,10 +20,13 @@
     NSString *_provisioningProfilePlatform;
     unsigned long long _provisioningProfileType;
     NSString *_bundleIdentifier;
+    NSString *_targetName;
     NSString *_portalTeamID;
 }
 
 @property(retain) NSString *portalTeamID; // @synthesize portalTeamID=_portalTeamID;
+@property BOOL usingTeamBasedSigning; // @synthesize usingTeamBasedSigning=_usingTeamBasedSigning;
+@property(retain) NSString *targetName; // @synthesize targetName=_targetName;
 @property(retain) NSString *bundleIdentifier; // @synthesize bundleIdentifier=_bundleIdentifier;
 @property unsigned long long provisioningProfileType; // @synthesize provisioningProfileType=_provisioningProfileType;
 @property BOOL requiresProvisioningProfile; // @synthesize requiresProvisioningProfile=_requiresProvisioningProfile;

@@ -16,6 +16,7 @@
     DVTDeveloperAccountSession *_session;
     DVTDeveloperAccountCredentials *_accountCredentials;
     NSString *_userDescription;
+    NSString *_credentialsErrorDescription;
 }
 
 + (id)keyPathsForValuesAffectingUserDescriptionOrBestGuess;
@@ -26,8 +27,11 @@
 + (id)accountWithCredentials:(id)arg1;
 @property BOOL enabled; // @synthesize enabled=_enabled;
 @property BOOL alwaysLogInUsingQA; // @synthesize alwaysLogInUsingQA=_alwaysLogInUsingQA;
+@property(retain) NSString *credentialsErrorDescription; // @synthesize credentialsErrorDescription=_credentialsErrorDescription;
 @property(copy, nonatomic) NSString *userDescription; // @synthesize userDescription=_userDescription;
 @property(copy) DVTDeveloperAccountCredentials *accountCredentials; // @synthesize accountCredentials=_accountCredentials;
+- (void)checkForValidCredentials:(dispatch_block_t)arg1;
+- (void)validateCredentials;
 @property(readonly) NSDictionary *propertyListRepresentation;
 @property(readonly) NSString *userDescriptionOrBestGuess;
 @property(readonly) BOOL hasPassword;

@@ -7,7 +7,7 @@
 #import "CDStructures.h"
 #import "DVTCompletingTextViewDelegate-Protocol.h"
 
-@class DVTAnnotationContext, DVTMutableRangeArray, DVTSourceTextView, NSArray, NSDictionary, NSEvent, NSMenu, NSNotification, NSString;
+@class DVTAnnotationContext, DVTFilePath, DVTMutableRangeArray, DVTSourceTextView, NSArray, NSDictionary, NSEvent, NSMenu, NSNotification, NSString;
 
 @protocol DVTSourceTextViewDelegate <DVTCompletingTextViewDelegate>
 
@@ -15,6 +15,8 @@
 - (double)textView:(DVTSourceTextView *)arg1 constrainAccessoryAnnotationWidth:(double)arg2;
 - (double)textView:(DVTSourceTextView *)arg1 constrainMaxAccessoryAnnotationWidth:(double)arg2;
 - (double)textView:(DVTSourceTextView *)arg1 constrainMinAccessoryAnnotationWidth:(double)arg2;
+- (DVTFilePath *)directoryForLiteralsInTextView:(DVTSourceTextView *)arg1;
+- (NSArray *)textView:(DVTSourceTextView *)arg1 objectLiteralStringsForObjects:(NSArray *)arg2;
 - (NSString *)textViewWillReturnPrintJobTitle:(DVTSourceTextView *)arg1;
 - (void)textViewDidScroll:(DVTSourceTextView *)arg1;
 - (void)setupGutterContextMenuWithMenu:(NSMenu *)arg1;

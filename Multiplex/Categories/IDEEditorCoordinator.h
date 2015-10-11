@@ -6,11 +6,7 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-@interface IDEEditorCoordinator : NSObject
-
-@end
+#import <IDEKit/IDEEditorCoordinator.h>
 
 @interface IDEEditorCoordinator (MPXJumpSwizzle)
 

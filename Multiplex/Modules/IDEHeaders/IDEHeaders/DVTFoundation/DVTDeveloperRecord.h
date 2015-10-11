@@ -13,7 +13,6 @@
 }
 
 - (_Bool)hasRoleOnTeam:(id)arg1 forPlatform:(id)arg2;
-- (_Bool)hasAppIdManagementAccessForTeam:(id)arg1;
 - (_Bool)isAdminOrAgentOfTeam:(id)arg1;
 - (_Bool)isMemberOfTeam:(id)arg1;
 @property(readonly, nonatomic) _Bool isAgent;

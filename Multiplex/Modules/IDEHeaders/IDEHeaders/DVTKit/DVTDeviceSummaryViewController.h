@@ -10,11 +10,13 @@
 #import "DVTDevicesWindowDetailViewController-Protocol.h"
 #import "DVTTableViewDelegate-Protocol.h"
 
-@class DVTBorderedView, DVTDevice, DVTDeviceSummaryAppsViewController, DVTStackBacktrace, DVTStackView_AppKitAutolayout, DVTTableView, NSArray, NSBox, NSButton, NSImageView, NSScrollView, NSString, NSTextField, NSView;
+@class DVTBorderedView, DVTDevice, DVTDeviceSummaryAppsViewController, DVTObservingToken, DVTStackBacktrace, DVTStackView_AppKitAutolayout, DVTTableView, NSArray, NSBox, NSButton, NSImageView, NSMutableArray, NSScrollView, NSString, NSTextField, NSView;
 
 @interface DVTDeviceSummaryViewController : DVTViewController <DVTDevicesWindowDetailViewController, NSTableViewDataSource, DVTTableViewDelegate>
 {
     NSArray *_additionalSliceControllers;
+    NSMutableArray *_deviceObservationTokens;
+    DVTObservingToken *_proxiedDeviceSummaryObservingToken;
     DVTDevice *_device;
     NSArray *_additionalSliceViewControllerClasses;
     Class _deviceLogsViewControllerClass;

@@ -73,6 +73,7 @@
 @property(readonly) BOOL profileCreationRequiresProvisioningProfilePlatform; // @synthesize profileCreationRequiresProvisioningProfilePlatform=_profileCreationRequiresProvisioningProfilePlatform;
 @property(readonly) NSString *provisioningProfilePlatform; // @synthesize provisioningProfilePlatform=_provisioningProfilePlatform;
 @property(readonly) NSString *platformIdentifier; // @synthesize platformIdentifier=_platformIdentifier;
+@property(readonly) DVTPlatform *primaryPlatform;
 @property(readonly) BOOL isSimulatorPlatform;
 @property(readonly) DVTPlatform *correspondingSimulatorPlatform;
 @property(readonly) DVTPlatform *correspondingDevicePlatform;

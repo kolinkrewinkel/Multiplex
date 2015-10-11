@@ -22,6 +22,7 @@
 - (unsigned long long)characterIndexForPoint:(struct CGPoint)arg1 inTextContainer:(id)arg2 fractionOfDistanceBetweenInsertionPoints:(double *)arg3;
 - (struct CGSize)attachmentSizeForGlyphAtIndex:(unsigned long long)arg1;
 - (void)drawGlyphsForGlyphRange:(struct _NSRange)arg1 atPoint:(struct CGPoint)arg2;
+- (id)directoryForLiteralFoldInManager:(id)arg1;
 - (void)foldingManager:(id)arg1 didUnfoldRange:(struct _NSRange)arg2;
 - (void)foldingManager:(id)arg1 didFoldRange:(struct _NSRange)arg2;
 - (struct CGRect)boundingRectForGlyphRange:(struct _NSRange)arg1 inTextContainer:(id)arg2;

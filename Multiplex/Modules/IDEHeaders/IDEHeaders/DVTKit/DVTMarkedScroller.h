@@ -6,7 +6,7 @@
 
 #import "CDStructures.h"
 
-@class _DVTMarkerList;
+@class CALayer, DVTObservingToken, _DVTMarkerList;
 
 @interface DVTMarkedScroller : NSScroller
 {
@@ -16,6 +16,8 @@
     _DVTMarkerList *_breakpointMarks;
     _DVTMarkerList *_diffMarks;
     _DVTMarkerList *_diffConflictMarks;
+    CALayer *_marksLayer;
+    DVTObservingToken *_expansionTransitionProgressObservingToken;
 }
 
 + (BOOL)isCompatibleWithOverlayScrollers;
@@ -30,8 +32,17 @@
 - (void)clearNormalMarks;
 - (void)drawKnobSlotInRect:(struct CGRect)arg1 highlight:(BOOL)arg2;
 - (void)drawKnob;
-- (void)_fillRects:(id)arg1 usingGradient:(id)arg2;
+- (void)_drawMarks;
+- (void)_fillMarkRects:(id)arg1 usingGradient:(id)arg2;
 - (BOOL)_drawsMarks;
+- (void)drawLayer:(id)arg1 inContext:(struct CGContext *)arg2;
+- (void)setNeedsDisplayInRect:(struct CGRect)arg1;
+- (void)setNeedsDisplay:(BOOL)arg1;
+- (void)setScrollerStyle:(long long)arg1;
+- (void)setControlSize:(unsigned long long)arg1;
+- (void)setLayer:(id)arg1;
+- (void)_invalidateMarksLayer;
+- (void)dealloc;
 
 @end
 

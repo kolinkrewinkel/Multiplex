@@ -10,6 +10,7 @@
 
 @protocol DVTTextCompletionItem <NSObject>
 @property(readonly) BOOL notRecommended;
+@property double fuzzyMatchingScore;
 @property double priority;
 @property(readonly) unsigned long long priorityComparatorKind;
 @property(readonly) long long priorityBucket;
