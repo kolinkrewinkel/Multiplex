@@ -110,7 +110,7 @@
 {
     for (RACTuple *tuple in self.caretViews) {
         RACTupleUnpack(MPXSelection *selection, NSView *caretView) = tuple;
-        caretView.hidden = !visible;
+        caretView.alphaValue = !visible;
     }
 
     self.blinkState = visible;
