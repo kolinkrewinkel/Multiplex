@@ -44,6 +44,10 @@
     [self jr_swizzleMethod:@selector(validateMenuItem:)
                 withMethod:@selector(mpx_validateMenuItem:)
                      error:nil];
+    
+    [self jr_swizzleMethod:@selector(_updateTemporaryLinkUnderMouseForEvent:)
+                withMethod:@selector(mpx_updateTemporaryLinkUnderMouseForEvent:)
+                     error:nil];
 }
 
 @end

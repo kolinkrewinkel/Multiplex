@@ -13,6 +13,7 @@
 #import <DVTKit/DVTFoldingManager.h>
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTTextStorage.h>
+#import <DVTKit/DVTSourceTextViewDelegate-Protocol.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
@@ -20,7 +21,6 @@
 #import "DVTSourceTextView+MPXEditorMouseEvents.h"
 
 @implementation DVTSourceTextView (MPXEditorMouseEvents)
-@synthesizeAssociation(DVTSourceTextView, mpx_definitionLongPressTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
 
@@ -28,8 +28,6 @@
 
 - (void)mpx_mouseDragged:(NSEvent *)theEvent
 {
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(mpx_performOriginalJump:) object:nil];
-
     [self.mpx_textViewSelectionDecorator stopBlinking];
 
     NSRange rangeInProgress = self.mpx_rangeInProgress.range;
@@ -60,22 +58,13 @@
     [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];
 }
 
-- (void)mpx_performOriginalJump:(NSTimer *)sender
-{
-    NSEvent *mouseDownEvent = sender.userInfo;
-    if (!CGPointEqualToPoint(self.window.mouseLocationOutsideOfEventStream, [mouseDownEvent locationInWindow])) {
-        return;
-    }
-
-    [self.mpx_selectionManager setTemporarySelections:nil];
-    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
-    self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
-
-    [self _didClickOnTemporaryLinkWithEvent:mouseDownEvent];
-}
-
 - (void)mpx_mouseDown:(NSEvent *)theEvent
 {
+    BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
+    if (altKeyHeld) {        
+        return;
+    }
+    
     NSUInteger index = ({
         CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
                                           fromView:nil];
@@ -125,14 +114,6 @@
     if (commandKeyHeld) {
         NSArray *selections = self.mpx_selectionManager.visualSelections;
         [self.mpx_selectionManager setTemporarySelections:[selections arrayByAddingObject:selection]];
-
-        self.mpx_definitionLongPressTimer = [NSTimer timerWithTimeInterval:0.333
-                                                                    target:self
-                                                                  selector:@selector(mpx_performOriginalJump:)
-                                                                  userInfo:theEvent
-                                                                   repeats:NO];
-
-        [[NSRunLoop mainRunLoop] addTimer:self.mpx_definitionLongPressTimer forMode:NSDefaultRunLoopMode];
     } else {
         self.mpx_shouldCloseGroupOnNextChange = [self.mpx_selectionManager.finalizedSelections count] > 0;
 
@@ -148,13 +129,57 @@
 
 - (void)mpx_mouseUp:(NSEvent *)theEvent
 {
-    [self.mpx_definitionLongPressTimer invalidate];
-
+    NSUInteger index = ({
+        CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow]
+                                          fromView:nil];
+        [self characterIndexForInsertionAtPoint:clickLocation];
+    });
+    
+    BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
+    if (altKeyHeld) {        
+        NSEvent *event = [NSEvent mouseEventWithType:theEvent.type
+                                            location:theEvent.locationInWindow
+                                       modifierFlags:NSCommandKeyMask
+                                           timestamp:theEvent.timestamp
+                                        windowNumber:theEvent.windowNumber
+                                             context:theEvent.context
+                                         eventNumber:theEvent.eventNumber
+                                          clickCount:1
+                                            pressure:theEvent.pressure];
+        
+        
+        [((id<DVTSourceTextViewDelegate>)self.delegate) textView:self
+                         didClickOnTemporaryLinkAtCharacterIndex:index
+                                                           event:event
+                                                      isAltEvent:NO];
+        
+        return;
+    }
+  
     self.mpx_selectionManager.finalizedSelections = self.mpx_selectionManager.visualSelections;
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     
     [self.mpx_textViewSelectionDecorator startBlinking];
+}
+
+- (void)mpx_updateTemporaryLinkUnderMouseForEvent:(NSEvent *)event
+{
+    BOOL altKeyHeld = (event.modifierFlags & NSAlternateKeyMask) != 0;
+    BOOL commandKeyHeld = (event.modifierFlags & NSCommandKeyMask) != 0;
+    if (!commandKeyHeld) {        
+        NSEvent *substituteEvent = event;
+        
+        if (altKeyHeld) {
+            if (event.type == NSMouseMoved) {
+                substituteEvent = [NSEvent mouseEventWithType:event.type location:event.locationInWindow modifierFlags:NSCommandKeyMask timestamp:event.timestamp windowNumber:event.windowNumber context:event.context eventNumber:event.eventNumber clickCount:event.clickCount pressure:event.pressure];
+            } else if (event.type == NSFlagsChanged) {
+                substituteEvent = [NSEvent keyEventWithType:event.type location:event.locationInWindow modifierFlags:NSCommandKeyMask timestamp:event.timestamp windowNumber:event.windowNumber context:event.context characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:event.keyCode];
+            }
+        }
+
+        [self mpx_updateTemporaryLinkUnderMouseForEvent:substituteEvent];
+    }
 }
 
 @end

@@ -12,9 +12,10 @@
 
 - (void)mpx_mouseDown:(id)sender;
 - (void)mpx_mouseUp:(id)sender;
+//- (void)mpx_mouseMoved:(NSEvent *)event;
 - (void)mpx_mouseDragged:(id)sender;
+- (void)mpx_updateTemporaryLinkUnderMouseForEvent:(NSEvent *)event;
 
-@property (nonatomic) NSTimer *mpx_definitionLongPressTimer;
 @property (nonatomic) MPXSelection *mpx_rangeInProgress;
 @property (nonatomic) MPXSelection *mpx_rangeInProgressStart;
 

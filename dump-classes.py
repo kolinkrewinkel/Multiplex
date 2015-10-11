@@ -12,12 +12,15 @@ def dump_all_frameworks():
 	# 3 different directories contain all of the frameworks a plugin may interface with.
 	# They're located at {APP_DIR}/Contents/
 	shared_frameworks = ['DVTFoundation', 'DVTKit']
-	frameworks = ['IDEFoundation']
+	frameworks = ['IDEFoundation', 'IDEKit']
 	other_frameworks = ['']
 
-	for framework in shared_frameworks:		
+	for framework in shared_frameworks:
 		dump_framework(frameworkPath('SharedFrameworks', framework), frameworkDumpDestination(framework))
 
+	for framework in frameworks:
+		dump_framework(frameworkPath('Frameworks', framework), frameworkDumpDestination(framework))
+	
 	cleanup_dumped_files()
 
 def frameworkPath(frameworkDir, frameworkName):
