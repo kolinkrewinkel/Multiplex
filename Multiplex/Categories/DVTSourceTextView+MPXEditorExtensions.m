@@ -273,7 +273,7 @@ static NSString *kMPXNewlineString = @"\n";
                     NSRange rangeToSearchThrough = NSMakeRange(locationToSearchForwardFrom, self.string.length - locationToSearchForwardFrom);
                     NSRange nextNewline = [self.string rangeOfString:kMPXNewlineString options:0 range:rangeToSearchThrough];
                     if (nextNewline.length > 0) {
-                        NSRange lineComponentRange = NSMakeRange(locationToSearchForwardFrom - [kMPXNewlineString length], NSMaxRange(nextNewline) - (locationToSearchForwardFrom + [kMPXNewlineString length]));
+                        NSRange lineComponentRange = NSMakeRange(locationToSearchForwardFrom, NSMaxRange(nextNewline) - locationToSearchForwardFrom);
                         NSString *lineComponentToAppend = [self.string substringWithRange:lineComponentRange];
                         lineToIndent = [line stringByAppendingString:lineComponentToAppend];                        
                     }
