@@ -22,7 +22,6 @@
 
 @implementation DVTSourceTextView (MPXEditorMouseEvents)
 @synthesizeAssociation(DVTSourceTextView, mpx_altPopoverTimer);
-@synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgressStart);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
 
 #pragma mark - Mouse Events
@@ -32,9 +31,8 @@
     [self.mpx_textViewSelectionDecorator stopBlinking];
 
     NSRange rangeInProgress = self.mpx_rangeInProgress.range;
-    NSRange rangeInProgressOrigin = self.mpx_rangeInProgressStart.range;
 
-    if (rangeInProgress.location == NSNotFound || rangeInProgressOrigin.location == NSNotFound) {
+    if (rangeInProgress.location == NSNotFound) {
         return;
     }
 
@@ -42,19 +40,22 @@
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
     NSRange newRange;
 
-    if (index > rangeInProgressOrigin.location) {
-        newRange = NSMakeRange(rangeInProgressOrigin.location, index - rangeInProgressOrigin.location);
+    NSUInteger origin = self.mpx_rangeInProgress.origin;
+    if (index > origin) {
+        newRange = NSMakeRange(origin, index - origin);
     } else {
-        newRange = NSMakeRange(index, (rangeInProgressOrigin.location + rangeInProgressOrigin.length) - index);
+        newRange = NSMakeRange(index, origin - index);
     }
 
     // Update the model value for when it is used combinatorily.
-    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:newRange];
-
+    self.mpx_rangeInProgress = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                      indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                     origin:origin];
+                                
     NSArray *finalizedSelections = self.mpx_selectionManager.finalizedSelections;
     MPXSelection *draggingSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
                                                              indexWantedWithinLine:MPXNoStoredLineIndex
-                                                                            origin:self.mpx_rangeInProgressStart.range.location];
+                                                                            origin:origin];
 
     [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];
     
@@ -131,9 +132,10 @@
     [self.mpx_textViewSelectionDecorator stopBlinking];
     [self.mpx_textViewSelectionDecorator setCursorsVisible:YES];
 
-    MPXSelection *selection = [MPXSelection selectionWithRange:resultRange];
+    MPXSelection *selection = [[MPXSelection alloc] initWithSelectionRange:resultRange
+                                                     indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                    origin:resultRange.location];
     self.mpx_rangeInProgress = selection;
-    self.mpx_rangeInProgressStart = selection;
 
     BOOL commandKeyHeld = (theEvent.modifierFlags & NSCommandKeyMask) != 0;
     if (commandKeyHeld) {
@@ -189,7 +191,6 @@
   
     self.mpx_selectionManager.finalizedSelections = self.mpx_selectionManager.visualSelections;
     self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
-    self.mpx_rangeInProgressStart = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
     
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
