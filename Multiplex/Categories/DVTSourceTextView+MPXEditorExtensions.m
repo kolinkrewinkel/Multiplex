@@ -267,7 +267,19 @@ static NSString *kMPXNewlineString = @"\n";
         if ([modifiedInsertString rangeOfString:kMPXNewlineString].length > 0) {                        
             __block NSUInteger index = rangeOfInsertedText.location;    
             [modifiedInsertString enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
-                NSRange lineRange = NSMakeRange(index + [kMPXNewlineString length], [line length] + [kMPXNewlineString length]);
+                NSString *lineToIndent = line;
+                if (line.length == 0) {
+                    NSUInteger locationToSearchForwardFrom = index + [kMPXNewlineString length];
+                    NSRange rangeToSearchThrough = NSMakeRange(locationToSearchForwardFrom, self.string.length - locationToSearchForwardFrom);
+                    NSRange nextNewline = [self.string rangeOfString:kMPXNewlineString options:0 range:rangeToSearchThrough];
+                    if (nextNewline.length > 0) {
+                        NSRange lineComponentRange = NSMakeRange(locationToSearchForwardFrom - [kMPXNewlineString length], NSMaxRange(nextNewline) - (locationToSearchForwardFrom + [kMPXNewlineString length]));
+                        NSString *lineComponentToAppend = [self.string substringWithRange:lineComponentRange];
+                        lineToIndent = [line stringByAppendingString:lineComponentToAppend];                        
+                    }
+                }
+                
+                NSRange lineRange = NSMakeRange(index + [kMPXNewlineString length], [lineToIndent length] + [kMPXNewlineString length]);                                
                 NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
                 
                 if (NSMaxRange(rangeOfInsertedText) >= lineRange.location) {
@@ -275,7 +287,7 @@ static NSString *kMPXNewlineString = @"\n";
                 }
                 
                 index = NSMaxRange(indentedRange);
-            }];           
+            }];        
         }
         
         NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];       
