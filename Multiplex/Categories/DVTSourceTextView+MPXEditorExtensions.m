@@ -368,7 +368,29 @@ static NSString *kMPXNewlineString = @"\n";
     self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
 }
 
+- (BOOL)handleInsertBackTab
+{
+    return [self mpx_handleTabInDirection:NSSelectionAffinityUpstream];
+}
+
 - (BOOL)handleInsertTab
+{
+    if ([self mpx_handleTabInDirection:NSSelectionAffinityDownstream]) {
+        return YES;
+    }
+    
+    BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
+    self.mpx_trimTrailingWhitespace = NO;
+    
+    NSString *tabString = [self mpx_tabString];
+    [self insertText:tabString];
+    
+    self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
+    
+    return YES;
+}
+
+- (BOOL)mpx_handleTabInDirection:(NSSelectionAffinity)direction
 {
     if ([self.mpx_selectionManager.finalizedSelections count] == 1) {
         MPXSelection *selection = [self.mpx_selectionManager.finalizedSelections firstObject];
@@ -376,9 +398,11 @@ static NSString *kMPXNewlineString = @"\n";
         // Use the actual line to allow skipping to a placeholder that's only soft word-wrapped.
         NSRange lineRange = [self.string lineRangeForRange:selection.range];
         
+        BOOL forward = direction == NSSelectionAffinityDownstream; 
+        
         // Get the next placeholder within the line.
         NSRange placeholderOnSameLine = [self rangeOfPlaceholderFromCharacterIndex:selection.range.location
-                                                                           forward:YES
+                                                                           forward:forward
                                                                               wrap:NO
                                                                              limit:NSMaxRange(lineRange)];
         
@@ -394,15 +418,7 @@ static NSString *kMPXNewlineString = @"\n";
         }
     }
     
-    BOOL shouldTrimTrailingWhitespace = [self mpx_shouldTrimTrailingWhitespace];
-    self.mpx_trimTrailingWhitespace = NO;
-    
-    NSString *tabString = [self mpx_tabString];
-    [self insertText:tabString];
-    
-    self.mpx_trimTrailingWhitespace = shouldTrimTrailingWhitespace;
-    
-    return YES;
+    return NO;
 }
 
 - (NSString *)mpx_tabString
