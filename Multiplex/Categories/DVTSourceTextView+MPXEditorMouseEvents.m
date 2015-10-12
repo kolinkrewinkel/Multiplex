@@ -32,10 +32,12 @@
 
     NSRange rangeInProgress = self.mpx_rangeInProgress.range;
 
-    if (rangeInProgress.location == NSNotFound) {
+    if (!self.mpx_rangeInProgress) {
         return;
     }
-
+    
+    [self.mpx_textViewSelectionDecorator stopBlinking];
+    
     CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
     NSRange newRange;
@@ -190,7 +192,7 @@
     }
   
     self.mpx_selectionManager.finalizedSelections = self.mpx_selectionManager.visualSelections;
-    self.mpx_rangeInProgress = [MPXSelection selectionWithRange:NSMakeRange(NSNotFound, 0)];
+    self.mpx_rangeInProgress = nil;
     
     [self.mpx_textViewSelectionDecorator startBlinking];
 }
