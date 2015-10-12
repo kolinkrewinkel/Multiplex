@@ -233,7 +233,6 @@ static NSString *kMPXNewlineString = @"\n";
         // Gets subtracted from NSMaxRange() of modifiedInsertString.
         NSString *modifiedInsertString = insertString;        
         NSUInteger offsetForCursor = 0;
-        BOOL indentNextLine = NO;              
                 
         NSString *nextChar = nil;
         if ([self.textStorage.string length] - 1 > selection.insertionIndex + 1) {
@@ -246,7 +245,6 @@ static NSString *kMPXNewlineString = @"\n";
                 if ([currChar isEqualToString:@"{"] && [insertString isEqualToString:kMPXNewlineString]) {
                     modifiedInsertString = @"\n\n";
                     offsetForCursor = 1;
-                    indentNextLine = YES;
                 }
             }
         }
