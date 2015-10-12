@@ -28,10 +28,6 @@
 
 - (void)mpx_mouseDragged:(NSEvent *)theEvent
 {
-    [self.mpx_textViewSelectionDecorator stopBlinking];
-
-    NSRange rangeInProgress = self.mpx_rangeInProgress.range;
-
     if (!self.mpx_rangeInProgress) {
         return;
     }
