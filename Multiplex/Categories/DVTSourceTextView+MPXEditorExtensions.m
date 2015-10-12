@@ -322,6 +322,8 @@ static NSString *kMPXNewlineString = @"\n";
                                               modifyingSelections:NO
                                                        usingBlock:transformBlock];
     
+    [self centerSelectionInVisibleArea:self];
+    
     [self.completionController textViewDidInsertText];
     [self.completionController _textViewTextDidChange:self];
 }
@@ -505,6 +507,22 @@ static NSString *kMPXNewlineString = @"\n";
     }
     
     return nil;
+}
+
+- (void)centerSelectionInVisibleArea:(id)sender
+{
+    NSUInteger rectCount = 0;
+    NSRectArray rectsToCenter = [self.layoutManager rectArrayForCharacterRange:self.selectedRange
+                                                  withinSelectedCharacterRange:self.selectedRange
+                                                               inTextContainer:(NSTextContainer *)self.textContainer
+                                                                     rectCount:&rectCount];
+    
+    if (rectCount == 0) {
+        return;
+    }
+    
+    CGRect firstRect = rectsToCenter[0];
+    [self.enclosingScrollView scrollRectToVisible:firstRect];
 }
 
 @end
