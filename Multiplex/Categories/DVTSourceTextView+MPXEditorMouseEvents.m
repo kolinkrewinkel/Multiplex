@@ -57,6 +57,9 @@
                                                                             origin:self.mpx_rangeInProgressStart.range.location];
 
     [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];
+    
+    // Make sure the selection being dragged stays visible
+    [self autoscroll:theEvent];
 }
 
 - (void)mpx_showAltPopover:(NSTimer *)sender
