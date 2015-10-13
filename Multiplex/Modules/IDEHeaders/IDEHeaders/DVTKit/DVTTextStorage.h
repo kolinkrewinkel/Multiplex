@@ -214,7 +214,6 @@
 - (id)attributesAtIndex:(unsigned long long)arg1 longestEffectiveRange:(struct _NSRange *)arg2 inRange:(struct _NSRange)arg3;
 - (id)attributedSubstringFromRange:(struct _NSRange)arg1;
 - (id)attribute:(id)arg1 atIndex:(unsigned long long)arg2 effectiveRange:(struct _NSRange *)arg3;
-- (unsigned long long)length;
 - (id)attributesAtIndex:(unsigned long long)arg1 effectiveRange:(struct _NSRange *)arg2;
 - (id)contents;
 - (id)string;
