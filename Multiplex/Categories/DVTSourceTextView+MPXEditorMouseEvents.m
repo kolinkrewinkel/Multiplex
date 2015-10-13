@@ -114,17 +114,13 @@
     } else {
         newRange = NSMakeRange(index, origin - index);
     }
-
-    // Update the model value for when it is used combinatorily.
-    self.mpx_rangeInProgress = [[MPXSelection alloc] initWithSelectionRange:newRange
-                                                      indexWantedWithinLine:MPXNoStoredLineIndex
-                                                                     origin:origin];
-                                
-    NSArray *finalizedSelections = self.mpx_selectionManager.finalizedSelections;
+    
     MPXSelection *draggingSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
                                                              indexWantedWithinLine:MPXNoStoredLineIndex
                                                                             origin:origin];
-
+    self.mpx_rangeInProgress = draggingSelection;
+                                    
+    NSArray *finalizedSelections = self.mpx_selectionManager.finalizedSelections;
     [self.mpx_selectionManager setTemporarySelections:[finalizedSelections arrayByAddingObject:draggingSelection]];
     
     // Make sure the selection being dragged stays visible
