@@ -635,7 +635,6 @@
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks",
 					"$(DEVELOPER_DIR)/../SharedFrameworks",
-					"$(DEVELOPER_DIR)/../SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "${PROJECT_NAME}/${TARGET_NAME}-Prefix.pch";
@@ -668,7 +667,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_DIR)/../Frameworks",
-					"$(DEVELOPER_DIR)/../SharedFrameworks",
 					"$(DEVELOPER_DIR)/../SharedFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

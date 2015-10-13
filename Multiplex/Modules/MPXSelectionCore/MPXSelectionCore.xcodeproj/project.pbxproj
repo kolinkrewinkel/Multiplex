@@ -10,6 +10,7 @@
 		335011B31BB5E5D9004D0A5D /* MPXSelectionMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = 335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		335011B41BB5E5D9004D0A5D /* MPXSelectionMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */; settings = {ASSET_TAGS = (); }; };
 		336CDE581B8BDE680046D6AB /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */; };
+		33D4EBD21BCD74B8000FDA35 /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D4EBD11BCD74B8000FDA35 /* DVTFoundation.framework */; };
 		33D9FF331B8BC72600A9CD4D /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */; };
 		33D9FF381B8BC72600A9CD4D /* MPXSelectionManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D9FF371B8BC72600A9CD4D /* MPXSelectionManagerTests.m */; };
 		33D9FF5F1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D9FF591B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -60,6 +61,7 @@
 		336CDE551B8BDE680046D6AB /* libextobjc.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libextobjc.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/libextobjc.framework"; sourceTree = "<group>"; };
 		336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/ReactiveCocoa.framework"; sourceTree = "<group>"; };
 		338A237B1B8BD4B800CC6C1F /* Pods.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/Pods.framework"; sourceTree = "<group>"; };
+		33D4EBD11BCD74B8000FDA35 /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = ../../../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
 		33D9FF281B8BC72500A9CD4D /* MPXSelectionCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPXSelectionCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33D9FF2D1B8BC72500A9CD4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33D9FF321B8BC72600A9CD4D /* MPXSelectionCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MPXSelectionCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33D4EBD21BCD74B8000FDA35 /* DVTFoundation.framework in Frameworks */,
 				336CDE581B8BDE680046D6AB /* ReactiveCocoa.framework in Frameworks */,
 				7D5C1235CC092E474924A045 /* Pods.framework in Frameworks */,
 			);
@@ -111,6 +114,7 @@
 		338A237E1B8BD4BC00CC6C1F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				33D4EBD11BCD74B8000FDA35 /* DVTFoundation.framework */,
 				336CDE551B8BDE680046D6AB /* libextobjc.framework */,
 				336CDE561B8BDE680046D6AB /* ReactiveCocoa.framework */,
 				33D9FFD11B8BD32500A9CD4D /* MPXFoundation.xcodeproj */,
@@ -469,6 +473,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_DIR)/../SharedFrameworks",
+					"$(DEVELOPER_DIR)/../Frameworks",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/$(TARGET_NAME)/$(TARGET_NAME)-Prefix.pch";
@@ -496,6 +504,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_DIR)/../SharedFrameworks",
+					"$(DEVELOPER_DIR)/../Frameworks",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/$(TARGET_NAME)/$(TARGET_NAME)-Prefix.pch";
