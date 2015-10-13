@@ -27,7 +27,7 @@
 - (void)mpx_mouseDown:(NSEvent *)theEvent
 {
     CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];    
-    NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
+    NSUInteger index = [self foldedCharacterIndexForPoint:clickLocation];
     
     if (index == NSNotFound) {
         return;
@@ -105,7 +105,7 @@
     [self.mpx_textViewSelectionDecorator stopBlinking];
     
     CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    NSUInteger index = [self characterIndexForInsertionAtPoint:clickLocation];
+    NSUInteger index = [self foldedCharacterIndexForPoint:clickLocation];
     NSRange newRange;
 
     NSUInteger origin = self.mpx_rangeInProgress.origin;
@@ -135,12 +135,10 @@
 {
     BOOL showedAltPopover = !self.mpx_altPopoverTimer.valid;
     [self.mpx_altPopoverTimer invalidate];
-    
-    NSUInteger index = ({
-        CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-        [self characterIndexForInsertionAtPoint:clickLocation];
-    });
-    
+
+    CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];    
+    NSUInteger index = [self foldedCharacterIndexForPoint:clickLocation];
+
     BOOL altKeyHeld = (theEvent.modifierFlags & NSAlternateKeyMask) != 0;
     if (altKeyHeld) {        
         
