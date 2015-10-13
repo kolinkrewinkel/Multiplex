@@ -7,6 +7,12 @@
 //
 
 @import ReactiveCocoa;
+
+#import <DVTFoundation/DVTMutableRangeArray.h>
+
+#import <DVTKit/DVTFoldingManager.h>
+#import <DVTKit/DVTTextFold.h>
+#import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTSourceTextView.h>
 
 #import "MPXSelection.h"
@@ -56,6 +62,43 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     }];
 }
 
+static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
+                                              NSRange tokenRange,
+                                              NSSelectionAffinity movementDirection,
+                                              BOOL modifySelection)
+{
+    NSRange originalRange = selection.range;
+
+    if (tokenRange.location == NSNotFound) {
+        return originalRange;
+    }
+    
+    NSRange intersection = NSIntersectionRange(originalRange, tokenRange);
+
+    switch (movementDirection) {
+        case NSSelectionAffinityUpstream: {
+            if (intersection.length > 0 && modifySelection && selection.insertionIndex < NSMaxRange(tokenRange)) {
+                return [selection modifySelectionUpstreamByAmount:tokenRange.length - 1];
+            } else if (intersection.location != 0 && intersection.length == 0 && NSMaxRange(originalRange) < NSMaxRange(tokenRange)) {
+                return NSMakeRange(tokenRange.location, 0);
+            }
+            
+            break;
+        }
+        case NSSelectionAffinityDownstream: {
+            if (intersection.length > 0 && modifySelection && selection.insertionIndex > tokenRange.location) {
+                return [selection modifySelectionDownstreamByAmount:tokenRange.length - 1];
+            } else if (intersection.location != 0 && intersection.length == 0 && originalRange.location > tokenRange.location) {
+                return NSMakeRange(NSMaxRange(tokenRange), 0);
+            }
+
+            break;
+        }            
+    }
+    
+    return originalRange;
+}
+
 - (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray *)selections
                                           movementDirection:(NSSelectionAffinity)movementDirection
                                             modifySelection:(BOOL)modifySelection
@@ -66,26 +109,21 @@ static NSArray *MPXSortedSelections(NSArray *selections)
     }
     
     return [[[selections rac_sequence] map:^MPXSelection *(MPXSelection *selection) {
-        NSRange range1 = [selection range];
-        NSRange rangeToAdd = range1;
+        NSRange rangeToAdd = selection.range;
         NSUInteger selectionOrigin = selection.origin;
         
         switch (movementDirection) {
-            case NSSelectionAffinityUpstream: {
+            case NSSelectionAffinityUpstream: {                                
                 NSRange leadingPlaceholder = [self.textView rangeOfPlaceholderFromCharacterIndex:selection.insertionIndex
                                                                                          forward:NO
                                                                                             wrap:NO
                                                                                            limit:0];
-
-                if (leadingPlaceholder.location != NSNotFound) {
-                    NSRange intersection = NSIntersectionRange(rangeToAdd, leadingPlaceholder);
-                    if (intersection.length > 0 && modifySelection && selection.insertionIndex < NSMaxRange(leadingPlaceholder)) {
-                        rangeToAdd = [selection modifySelectionUpstreamByAmount:leadingPlaceholder.length - 1];
-                    } else if (intersection.location != 0 && intersection.length == 0 && NSMaxRange(rangeToAdd) < NSMaxRange(leadingPlaceholder)) {
-                        rangeToAdd = NSMakeRange(leadingPlaceholder.location, 0);
-                    }
-                }
+                                
+                rangeToAdd = MPXSelectionAdjustedAboutToken(selection, leadingPlaceholder, movementDirection, modifySelection);
                 
+                DVTTextFold *fold = [self.textView.layoutManager.foldingManager lastFoldTouchingCharacterIndex:selection.insertionIndex];
+                rangeToAdd = MPXSelectionAdjustedAboutToken(selection, fold.range, movementDirection, modifySelection);
+                    
                 break;
             }
             case NSSelectionAffinityDownstream: {
@@ -94,19 +132,15 @@ static NSArray *MPXSortedSelections(NSArray *selections)
                                                                                              wrap:NO
                                                                                             limit:0];
 
-                if (trailingPlaceholder.location != NSNotFound) {
-                    NSRange intersection = NSIntersectionRange(rangeToAdd, trailingPlaceholder);
-                    if (intersection.length > 0 && modifySelection && selection.insertionIndex > trailingPlaceholder.location) {
-                        rangeToAdd = [selection modifySelectionDownstreamByAmount:trailingPlaceholder.length - 1];
-                    } else if (intersection.location != 0 && intersection.length == 0 && rangeToAdd.location > trailingPlaceholder.location) {
-                        rangeToAdd = NSMakeRange(NSMaxRange(trailingPlaceholder), 0);
-                    }
-                }
+                rangeToAdd = MPXSelectionAdjustedAboutToken(selection, trailingPlaceholder, movementDirection, modifySelection);
+                
+                DVTTextFold *fold = [self.textView.layoutManager.foldingManager firstFoldTouchingCharacterIndex:selection.insertionIndex - 1];
+                rangeToAdd = MPXSelectionAdjustedAboutToken(selection, fold.range, movementDirection, modifySelection);
 
                 break;
             }
         }
-                                     
+                
         return [[MPXSelection alloc] initWithSelectionRange:rangeToAdd
                                       indexWantedWithinLine:selection.indexWantedWithinLine
                                                      origin:selectionOrigin];
