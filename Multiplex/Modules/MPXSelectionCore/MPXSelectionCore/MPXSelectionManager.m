@@ -44,20 +44,17 @@
 
 static NSArray *MPXSortedSelections(NSArray *selections)
 {
-    return [selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection1,
-                                                                       MPXSelection *selection2) {
-        NSRange range1 = selection1.range;
-        NSInteger range1Loc = range1.location;
+    return [selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection,
+                                                                      MPXSelection *otherSelection) {
+        NSUInteger rangeLocation = selection.range.location;
+        NSUInteger otherRangeLocation = otherSelection.range.location;
         
-        NSRange range2 = selection2.range;
-        NSInteger range2Loc = range2.location;
-
-        if (range2Loc > range1Loc) {
+        if (otherRangeLocation > rangeLocation) {
             return NSOrderedAscending;
-        } else if (range2Loc < range1Loc) {
+        } else if (otherRangeLocation < rangeLocation) {
             return NSOrderedDescending;
         }
-
+        
         return NSOrderedSame;
     }];
 }
