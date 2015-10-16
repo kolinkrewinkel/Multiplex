@@ -108,7 +108,7 @@ static NSString *kMPXNewlineString = @"\n";
 {
     NSString *stringToMatch = nil;
     for (MPXSelection *selection in self.mpx_selectionManager.visualSelections) {
-        NSString *selectionString = [self.string substringWithRange:selection.range];
+        NSString *selectionString = [self.textStorage.string substringWithRange:selection.range];
         
         // Find the word it's in if the selection is just a caret.
         if (selectionString.length == 0) {
@@ -117,7 +117,7 @@ static NSString *kMPXNewlineString = @"\n";
             if (wordRange.length == 0) {
                 selectionString = nil;
             } else {
-                selectionString = [self.string substringWithRange:wordRange];
+                selectionString = [self.textStorage.string substringWithRange:wordRange];
             }
         }
         
