@@ -24,6 +24,7 @@
 - (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;
 
 - (BOOL)mpx_shouldTrimTrailingWhitespace;
+- (void)mpx_trimTrailingWhitespaceOnLine:(NSUInteger)line;
 
 #pragma mark - Selection Management Core
 

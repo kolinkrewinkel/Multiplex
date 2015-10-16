@@ -48,6 +48,10 @@
     [self jr_swizzleMethod:@selector(_updateTemporaryLinkUnderMouseForEvent:)
                 withMethod:@selector(mpx_updateTemporaryLinkUnderMouseForEvent:)
                      error:nil];
+    
+    [self jr_swizzleMethod:@selector(trimTrailingWhitespaceOnLine:)
+                withMethod:@selector(mpx_trimTrailingWhitespaceOnLine:)
+                     error:nil];
 }
 
 @end
