@@ -291,7 +291,7 @@ static NSString *kMPXNewlineString = @"\n";
         }
         
         NSString *matchingBrace = [self followupStringToMakePair:modifiedInsertString];       
-        if (matchingBrace && [[[NSCharacterSet alphanumericCharacterSet] invertedSet] characterIsMember:[nextChar characterAtIndex:0]]) {
+        if (matchingBrace && [[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[nextChar characterAtIndex:0]]) {
             NSRange matchingBraceRange = NSMakeRange(NSMaxRange(range) + delta, 0);
             [self.textStorage replaceCharactersInRange:matchingBraceRange
                                             withString:matchingBrace
