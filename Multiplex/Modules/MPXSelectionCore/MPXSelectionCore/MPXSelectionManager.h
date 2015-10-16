@@ -12,16 +12,13 @@ typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selecti
 @import Foundation;
 
 @class MPXSelectionManager;
-@protocol MPXSelectionManagerSelectionChangeDelegate <NSObject>
+@protocol MPXSelectionManagerVisualizationDelegate <NSObject>
 
 /**
  * Called when the visual selections that are to be used are changed.
  */
-- (void)selectionManager:(MPXSelectionManager *)selectionManager didChangeVisualSelections:(NSArray *)visualSelections;
+- (void)selectionManager:(MPXSelectionManager *)selectionManager didChangeVisualSelections:(NSArray<MPXSelection *> *)visualSelections;
 
-@end
-
-@protocol MPXSelectionManagerVisualizationDelegate <MPXSelectionManagerSelectionChangeDelegate>
 @end
 
 @class DVTSourceTextView;
@@ -41,35 +38,30 @@ typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selecti
 /**
  * @return Selections which should be rendered onscreen.
  */
-@property (nonatomic, readonly) NSArray *visualSelections;
+@property (nonatomic, readonly) NSArray<MPXSelection *> *visualSelections;
 
 /**
  * Essentially a listener for changes to `visualSelections`.
  */
 @property (nonatomic, weak) id<MPXSelectionManagerVisualizationDelegate> visualizationDelegate;
 
-/**
- * Used for updates to other visual state, such as the breadcrumb bar and autocomplete.
- */
-@property (nonatomic, weak) id<MPXSelectionManagerSelectionChangeDelegate> selectionDelegate;
-
 #pragma mark - State
 
 /**
  * @return Selections which are finalized and not subject to mutation.
  */
-@property (nonatomic) NSArray *finalizedSelections;
+@property (nonatomic) NSArray<MPXSelection *> *finalizedSelections;
 
 /**
  * Allows clients to temporarily alter the display attributes before a change to the selections is finalized.
  */
-- (void)setTemporarySelections:(NSArray *)temporarySelections;
+- (void)setTemporarySelections:(NSArray<MPXSelection *> *)temporarySelections;
 
 /**
  * Should be called before setting/applying a selection to make sure that placeholders are properly moved around or 
  * included.
  */
-- (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray *)selections
+- (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray<MPXSelection *> *)selections
                                           movementDirection:(NSSelectionAffinity)movementDirection
                                             modifySelection:(BOOL)modifySelection;
 

@@ -23,7 +23,7 @@
 
 @property (nonatomic) DVTSourceTextView *textView;
 
-@property (nonatomic) NSArray *temporarySelections;
+@property (nonatomic) NSArray<MPXSelection *> *temporarySelections;
 
 @end
 
@@ -42,7 +42,7 @@
 
 #pragma mark - Range Logic
 
-static NSArray *MPXSortedSelections(NSArray *selections)
+static NSArray *MPXSortedSelections(NSArray<MPXSelection *> *selections)
 {
     return [selections sortedArrayUsingComparator:^NSComparisonResult(MPXSelection *selection,
                                                                       MPXSelection *otherSelection) {
@@ -96,7 +96,7 @@ static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
     return originalRange;
 }
 
-- (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray *)selections
+- (NSArray *)preprocessedPlaceholderSelectionsForSelections:(NSArray<MPXSelection *> *)selections
                                           movementDirection:(NSSelectionAffinity)movementDirection
                                             modifySelection:(BOOL)modifySelection
 {
@@ -144,7 +144,7 @@ static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
     }] array];
 }
 
-- (NSArray *)fixedSelections:(NSArray *)ranges
+- (NSArray *)fixedSelections:(NSArray<MPXSelection *> *)ranges
 {
     NSArray *sortedSelections = MPXSortedSelections(ranges);
 
@@ -205,16 +205,15 @@ static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
     return self.temporarySelections ?: self.finalizedSelections;
 }
 
-- (void)setFinalizedSelections:(NSArray *)finalizedSelections
+- (void)setFinalizedSelections:(NSArray<MPXSelection *> *)finalizedSelections
 {
     _finalizedSelections = [self fixedSelections:finalizedSelections];
     self.temporarySelections = nil;
 
     [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
-    [self.selectionDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
-- (void)setTemporarySelections:(NSArray *)temporarySelections
+- (void)setTemporarySelections:(NSArray<MPXSelection *> *)temporarySelections
 {
     if (!temporarySelections) {
         _temporarySelections = nil;
@@ -224,7 +223,6 @@ static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
     _temporarySelections = [self fixedSelections:temporarySelections];
 
     [self.visualizationDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
-    [self.selectionDelegate selectionManager:self didChangeVisualSelections:self.visualSelections];
 }
 
 - (void)mapSelectionsWithMovementDirection:(NSSelectionAffinity)movementDirection
