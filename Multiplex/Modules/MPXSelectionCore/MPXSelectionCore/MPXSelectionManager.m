@@ -239,7 +239,7 @@ static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
         MPXSelection *precedingMutationAdjustedSelection = selection;
         
         for (MPXSelectionMutation *precedingMutation in processedMutations) {
-            precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:selection];
+            precedingMutationAdjustedSelection = [precedingMutation adjustTrailingSelection:precedingMutationAdjustedSelection];
         }
         
         MPXSelectionMutation *mutation = mutationBlock(precedingMutationAdjustedSelection);
