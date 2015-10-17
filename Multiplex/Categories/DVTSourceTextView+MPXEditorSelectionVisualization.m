@@ -6,6 +6,8 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
+#import "DVTSourceTextView+MPXEditorExtensions.h"
+
 #import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
 
 @import libextobjc;
@@ -33,6 +35,11 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
     }
+    
+    NSMenuItem *findMenuItem = [[NSApp mainMenu] itemWithTitle:@"Find"];
+    NSMenu *findMenu = findMenuItem.submenu;
+    NSMenuItem *quickAddNextItem = [findMenu itemWithTitle:kMPXQuickAddNextMenuItemTitle];
+    quickAddNextItem.target = self;
 }
 
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color

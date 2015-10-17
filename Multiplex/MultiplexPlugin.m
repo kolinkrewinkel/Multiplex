@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Kolin Krewinkel. All rights reserved.
 //
 
+#import "DVTSourceTextView+MPXEditorExtensions.h"
+
 #import "MultiplexPlugin.h"
 
 static NSString *kMPXApplicationName = @"Xcode";
@@ -52,6 +54,10 @@ static NSString *kMPXApplicationName = @"Xcode";
 {
     if (self = [self init]) {
         self.bundle = bundle;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [DVTSourceTextView mpx_addQuickAddNextMenuItem];
+        });
     }
 
     return self;
