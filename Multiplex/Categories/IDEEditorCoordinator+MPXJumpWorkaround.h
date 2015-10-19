@@ -1,5 +1,5 @@
 //
-//  IDEEditorCoordinator.h
+//  IDEEditorCoordinator+MPXJumpWorkaround.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 10/10/15.
@@ -8,6 +8,6 @@
 
 #import <IDEKit/IDEEditorCoordinator.h>
 
-@interface IDEEditorCoordinator (MPXJumpSwizzle)
+@interface IDEEditorCoordinator (MPXJumpWorkaround)
 
 @end
