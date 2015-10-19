@@ -257,7 +257,7 @@ static NSString *kMPXNewlineString = @"\n";
                                                            finalSelection:newSelection
                                                               mutatedText:NO];
         }
-                
+        
         [self.textStorage replaceCharactersInRange:range withString:modifiedInsertString withUndoManager:self.undoManager];
         
         NSUInteger delta = [modifiedInsertString length] - range.length;
@@ -279,12 +279,12 @@ static NSString *kMPXNewlineString = @"\n";
                 }
                 
                 NSRange lineRange = NSMakeRange(index + [kMPXNewlineString length], [lineToIndent length] + [kMPXNewlineString length]);                                
-                NSRange indentedRange = [self _indentInsertedTextIfNecessaryAtRange:lineRange];
+                NSRange indentedRange = [self mpx_indentRange:lineRange];
                 
                 if (NSMaxRange(rangeOfInsertedText) >= lineRange.location) {
                     rangeOfInsertedText.location += indentedRange.location - lineRange.location;
                 }
-                
+
                 index = NSMaxRange(indentedRange);
             }];        
         }
@@ -597,13 +597,7 @@ static NSString *kMPXNewlineString = @"\n";
 {
     MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
         NSRange lineRange = selectionToModify.range;
-        [self.textStorage beginEditing];
-
-        NSUInteger changeIndex = [self.textStorage currentChangeIndex];
-        [self.textStorage indentCharacterRange:lineRange undoManager:self.undoManager];
-
-        NSRange newRange = [self _adjustedSelectedRange:lineRange fromChangeIndex:changeIndex];
-        [self.textStorage endEditing];
+        NSRange newRange = [self mpx_indentRange:lineRange];
 
         MPXSelection *newSelection = selectionToModify;
         BOOL mutatedText = !NSEqualRanges(lineRange, newRange);
@@ -621,6 +615,30 @@ static NSString *kMPXNewlineString = @"\n";
     [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
                                               modifyingSelections:NO
                                                        usingBlock:transformBlock];
+}
+
+- (NSRange)mpx_indentRange:(NSRange)range
+{
+    [self.textStorage beginEditing];
+
+    NSUInteger changeIndex = [self.textStorage currentChangeIndex];
+    [self.textStorage indentCharacterRange:range undoManager:self.undoManager];
+
+    // Adjusting ranges that are > 0 chars doesn't work, so we feed it a 0-length version and calculate the delta.
+    NSRange zeroLengthRange = NSMakeRange(range.location, 0);
+    NSRange adjustedRange = [self _adjustedSelectedRange:zeroLengthRange fromChangeIndex:changeIndex];
+
+    NSInteger shift = 0;
+    if (adjustedRange.location >= range.location) {
+        shift = adjustedRange.location - range.location;
+    } else {
+        shift = range.location - adjustedRange.location;
+        shift *= -1;
+    }
+
+    [self.textStorage endEditing];
+
+    return NSMakeRange(range.location + shift, range.length);
 }
 
 @end
