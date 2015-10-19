@@ -26,6 +26,10 @@
 
 - (void)mpx_mouseDown:(NSEvent *)theEvent
 {
+    // Prevent the next symbol selected from being batch-selected if already in tokenized editing mode. This could be a
+    // feature later on if it's a different mode from the normal "Edit All in Scope...""
+    [self.layoutManager setTokenizedEditingEnabled:NO];
+
     CGPoint clickLocation = [self convertPoint:[theEvent locationInWindow] fromView:nil];    
     NSUInteger index = [self foldedCharacterIndexForPoint:clickLocation];
     
