@@ -219,10 +219,6 @@
 		33D9FE891B8AE32400A9CD4D /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				334A19B71BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.h */,
-				334A19B81BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m */,
-				3336EC891BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.h */,
-				3336EC8A1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m */,
 				337F176A1B8EAFED002FA72B /* DVTSourceTextView+MPXEditorArrowKeyMovement.h */,
 				337F176B1B8EAFED002FA72B /* DVTSourceTextView+MPXEditorArrowKeyMovement.m */,
 				337F17671B8EAECE002FA72B /* DVTSourceTextView+MPXEditorAutocompletion.h */,
@@ -245,8 +241,12 @@
 				337F17591B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m */,
 				337F17611B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.h */,
 				337F17621B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.m */,
+				3336EC891BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.h */,
+				3336EC8A1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m */,
 				33502CDB1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.h */,
 				33502CDC1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m */,
+				334A19B71BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.h */,
+				334A19B81BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";

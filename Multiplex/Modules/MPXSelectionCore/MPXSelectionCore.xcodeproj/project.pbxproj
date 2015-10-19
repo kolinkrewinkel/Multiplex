@@ -147,8 +147,6 @@
 		33D9FF2A1B8BC72500A9CD4D /* MPXSelectionCore */ = {
 			isa = PBXGroup;
 			children = (
-				335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */,
-				335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */,
 				33D9FF2D1B8BC72500A9CD4D /* Info.plist */,
 				33D9FF5D1B8BCD7C00A9CD4D /* MPXSelection.h */,
 				33D9FF5E1B8BCD7C00A9CD4D /* MPXSelection.m */,
@@ -156,6 +154,8 @@
 				33D9FF991B8BD16A00A9CD4D /* MPXSelectionCore.h */,
 				33D9FF5B1B8BCD7C00A9CD4D /* MPXSelectionManager.h */,
 				33D9FF5C1B8BCD7C00A9CD4D /* MPXSelectionManager.m */,
+				335011B11BB5E5D9004D0A5D /* MPXSelectionMutation.h */,
+				335011B21BB5E5D9004D0A5D /* MPXSelectionMutation.m */,
 				33D9FF591B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.h */,
 				33D9FF5A1B8BCD7C00A9CD4D /* MPXTextViewSelectionDecorator.m */,
 			);
