@@ -24,6 +24,8 @@ extern NSString *kMPXQuickAddNextMenuItemTitle;
 - (void)mpx_commonInitDVTSourceTextView;
 + (void)mpx_addQuickAddNextMenuItem;
 
+- (void)mpx_indentSelection:(id)sender;
+
 - (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;
 
 - (BOOL)mpx_shouldTrimTrailingWhitespace;

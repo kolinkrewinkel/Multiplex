@@ -593,4 +593,34 @@ static NSString *kMPXNewlineString = @"\n";
                                                        usingBlock:transformBlock];
 }
 
+- (void)mpx_indentSelection:(id)arg1
+{
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
+        NSRange lineRange = selectionToModify.range;
+        [self.textStorage beginEditing];
+
+        NSUInteger changeIndex = [self.textStorage currentChangeIndex];
+        [self.textStorage indentCharacterRange:lineRange undoManager:self.undoManager];
+
+        NSRange newRange = [self _adjustedSelectedRange:lineRange fromChangeIndex:changeIndex];
+        [self.textStorage endEditing];
+
+        MPXSelection *newSelection = selectionToModify;
+        BOOL mutatedText = !NSEqualRanges(lineRange, newRange);
+        if (mutatedText) {
+            newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                  indexWantedWithinLine:selectionToModify.indexWantedWithinLine
+                                                                 origin:selectionToModify.origin];
+        }
+
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selectionToModify
+                                                       finalSelection:newSelection
+                                                          mutatedText:mutatedText];
+    };
+
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
+}
+
 @end

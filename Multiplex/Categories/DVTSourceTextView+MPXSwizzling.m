@@ -52,6 +52,10 @@
     [self jr_swizzleMethod:@selector(trimTrailingWhitespaceOnLine:)
                 withMethod:@selector(mpx_trimTrailingWhitespaceOnLine:)
                      error:nil];
+    
+    [self jr_swizzleMethod:@selector(indentSelection:)
+                withMethod:@selector(mpx_indentSelection:)
+                     error:nil];
 }
 
 @end
