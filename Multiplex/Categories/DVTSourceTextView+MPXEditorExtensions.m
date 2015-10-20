@@ -16,8 +16,10 @@
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTSourceLanguageService.h>
 #import <DVTKit/DVTTextCompletionController.h>
+#import <DVTKit/DVTTextFold.h>
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTTextCompletionSession.h>
+#import <DVTKit/DVTFoldingManager.h>
 #import <DVTKit/DVTTextCompletionInlinePreviewController.h>
 
 #import <libextobjc/EXTSynthesize.h>
@@ -329,33 +331,84 @@ static NSString *kMPXNewlineString = @"\n";
 
 - (void)deleteBackward:(id)sender
 {
-    // Sequential (negative) offset of characters added.
-    __block NSUInteger totalDelta = 0;
-    
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
         // Update the base range with the delta'd amount of change from previous mutations.
-        NSRange range = [selection range];
-        NSRange offsetRange = NSMakeRange(range.location - totalDelta, range.length);
-        
+        NSRange range = selectionToModify.range;
+
         NSRange deletingRange = NSMakeRange(0, 0);
-        if (offsetRange.location > 0 && offsetRange.length == 0) {
-            deletingRange = NSMakeRange(offsetRange.location - 1, 1);
+        if (range.location > 0 && range.length == 0) {
+            deletingRange = NSMakeRange(range.location - 1, 1);
+
+            NSRange rangeOfLine = [self.textStorage.string lineRangeForRange:range];
+            NSRange lineSubrangePendingDeletion = NSMakeRange(rangeOfLine.location, range.location - rangeOfLine.location);
+
+            if (lineSubrangePendingDeletion.length > 0) {
+                NSString *remainderOfLine = [self.textStorage.string substringWithRange:lineSubrangePendingDeletion];
+
+                if (![[DVTTextPreferences preferences] useTabsToIndent]) {
+                    BOOL shouldDeleteAsTab = YES;
+                    NSUInteger charIndex = 0;
+                    while (charIndex < [remainderOfLine length] - 1) {
+                        unichar character = [remainderOfLine characterAtIndex:charIndex];
+
+                        if ([[[NSCharacterSet whitespaceCharacterSet] invertedSet] characterIsMember:character]) {
+                            shouldDeleteAsTab = NO;
+                            break;
+                        }
+
+                        charIndex++;
+                    }
+
+                    if (shouldDeleteAsTab) {
+                        NSRange tabStringToDelete = [self.textStorage.string rangeOfString:[self mpx_tabString]
+                                                                                   options:NSBackwardsSearch
+                                                                                     range:lineSubrangePendingDeletion];
+
+                        if (tabStringToDelete.length > 0) {
+                            deletingRange = tabStringToDelete;
+                        }
+                    }
+                }
+            }
         } else {
-            deletingRange = NSMakeRange(offsetRange.location, offsetRange.length);
+            deletingRange = NSMakeRange(range.location, range.length);
         }
-        
+
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:deletingRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:NSMaxRange(deletingRange)];
+
+        NSRange leadingPlaceholder = [self rangeOfPlaceholderFromCharacterIndex:newSelection.insertionIndex
+                                                                        forward:NO
+                                                                           wrap:NO
+                                                                          limit:0];
+
+        deletingRange = MPXSelectionAdjustedAboutToken(newSelection, leadingPlaceholder, NSSelectionAffinityUpstream, YES);
+
+        newSelection = [[MPXSelection alloc] initWithSelectionRange:deletingRange
+                                              indexWantedWithinLine:MPXNoStoredLineIndex
+                                                             origin:NSMaxRange(deletingRange)];
+
+        DVTTextFold *fold = [self.layoutManager.foldingManager lastFoldTouchingCharacterIndex:newSelection.insertionIndex];
+        deletingRange = MPXSelectionAdjustedAboutToken(newSelection, fold.range, NSSelectionAffinityUpstream, YES);
+
         // Delete the characters
         [self insertText:@"" replacementRange:deletingRange];
-        
+
         // New range for the beam (to the beginning of the range we replaced)
         NSRange newInsertionPointRange = NSMakeRange(deletingRange.location, 0);
-        MPXSelection *newSelection = [MPXSelection selectionWithRange:newInsertionPointRange];
-        
-        // Increment/decrement the delta by how much we trimmed.
-        totalDelta += deletingRange.length;
-        
-        return newSelection;
-    }];
+        newSelection = [[MPXSelection alloc] initWithSelectionRange:newInsertionPointRange
+                                              indexWantedWithinLine:MPXNoStoredLineIndex
+                                                             origin:newInsertionPointRange.location];
+
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selectionToModify
+                                                       finalSelection:newSelection
+                                                          mutatedText:YES];
+    };
+
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityUpstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
 }
 
 #pragma mark - Indentations/Other insertions
