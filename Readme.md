@@ -1,6 +1,6 @@
 #Multiplex
 Simultaneous editing inspired by Sublime Text, for Xcode.
-![Screenshot of Xcode with plugin installed.](https://raw.githubusercontent.com/kolinkrewinkel/Multiplex/develop/Meta/Demo.gif?token=AAIySMafpQBMgkGxOScLW0NcmJgxFmZdks5WLwZdwA%3D%3D)
+![Screenshot of Xcode with plugin installed.](https://raw.githubusercontent.com/kolinkrewinkel/Multiplex/develop/Meta/Demo.gif)
 
 ##Features
 - Quickly edit specific instances of a variable being used.
