@@ -22,7 +22,6 @@ extern NSString *kMPXQuickAddNextMenuItemTitle;
                        movementDirection:(NSSelectionAffinity)movementDirection;
 
 - (void)mpx_commonInitDVTSourceTextView;
-+ (void)mpx_addQuickAddNextMenuItem;
 
 - (void)mpx_indentSelection:(id)sender;
 

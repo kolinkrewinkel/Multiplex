@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Kolin Krewinkel. All rights reserved.
 //
 
-#import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "DVTSourceTextView+MPXQuickAddNext.h"
 
 #import "MultiplexPlugin.h"
 
