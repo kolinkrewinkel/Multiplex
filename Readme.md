@@ -17,7 +17,7 @@ Simultaneous editing inspired by Sublime Text, for Xcode.
 ##Installation
 
 **Alcatraz**  
-Install as you would any other plugin through Alcatraz.
+Pending addition to the Alcatraz specs repo...for now, please use the installer or copy the file manually.
 
 **Installer**  
 Run the latest installer from [Releases](https://github.com/kolinkrewinkel/Multiplex/releases).
