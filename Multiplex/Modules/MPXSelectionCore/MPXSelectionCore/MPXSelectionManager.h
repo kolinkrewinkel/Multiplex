@@ -72,4 +72,9 @@ typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selecti
                        modifyingSelections:(BOOL)modifySelections
                                 usingBlock:(MPXSelectionMutationBlock)mutationBlock;
 
+NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
+                                       NSRange tokenRange,
+                                       NSSelectionAffinity movementDirection,
+                                       BOOL modifySelection);
+
 @end

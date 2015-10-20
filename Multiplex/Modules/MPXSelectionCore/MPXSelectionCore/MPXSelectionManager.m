@@ -59,14 +59,14 @@ static NSArray *MPXSortedSelections(NSArray<MPXSelection *> *selections)
     }];
 }
 
-static NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
-                                              NSRange tokenRange,
-                                              NSSelectionAffinity movementDirection,
-                                              BOOL modifySelection)
+NSRange MPXSelectionAdjustedAboutToken(MPXSelection *selection,
+                                       NSRange tokenRange,
+                                       NSSelectionAffinity movementDirection,
+                                       BOOL modifySelection)
 {
     NSRange originalRange = selection.range;
 
-    if (tokenRange.location == NSNotFound) {
+    if (tokenRange.location == NSNotFound || NSEqualRanges(originalRange, tokenRange)) {
         return originalRange;
     }
     
