@@ -1,5 +1,5 @@
 //
-//  IDESourceCodeEditor+CATViewReplacement.m
+//  DVTSourceTextView+MPXEditorExtensions.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 9/25/14.
