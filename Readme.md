@@ -1,5 +1,5 @@
 #Multiplex
-Simultaneous editing inspired by Sublime Text, for Xcode.
+Simultaneous editing for Xcode, inspired by Sublime Text.
 ![Screenshot of Xcode with plugin installed.](https://raw.githubusercontent.com/kolinkrewinkel/Multiplex/develop/Meta/Demo.gif?token=AAIySPhzw5iiBXC8SolkmLXckB_BXhujks5WLxWCwA%3D%3D)
 
 ##Features
