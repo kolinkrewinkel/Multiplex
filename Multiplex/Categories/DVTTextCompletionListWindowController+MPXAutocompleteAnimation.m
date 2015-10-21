@@ -22,6 +22,10 @@
 
 - (void)mpx_showWindowForTextFrame:(CGRect)textFrame explicitAnimation:(BOOL)explicitAnimation
 {
+    if (![self isValid]) {
+        return;
+    }
+    
     // Disable the AppKit window animation as well as the explicit animation created by Xcode.
     self.window.animationBehavior = NSWindowAnimationBehaviorNone;
     [self mpx_showWindowForTextFrame:textFrame explicitAnimation:NO];
