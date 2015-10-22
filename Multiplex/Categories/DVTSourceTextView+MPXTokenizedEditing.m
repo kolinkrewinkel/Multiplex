@@ -8,6 +8,8 @@
 
 #import <DVTFoundation/DVTRangeArray.h>
 
+#import <DVTKit/DVTLayoutManager.h>
+
 @import MPXSelectionCore;
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
@@ -23,6 +25,14 @@
                                       indexWantedWithinLine:MPXNoStoredLineIndex
                                                      origin:range.location];
     }] array];
+    
+    // When called, `isTokenizedEditingEnabled` is still NO, and there's no `didStartTokenizedEditingWithRanges:` method
+    // to immediately disable it. Thus, we do a yucky dispatch_async() because immediately after it gets set to YES.
+    // Without this, the editor class will try to intercede when changing the selection in certain ways and snap it back
+    // to the original values (issue #17).
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.layoutManager.tokenizedEditingEnabled = NO;
+    });
 }
 
 @end
