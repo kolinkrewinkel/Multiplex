@@ -27,17 +27,11 @@ extern NSString *kMPXQuickAddNextMenuItemTitle;
 
 - (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;
 
-- (BOOL)mpx_shouldTrimTrailingWhitespace;
-- (void)mpx_trimTrailingWhitespaceOnLine:(NSUInteger)line;
-
 #pragma mark - Selection Management Core
 
 @property (nonatomic) MPXSelectionManager *mpx_selectionManager;
 
 @property (nonatomic) BOOL mpx_shouldCloseGroupOnNextChange;
 @property (nonatomic) BOOL mpx_inUndoGroup;
-
-@property (nonatomic) BOOL mpx_trimTrailingWhitespace;
-
 
 @end
