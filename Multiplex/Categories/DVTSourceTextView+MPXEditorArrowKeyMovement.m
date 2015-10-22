@@ -181,6 +181,14 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
 {
     MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
         NSUInteger newIndex = MAX(selectionToModify.insertionIndex - 1, 0);
+
+        // When the selection is more than just a 0-length caret, the behavior in OS X is to snap to the leftmost index
+        // within that selection range (its `location`), regardless of the direction/affinity of the selection.
+        NSRange range = selectionToModify.range;
+        if (range.length > 0) {
+            newIndex = range.location;
+        }
+
         MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
                                                             indexWantedWithinLine:selectionToModify.indexWantedWithinLine
                                                                            origin:newIndex];
@@ -218,6 +226,13 @@ static MPXSelection *MPXSelectionMove(MPXSelection *selection, NSRange fromLineR
 {
     MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *fromSelection) {
         NSUInteger newIndex = MIN(fromSelection.insertionIndex + 1, self.textStorage.length);
+        
+        // When the selection is more than just a 0-length caret, the behavior in OS X is to snap to the rightmost index
+        // within that selection range (its max), regardless of the direction/affinity of the selection.
+        NSRange range = fromSelection.range;
+        if (range.length > 0) {
+            newIndex = NSMaxRange(range);
+        }
         
         MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(newIndex, 0)
                                                             indexWantedWithinLine:fromSelection.indexWantedWithinLine
