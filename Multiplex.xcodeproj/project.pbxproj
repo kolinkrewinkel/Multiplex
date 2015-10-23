@@ -15,7 +15,7 @@
 		33742F8A1B903FBC001B4C55 /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */; };
 		337F17531B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17521B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m */; };
 		337F175A1B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17591B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m */; };
-		337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m */; };
+		337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m */; };
 		337F17601B8EAB32002FA72B /* DVTSourceTextView+MPXEditorParagraphMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F175F1B8EAB32002FA72B /* DVTSourceTextView+MPXEditorParagraphMovement.m */; };
 		337F17631B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17621B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.m */; };
 		337F17661B8EAD9D002FA72B /* DVTSourceTextView+MPXEditorDocumentMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17651B8EAD9D002FA72B /* DVTSourceTextView+MPXEditorDocumentMovement.m */; };
@@ -107,8 +107,8 @@
 		337F17521B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorClipboardSupport.m"; sourceTree = "<group>"; };
 		337F17581B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXEditorWordMovement.h"; sourceTree = "<group>"; };
 		337F17591B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorWordMovement.m"; sourceTree = "<group>"; };
-		337F175B1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXEditorLineMovement.h"; sourceTree = "<group>"; };
-		337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorLineMovement.m"; sourceTree = "<group>"; };
+		337F175B1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXLineMovement.h"; sourceTree = "<group>"; };
+		337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXLineMovement.m"; sourceTree = "<group>"; };
 		337F175E1B8EAB32002FA72B /* DVTSourceTextView+MPXEditorParagraphMovement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXEditorParagraphMovement.h"; sourceTree = "<group>"; };
 		337F175F1B8EAB32002FA72B /* DVTSourceTextView+MPXEditorParagraphMovement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorParagraphMovement.m"; sourceTree = "<group>"; };
 		337F17611B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXSwizzling.h"; sourceTree = "<group>"; };
@@ -235,8 +235,6 @@
 				337F17651B8EAD9D002FA72B /* DVTSourceTextView+MPXEditorDocumentMovement.m */,
 				33D9FE8A1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.h */,
 				33D9FE8B1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m */,
-				337F175B1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.h */,
-				337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m */,
 				337F176D1B8EB2F1002FA72B /* DVTSourceTextView+MPXEditorMouseEvents.h */,
 				337F176E1B8EB2F1002FA72B /* DVTSourceTextView+MPXEditorMouseEvents.m */,
 				337F175E1B8EAB32002FA72B /* DVTSourceTextView+MPXEditorParagraphMovement.h */,
@@ -245,6 +243,8 @@
 				33E3DA6B1B903C1700E47395 /* DVTSourceTextView+MPXEditorSelectionVisualization.m */,
 				337F17581B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.h */,
 				337F17591B8EA5A0002FA72B /* DVTSourceTextView+MPXEditorWordMovement.m */,
+				337F175B1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.h */,
+				337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m */,
 				333860F41BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.h */,
 				333860F51BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m */,
 				337F17611B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.h */,
@@ -472,7 +472,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXEditorLineMovement.m in Sources */,
+				337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m in Sources */,
 				337F176F1B8EB2F1002FA72B /* DVTSourceTextView+MPXEditorMouseEvents.m in Sources */,
 				333860F61BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m in Sources */,
 				337F17531B8EA3FF002FA72B /* DVTSourceTextView+MPXEditorClipboardSupport.m in Sources */,

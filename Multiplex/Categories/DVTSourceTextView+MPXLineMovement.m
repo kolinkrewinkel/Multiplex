@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXLineMovement.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -15,9 +15,9 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
-#import "DVTSourceTextView+MPXEditorLineMovement.h"
+#import "DVTSourceTextView+MPXLineMovement.h"
 
-@implementation DVTSourceTextView (MPXEditorLineMovement)
+@implementation DVTSourceTextView (MPXLineMovement)
 
 #pragma mark - Convenience
 
