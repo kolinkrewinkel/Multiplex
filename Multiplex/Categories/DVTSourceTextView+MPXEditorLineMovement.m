@@ -19,75 +19,115 @@
 
 @implementation DVTSourceTextView (MPXEditorLineMovement)
 
-- (void)mpx_moveSelectionsToLineExtremity:(NSSelectionAffinity)affinity modifyingSelection:(BOOL)modifySelection
+#pragma mark - Convenience
+
+/**
+ * @return Range of characters for the word-wrapped line containing the index.
+ */
+ - (NSRange)mpx_rangeOfWordWrappedLineContainingIndex:(NSUInteger)index
 {
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSRange previousAbsoluteRange = selection.range;
-
-        // The cursors are being pushed to the line's relative location of 0 or .length.
-        NSRange rangeOfContainingLine = ({
-            NSRange range;
-            NSUInteger locationToBaseFrom = previousAbsoluteRange.location;
-
-            if (affinity == NSSelectionAffinityDownstream) {
-                locationToBaseFrom = NSMaxRange(previousAbsoluteRange);
-            }
-
-            [self.layoutManager lineFragmentRectForGlyphAtIndex:locationToBaseFrom
-                                                 effectiveRange:&range];
-            range;
-        });
-
-        NSRange cursorRange = NSMakeRange(rangeOfContainingLine.location, 0);
-
-        if (affinity == NSSelectionAffinityDownstream) {
-            cursorRange.location += rangeOfContainingLine.length - 1;
-        }
-
-        if (modifySelection) {
-            cursorRange = NSUnionRange(previousAbsoluteRange, cursorRange);
-        }
-        
-        if (NSEqualRanges(cursorRange, selection.range)) {
-            return selection;
-        }
-
-        return [[MPXSelection alloc] initWithSelectionRange:cursorRange
-                                      indexWantedWithinLine:MPXNoStoredLineIndex
-                                                     origin:selection.insertionIndex];
-    }];
-}
-
-- (void)mpx_moveToLeftEndOfLineModifyingSelection:(BOOL)modifySelection
-{
-    [self mpx_moveSelectionsToLineExtremity:NSSelectionAffinityUpstream modifyingSelection:modifySelection];
-}
-
-- (void)mpx_moveToRightEndOfLineModifyingSelection:(BOOL)modifySelection
-{
-    [self mpx_moveSelectionsToLineExtremity:NSSelectionAffinityDownstream modifyingSelection:modifySelection];
+    // Use -lineFragmentRectForGlyphAtIndex:effectiveRange: instead of -lineRangeForRange: on NSString because we want
+    // line movements to occur relative to word-wrapped lines. Otherwise, for example, Command-Left Arrow on a word-
+    // wrapped line would jump it to the (visual) line above.
+    NSRange lineRange;
+    [self.layoutManager lineFragmentRectForGlyphAtIndex:index effectiveRange:&lineRange];
+    
+    return lineRange;
 }
 
 #pragma mark - Directional Movements
 
 - (void)moveToLeftEndOfLine:(id)sender
 {
-    [self mpx_moveToLeftEndOfLineModifyingSelection:NO];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        // Move to the beginning of the line.
+        NSRange lineRange = [self mpx_rangeOfWordWrappedLineContainingIndex:selection.insertionIndex];
+        NSRange newCursorRange = NSMakeRange(lineRange.location, 0);
+
+        // Because it's a plain caret selection, the origin needs to be moved/reset to wherever the caret is so
+        // subsequent modifications are performed about this location.
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newCursorRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:NSMaxRange(newCursorRange)];
+
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityUpstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
 }
 
 - (void)moveToLeftEndOfLineAndModifySelection:(id)sender
 {
-    [self mpx_moveToLeftEndOfLineModifyingSelection:YES];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        NSRange lineRange = [self mpx_rangeOfWordWrappedLineContainingIndex:selection.insertionIndex];
+        
+        // The selection should be moved upstream about the insertion index (and not the location) because the logic
+        // used to modify it in -modifySelectionUpstreamByAmount: will need to start from the trailing end and "clear"
+        // entire trailing side before getting to the origin, then progressing upstream the remaing amount to the
+        // desired location.
+        NSRange newRange = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - lineRange.location];
+
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:NSMaxRange(newRange)];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityUpstream
+                                              modifyingSelections:YES
+                                                       usingBlock:transformBlock];
 }
 
 - (void)moveToRightEndOfLine:(id)sender
 {
-    [self mpx_moveToRightEndOfLineModifyingSelection:NO];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        NSRange lineRange = [self mpx_rangeOfWordWrappedLineContainingIndex:selection.insertionIndex];
+        
+        // Subtract one from lineRange's max so the cursor isn't placed after the newline.
+        NSRange newCursorRange = NSMakeRange(NSMaxRange(lineRange) - 1, 0);
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newCursorRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:NSMaxRange(newCursorRange)];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
 }
 
 - (void)moveToRightEndOfLineAndModifySelection:(id)sender
 {
-    [self mpx_moveToRightEndOfLineModifyingSelection:YES];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        NSRange lineRange = [self mpx_rangeOfWordWrappedLineContainingIndex:selection.insertionIndex];
+        
+        // As in -moveToLeftEndOfLineAndModifySelection:, the selection has to be incremented by enough to account for
+        // a leading edge and then extending out to the end of the line from the trailing edge. 
+        NSUInteger endOfLine = NSMaxRange(lineRange) - 1;
+        NSRange newRange = [selection modifySelectionDownstreamByAmount:endOfLine - selection.insertionIndex];
+        
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:newRange.location];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:YES
+                                                       usingBlock:transformBlock];
 }
 
 #pragma mark - Semantic Movements
