@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33B3A3E918CD36BE00AA64C8"
                BuildableName = "Multiplex.xcplugin"
-               BlueprintName = "MultiplexPlugin"
+               BlueprintName = "Multiplex"
                ReferencedContainer = "container:Multiplex.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -55,7 +55,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33B3A3E918CD36BE00AA64C8"
             BuildableName = "Multiplex.xcplugin"
-            BlueprintName = "MultiplexPlugin"
+            BlueprintName = "Multiplex"
             ReferencedContainer = "container:Multiplex.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -85,7 +85,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33B3A3E918CD36BE00AA64C8"
             BuildableName = "Multiplex.xcplugin"
-            BlueprintName = "MultiplexPlugin"
+            BlueprintName = "Multiplex"
             ReferencedContainer = "container:Multiplex.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -103,7 +103,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33B3A3E918CD36BE00AA64C8"
             BuildableName = "Multiplex.xcplugin"
-            BlueprintName = "MultiplexPlugin"
+            BlueprintName = "Multiplex"
             ReferencedContainer = "container:Multiplex.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
