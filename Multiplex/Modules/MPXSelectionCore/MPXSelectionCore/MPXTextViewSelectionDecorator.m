@@ -166,17 +166,27 @@
     // If there's only one selection, always show it in the breadcrumb bar and have it be the basis for autocompletion.
     if ([self.caretViews count] == 1) {
         RACTupleUnpack(MPXSelection *selection, NSView *caretView) = [self.caretViews firstObject];
-        self.textView.selectedRange = selection.range;
+        [self setTextViewSelectedRangeSafely:selection.range];
         return;
     }
     
     MPXSelection *visibleSelection = [self firstVisibleSelectionInTextView];
     if (visibleSelection && [self.textView.string length] > 0) {
         if (!NSEqualRanges(self.textView.selectedRange, visibleSelection.range)) {
-            self.textView.selectedRange = visibleSelection.range;
+            [self setTextViewSelectedRangeSafely:visibleSelection.range];
         }
     } else {
-        self.textView.selectedRange = NSMakeRange(0, 0);
+        [self setTextViewSelectedRangeSafely:NSMakeRange(0, 0)];
+    }
+}
+
+- (void)setTextViewSelectedRangeSafely:(NSRange)range
+{
+    // When the textStorage is modified, sometimes a scroll can be triggered. Because this modification occurs just
+    // before the selections are updated, we check that the ranges aren't out of bounds (because the selections we're
+    // referencing are now incongruent with the text).
+    if ([self.textView.textStorage.string length] > NSMaxRange(range)) {
+        self.textView.selectedRange = range;
     }
 }
 
