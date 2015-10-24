@@ -25,6 +25,7 @@
 	<key>DVTPlugInCompatibilityUUIDs</key>
 	<array>
 		<string>0420B86A-AA43-4792-9ED0-6FE0F2B16A13</string>
+		<string>7265231C-39B4-402C-89E1-16167C4CC990</string>
 	</array>
 	<key>NSPrincipalClass</key>
 	<string>${PRODUCT_NAME}</string>
