@@ -16,9 +16,6 @@ Simultaneous editing for Xcode, inspired by Sublime Text.
 
 ##Installation
 
-**Alcatraz**  
-Multiplex is available on [Alcatraz](http://alcatraz.io)
-
 **Installer**  
 Run the latest installer from [Releases](https://github.com/kolinkrewinkel/Multiplex/releases).
 
@@ -26,6 +23,9 @@ Run the latest installer from [Releases](https://github.com/kolinkrewinkel/Multi
 Move the `Multiplex.xcplugin` file from [Releases](https://github.com/kolinkrewinkel/Multiplex/releases) into `~/Library/Application Support/Developer/Shared/Xcode/Plug-ins/`. Create any intermediate directories if necessary.
 
 Addtionally, you can clone the project and build/run it. It will automatically launch a debugger session on Xcode itself, copying the plugin into the correct folder.
+
+**Alcatraz**  
+Multiplex is not yet supported by [Alcatraz](http://alcatraz.io) (even though it is listed, the install will fail).
 
 ##Usage
 
