@@ -425,13 +425,15 @@ static NSString *kMPXNewlineString = @"\n";
              modifyingExistingSelections:(BOOL)modifySelection
                        movementDirection:(NSSelectionAffinity)movementDirection;
 {
-    NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
-    NSArray *placeholderFixedValues =
-    [self.mpx_selectionManager preprocessedPlaceholderSelectionsForSelections:mappedValues
-                                                            movementDirection:movementDirection
-                                                              modifySelection:modifySelection];
-    
-    self.mpx_selectionManager.finalizedSelections = placeholderFixedValues;
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selectionToModify
+                                                       finalSelection:mapBlock(selectionToModify)
+                                                          mutatedText:NO];
+    };
+
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:movementDirection
+                                              modifyingSelections:modifySelection
+                                                       usingBlock:transformBlock];
 }
 
 - (NSString *)followupStringToMakePair:(NSString *)originalInsertString
