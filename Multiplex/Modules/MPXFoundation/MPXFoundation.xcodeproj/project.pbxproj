@@ -26,9 +26,7 @@
 
 /* Begin PBXFileReference section */
 		29D883A4ECA87D08FADF3BC5 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		334387EE1B8BD56800A1AA32 /* MPXSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSwizzle.h; sourceTree = "<group>"; };
 		334387EF1B8BD56800A1AA32 /* MPXGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXGeometry.h; sourceTree = "<group>"; };
-		334387F01B8BD56800A1AA32 /* MPXSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSwizzle.m; sourceTree = "<group>"; };
 		338A23781B8BD49900CC6C1F /* Pods.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Multiplex-afagjbxtmzslnhfabrmdrnazxzmq/Build/Products/Debug/Pods.framework"; sourceTree = "<group>"; };
 		33D9FFA61B8BD24200A9CD4D /* MPXFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPXFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33D9FFA91B8BD24200A9CD4D /* MPXFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPXFoundation.h; sourceTree = "<group>"; };
@@ -93,8 +91,6 @@
 				33D9FFAB1B8BD24200A9CD4D /* Info.plist */,
 				33D9FFA91B8BD24200A9CD4D /* MPXFoundation.h */,
 				334387EF1B8BD56800A1AA32 /* MPXGeometry.h */,
-				334387EE1B8BD56800A1AA32 /* MPXSwizzle.h */,
-				334387F01B8BD56800A1AA32 /* MPXSwizzle.m */,
 			);
 			path = MPXFoundation;
 			sourceTree = "<group>";
