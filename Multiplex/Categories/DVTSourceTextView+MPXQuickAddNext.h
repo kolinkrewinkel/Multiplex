@@ -8,7 +8,7 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-extern const NSString *kMPXQuickAddNextMenuItemTitle;
+extern NSString *kMPXQuickAddNextMenuItemTitle;
 
 /**
  * Handles the "Quick Add Next" menu item, and the logic to handle selecting the current word and the next instance of

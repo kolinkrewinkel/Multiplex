@@ -331,148 +331,21 @@ static NSString *kMPXNewlineString = @"\n";
     [self insertText:kMPXNewlineString];
 }
 
-- (BOOL)handleInsertBackTab
-{
-    return [self mpx_handleTabInDirection:NSSelectionAffinityUpstream];
-}
-
-- (BOOL)handleInsertTab
-{
-    if ([self mpx_handleTabInDirection:NSSelectionAffinityDownstream]) {
-        return YES;
-    }
-
-    [self insertText:[self mpx_tabString]];
-        
-    return YES;
-}
-
-- (BOOL)mpx_handleTabInDirection:(NSSelectionAffinity)direction
-{
-    if ([self.mpx_selectionManager.finalizedSelections count] == 1) {
-        MPXSelection *selection = [self.mpx_selectionManager.finalizedSelections firstObject];
-        
-        // Use the actual line to allow skipping to a placeholder that's only soft word-wrapped.
-        NSRange lineRange = [self.string lineRangeForRange:selection.range];
-        
-        BOOL forward = direction == NSSelectionAffinityDownstream; 
-        
-        // Get the next placeholder within the line.
-        NSRange placeholderOnSameLine = [self rangeOfPlaceholderFromCharacterIndex:selection.range.location
-                                                                           forward:forward
-                                                                              wrap:NO
-                                                                             limit:NSMaxRange(lineRange)];
-        
-        if (placeholderOnSameLine.length > 0) {
-            [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {               
-                // Select the entirety of the next placeholder for quick typing-over/deletion.
-                return [[MPXSelection alloc] initWithSelectionRange:placeholderOnSameLine
-                                              indexWantedWithinLine:MPXNoStoredLineIndex
-                                                             origin:placeholderOnSameLine.location];
-            } sequentialModification:NO modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
-            
-            return YES;
-        }
-    }
-    
-    return NO;
-}
-
 - (NSString *)mpx_tabString
 {
     DVTTextPreferences *preferences = [DVTTextPreferences preferences];
     if (preferences.useTabsToIndent) {
         return @"\t";
     }
-    
+
     NSMutableString *spaceTabString = [NSMutableString string];
-    
+
     NSUInteger spaceCount = preferences.tabWidth;
     for (NSUInteger spacesAdded = 0; spacesAdded < spaceCount; spacesAdded++) {
         [spaceTabString appendString:@" "];
     }
-    
+
     return spaceTabString;
-}
-
-#pragma mark - Range Manipulation
-
-- (BOOL)mpx_validateMenuItem:(NSMenuItem *)item
-{
-    SEL theAction = item.action;
-    if (theAction == @selector(copy:) || theAction == @selector(cut:)) {
-        return [self.mpx_selectionManager.visualSelections count] > 0;
-    } else if (theAction == @selector(mpx_quickAddNext:)) {
-        return [self mpx_stringForQuickAddNext] != nil;
-    }
-    
-    return [self mpx_validateMenuItem:item];
-}
-
-- (void)selectAll:(id)sender
-{
-    self.mpx_selectionManager.finalizedSelections = @[[MPXSelection selectionWithRange:NSMakeRange(0, [self.textStorage.string length])]];
-}
-
-- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
-{
-    [self mpx_mapAndFinalizeSelectedRanges:mapBlock
-                    sequentialModification:NO
-               modifyingExistingSelections:NO
-                         movementDirection:NSSelectionAffinityDownstream];
-}
-
-- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
-                  sequentialModification:(BOOL)sequentialModification
-             modifyingExistingSelections:(BOOL)modifySelection
-                       movementDirection:(NSSelectionAffinity)movementDirection;
-{
-    NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
-    NSArray *placeholderFixedValues =
-    [self.mpx_selectionManager preprocessedPlaceholderSelectionsForSelections:mappedValues
-                                                            movementDirection:movementDirection
-                                                              modifySelection:modifySelection];
-    
-    self.mpx_selectionManager.finalizedSelections = placeholderFixedValues;
-}
-
-- (NSString *)followupStringToMakePair:(NSString *)originalInsertString
-{
-    if ([originalInsertString length] != 1) {
-        return nil;
-    }
-    
-    if ([originalInsertString isEqualToString:@"["]) {
-        return @"]";
-    } else if ([originalInsertString isEqualToString:@"{"]) {
-        return @"}";
-    } else if ([originalInsertString isEqualToString:@"("]) {
-        return @")";
-    } else if ([originalInsertString isEqualToString:@"\""]) {
-        return @"\"";
-    } else if ([originalInsertString isEqualToString:@"'"]) {
-        return @"'";
-    } else if ([originalInsertString isEqualToString:@"<"]) {
-        return @">";
-    }
-    
-    return nil;
-}
-
-- (void)centerSelectionInVisibleArea:(id)sender
-{
-    NSUInteger rectCount = 0;
-    NSRectArray rectsToCenter = [self.layoutManager rectArrayForCharacterRange:self.selectedRange
-                                                  withinSelectedCharacterRange:self.selectedRange
-                                                               inTextContainer:(NSTextContainer *)self.textContainer
-                                                                     rectCount:&rectCount];
-    
-    if (rectCount == 0) {
-        return;
-    }
-    
-    CGRect firstRect = rectsToCenter[0];
-    [self.enclosingScrollView scrollRectToVisible:firstRect];
 }
 
 - (void)mpx_indentSelection:(id)arg1
@@ -521,6 +394,65 @@ static NSString *kMPXNewlineString = @"\n";
     [self.textStorage endEditing];
 
     return NSMakeRange(range.location + shift, range.length);
+}
+
+#pragma mark - Range Manipulation
+
+- (BOOL)mpx_validateMenuItem:(NSMenuItem *)item
+{
+    SEL theAction = item.action;
+    if (theAction == @selector(copy:) || theAction == @selector(cut:)) {
+        return [self.mpx_selectionManager.visualSelections count] > 0;
+    } else if (theAction == @selector(mpx_quickAddNext:)) {
+        return [self mpx_stringForQuickAddNext] != nil;
+    }
+    
+    return [self mpx_validateMenuItem:item];
+}
+
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
+{
+    [self mpx_mapAndFinalizeSelectedRanges:mapBlock
+                    sequentialModification:NO
+               modifyingExistingSelections:NO
+                         movementDirection:NSSelectionAffinityDownstream];
+}
+
+- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
+                  sequentialModification:(BOOL)sequentialModification
+             modifyingExistingSelections:(BOOL)modifySelection
+                       movementDirection:(NSSelectionAffinity)movementDirection;
+{
+    NSArray *mappedValues = [[[self.mpx_selectionManager.visualSelections rac_sequence] map:mapBlock] array];
+    NSArray *placeholderFixedValues =
+    [self.mpx_selectionManager preprocessedPlaceholderSelectionsForSelections:mappedValues
+                                                            movementDirection:movementDirection
+                                                              modifySelection:modifySelection];
+    
+    self.mpx_selectionManager.finalizedSelections = placeholderFixedValues;
+}
+
+- (NSString *)followupStringToMakePair:(NSString *)originalInsertString
+{
+    if ([originalInsertString length] != 1) {
+        return nil;
+    }
+    
+    if ([originalInsertString isEqualToString:@"["]) {
+        return @"]";
+    } else if ([originalInsertString isEqualToString:@"{"]) {
+        return @"}";
+    } else if ([originalInsertString isEqualToString:@"("]) {
+        return @")";
+    } else if ([originalInsertString isEqualToString:@"\""]) {
+        return @"\"";
+    } else if ([originalInsertString isEqualToString:@"'"]) {
+        return @"'";
+    } else if ([originalInsertString isEqualToString:@"<"]) {
+        return @">";
+    }
+    
+    return nil;
 }
 
 @end

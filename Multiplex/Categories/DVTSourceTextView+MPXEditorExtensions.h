@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Kolin Krewinkel. All rights reserved.
 //
 
-extern NSString *kMPXQuickAddNextMenuItemTitle;
-
 #import <DVTKit/DVTSourceTextView.h>
 
 @class MPXSelection;
@@ -24,6 +22,7 @@ extern NSString *kMPXQuickAddNextMenuItemTitle;
 - (void)mpx_commonInitDVTSourceTextView;
 
 - (void)mpx_indentSelection:(id)sender;
+- (NSString *)mpx_tabString;
 
 - (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;
 

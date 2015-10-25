@@ -6,7 +6,11 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
+#import <DVTKit/DVTLayoutManager.h>
+#import <DVTKit/DVTTextStorage.h>
+
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "DVTSourceTextView+MPXQuickAddNext.h"
 
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
 
@@ -45,6 +49,32 @@
 - (void)_drawInsertionPointInRect:(CGRect)rect color:(NSColor *)color
 {
     // Intentionally no-op to prevent display of the original insertion point.
+}
+
+- (void)centerSelectionInVisibleArea:(id)sender
+{
+    NSUInteger rectCount = 0;
+    NSRectArray rectsToCenter = [self.layoutManager rectArrayForCharacterRange:self.selectedRange
+                                                  withinSelectedCharacterRange:self.selectedRange
+                                                               inTextContainer:(NSTextContainer *)self.textContainer
+                                                                     rectCount:&rectCount];
+
+    if (rectCount == 0) {
+        return;
+    }
+
+    CGRect firstRect = rectsToCenter[0];
+    [self.enclosingScrollView scrollRectToVisible:firstRect];
+}
+
+- (void)selectAll:(id)sender
+{
+    NSRange entireDocument = NSMakeRange(0, [self.textStorage.string length]);
+    MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:entireDocument
+                                                        indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                       origin:0];
+
+    self.mpx_selectionManager.finalizedSelections = @[newSelection];
 }
 
 @end
