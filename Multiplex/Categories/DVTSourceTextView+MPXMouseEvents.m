@@ -8,7 +8,6 @@
 
 @import JRSwizzle;
 @import libextobjc;
-@import MPXSelectionCore;
 
 #import <DVTKit/DVTFoldingManager.h>
 #import <DVTKit/DVTLayoutManager.h>
@@ -17,6 +16,10 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
+#import "MPXTextViewSelectionDecorator.h"
 
 #import "DVTSourceTextView+MPXMouseEvents.h"
 

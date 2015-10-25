@@ -8,11 +8,10 @@
 
 #import <DVTKit/DVTTextStorage.h>
 
-#import <MPXFoundation/MPXFoundation.h>
-
-#import <MPXSelectionCore/MPXSelectionCore.h>
-
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
 
 #import "DVTSourceTextView+MPXParagraphMovement.h"
 

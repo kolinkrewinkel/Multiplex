@@ -7,12 +7,15 @@
 //
 
 @import libextobjc;
-@import MPXSelectionCore;
 
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTFoundation/DVTTextPreferences.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
+
 #import "DVTSourceTextView+MPXWhitespaceTrimming.h"
 
 @implementation DVTSourceTextView (MPXWhitespaceTrimming)

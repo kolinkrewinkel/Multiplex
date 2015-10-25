@@ -6,6 +6,7 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
+@class MPXSelection;
 @class MPXSelectionMutation;
 typedef MPXSelectionMutation *(^MPXSelectionMutationBlock)(MPXSelection *selectionToModify);
 

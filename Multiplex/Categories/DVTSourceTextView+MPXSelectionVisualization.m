@@ -11,11 +11,12 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXQuickAddNext.h"
+#import "MPXSelection.h"
+#import "MPXTextViewSelectionDecorator.h"
 
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
 
 @import libextobjc;
-@import MPXSelectionCore;
 
 @implementation DVTSourceTextView (MPXSelectionVisualization)
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);

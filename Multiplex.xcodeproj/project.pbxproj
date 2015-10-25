@@ -13,7 +13,10 @@
 		334A19B91BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m in Sources */ = {isa = PBXBuildFile; fileRef = 334A19B81BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m */; };
 		334F8D201BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 334F8D1F1BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.m */; };
 		33502CDD1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 33502CDC1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m */; };
-		33742F8A1B903FBC001B4C55 /* MPXSelectionCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */; };
+		33619CCD1BDD662200F59C50 /* MPXSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 33619CC41BDD662200F59C50 /* MPXSelection.m */; };
+		33619CCE1BDD662200F59C50 /* MPXSelectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 33619CC81BDD662200F59C50 /* MPXSelectionManager.m */; };
+		33619CCF1BDD662200F59C50 /* MPXSelectionMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = 33619CCA1BDD662200F59C50 /* MPXSelectionMutation.m */; };
+		33619CD01BDD662200F59C50 /* MPXTextViewSelectionDecorator.m in Sources */ = {isa = PBXBuildFile; fileRef = 33619CCC1BDD662200F59C50 /* MPXTextViewSelectionDecorator.m */; };
 		337F17531B8EA3FF002FA72B /* DVTSourceTextView+MPXClipboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17521B8EA3FF002FA72B /* DVTSourceTextView+MPXClipboard.m */; };
 		337F175A1B8EA5A0002FA72B /* DVTSourceTextView+MPXWordMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F17591B8EA5A0002FA72B /* DVTSourceTextView+MPXWordMovement.m */; };
 		337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m in Sources */ = {isa = PBXBuildFile; fileRef = 337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m */; };
@@ -27,7 +30,6 @@
 		33A74F2E1B8935FB00FBBD2B /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2C1B8935FB00FBBD2B /* DVTKit.framework */; };
 		33A74F311B89365500FBBD2B /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F2F1B89365500FBBD2B /* IDEFoundation.framework */; };
 		33A74F321B89365500FBBD2B /* IDEKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33A74F301B89365500FBBD2B /* IDEKit.framework */; };
-		33A795A11BAB22F700388FC2 /* MPXSelectionCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33B3A3EE18CD36BE00AA64C8 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3ED18CD36BE00AA64C8 /* AppKit.framework */; };
 		33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B3A3EF18CD36BE00AA64C8 /* Foundation.framework */; };
 		33B3A3F618CD36BE00AA64C8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 33B3A3F418CD36BE00AA64C8 /* InfoPlist.strings */; };
@@ -38,47 +40,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		33D9FF471B8BC72600A9CD4D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33D9FF421B8BC72600A9CD4D /* MPXSelectionCore.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 33D9FF281B8BC72500A9CD4D;
-			remoteInfo = MPXSelectionCore;
-		};
-		33D9FF491B8BC72600A9CD4D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33D9FF421B8BC72600A9CD4D /* MPXSelectionCore.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 33D9FF321B8BC72600A9CD4D;
-			remoteInfo = MPXSelectionCoreTests;
-		};
-		33D9FF651B8BCEF300A9CD4D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33D9FF421B8BC72600A9CD4D /* MPXSelectionCore.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 33D9FF271B8BC72500A9CD4D;
-			remoteInfo = MPXSelectionCore;
-		};
 		33D9FF951B8BD05100A9CD4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 33D9FF911B8BD05000A9CD4D /* IDEHeaders.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 33D9FF861B8BD05000A9CD4D;
 			remoteInfo = IDEHeaders;
-		};
-		33D9FFC51B8BD24300A9CD4D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33D9FFC01B8BD24300A9CD4D /* MPXFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 33D9FFA61B8BD24200A9CD4D;
-			remoteInfo = MPXFoundation;
-		};
-		33D9FFC71B8BD24300A9CD4D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33D9FFC01B8BD24300A9CD4D /* MPXFoundation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 33D9FFB01B8BD24200A9CD4D;
-			remoteInfo = MPXFoundationTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -89,7 +56,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				33A795A11BAB22F700388FC2 /* MPXSelectionCore.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +72,17 @@
 		334F8D1F1BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXTabMovement.m"; sourceTree = "<group>"; };
 		33502CDB1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTTextCompletionListWindowController+MPXAutocompleteAnimation.h"; sourceTree = "<group>"; };
 		33502CDC1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m"; sourceTree = "<group>"; };
+		33619CC11BDD662200F59C50 /* MPXGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXGeometry.h; sourceTree = "<group>"; };
+		33619CC31BDD662200F59C50 /* MPXSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelection.h; sourceTree = "<group>"; };
+		33619CC41BDD662200F59C50 /* MPXSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelection.m; sourceTree = "<group>"; };
+		33619CC51BDD662200F59C50 /* MPXSelectionCore-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MPXSelectionCore-Prefix.pch"; sourceTree = "<group>"; };
+		33619CC61BDD662200F59C50 /* MPXSelectionCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionCore.h; sourceTree = "<group>"; };
+		33619CC71BDD662200F59C50 /* MPXSelectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionManager.h; sourceTree = "<group>"; };
+		33619CC81BDD662200F59C50 /* MPXSelectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionManager.m; sourceTree = "<group>"; };
+		33619CC91BDD662200F59C50 /* MPXSelectionMutation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXSelectionMutation.h; sourceTree = "<group>"; };
+		33619CCA1BDD662200F59C50 /* MPXSelectionMutation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXSelectionMutation.m; sourceTree = "<group>"; };
+		33619CCB1BDD662200F59C50 /* MPXTextViewSelectionDecorator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPXTextViewSelectionDecorator.h; sourceTree = "<group>"; };
+		33619CCC1BDD662200F59C50 /* MPXTextViewSelectionDecorator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPXTextViewSelectionDecorator.m; sourceTree = "<group>"; };
 		337F17511B8EA3FF002FA72B /* DVTSourceTextView+MPXClipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXClipboard.h"; sourceTree = "<group>"; };
 		337F17521B8EA3FF002FA72B /* DVTSourceTextView+MPXClipboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXClipboard.m"; sourceTree = "<group>"; };
 		337F17581B8EA5A0002FA72B /* DVTSourceTextView+MPXWordMovement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXWordMovement.h"; sourceTree = "<group>"; };
@@ -140,9 +117,7 @@
 		33D7559C1BD960A7000CBE8E /* DVTSourceTextView+MPXWhitespaceTrimming.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXWhitespaceTrimming.m"; sourceTree = "<group>"; };
 		33D9FE8A1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXEditorExtensions.h"; sourceTree = "<group>"; };
 		33D9FE8B1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXEditorExtensions.m"; sourceTree = "<group>"; };
-		33D9FF421B8BC72600A9CD4D /* MPXSelectionCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPXSelectionCore.xcodeproj; path = Modules/MPXSelectionCore/MPXSelectionCore.xcodeproj; sourceTree = "<group>"; };
 		33D9FF911B8BD05000A9CD4D /* IDEHeaders.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = IDEHeaders.xcodeproj; path = Multiplex/Modules/IDEHeaders/IDEHeaders.xcodeproj; sourceTree = "<group>"; };
-		33D9FFC01B8BD24300A9CD4D /* MPXFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MPXFoundation.xcodeproj; path = Modules/MPXFoundation/MPXFoundation.xcodeproj; sourceTree = "<group>"; };
 		33E3DA6A1B903C1700E47395 /* DVTSourceTextView+MPXSelectionVisualization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXSelectionVisualization.h"; sourceTree = "<group>"; };
 		33E3DA6B1B903C1700E47395 /* DVTSourceTextView+MPXSelectionVisualization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXSelectionVisualization.m"; sourceTree = "<group>"; };
 		741626E234D8521A05F9E61C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -161,7 +136,6 @@
 				33B3A3F018CD36BE00AA64C8 /* Foundation.framework in Frameworks */,
 				33A74F311B89365500FBBD2B /* IDEFoundation.framework in Frameworks */,
 				33A74F321B89365500FBBD2B /* IDEKit.framework in Frameworks */,
-				33742F8A1B903FBC001B4C55 /* MPXSelectionCore.framework in Frameworks */,
 				17963587F420FC6C9D934711 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,6 +143,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		33619CC01BDD662200F59C50 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				33619CC11BDD662200F59C50 /* MPXGeometry.h */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		33619CC21BDD662200F59C50 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				33619CC31BDD662200F59C50 /* MPXSelection.h */,
+				33619CC41BDD662200F59C50 /* MPXSelection.m */,
+				33619CC51BDD662200F59C50 /* MPXSelectionCore-Prefix.pch */,
+				33619CC61BDD662200F59C50 /* MPXSelectionCore.h */,
+				33619CC71BDD662200F59C50 /* MPXSelectionManager.h */,
+				33619CC81BDD662200F59C50 /* MPXSelectionManager.m */,
+				33619CC91BDD662200F59C50 /* MPXSelectionMutation.h */,
+				33619CCA1BDD662200F59C50 /* MPXSelectionMutation.m */,
+				33619CCB1BDD662200F59C50 /* MPXTextViewSelectionDecorator.h */,
+				33619CCC1BDD662200F59C50 /* MPXTextViewSelectionDecorator.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
 		33B3A3E118CD36BE00AA64C8 = {
 			isa = PBXGroup;
 			children = (
@@ -205,8 +204,9 @@
 		33B3A3F118CD36BE00AA64C8 /* Multiplex */ = {
 			isa = PBXGroup;
 			children = (
+				33619CC01BDD662200F59C50 /* Utilities */,
+				33619CC21BDD662200F59C50 /* Classes */,
 				33D9FE891B8AE32400A9CD4D /* Categories */,
-				33D9FF1D1B8BC6EC00A9CD4D /* Modules */,
 				33B3A3F718CD36BE00AA64C8 /* MultiplexPlugin.h */,
 				33B3A3F818CD36BE00AA64C8 /* MultiplexPlugin.m */,
 				33B3A3F218CD36BE00AA64C8 /* Supporting Files */,
@@ -237,8 +237,6 @@
 				337F17651B8EAD9D002FA72B /* DVTSourceTextView+MPXDocumentMovement.m */,
 				33D9FE8A1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.h */,
 				33D9FE8B1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m */,
-				334F8D1E1BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.h */,
-				334F8D1F1BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.m */,
 				337F175B1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.h */,
 				337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m */,
 				337F176D1B8EB2F1002FA72B /* DVTSourceTextView+MPXMouseEvents.h */,
@@ -251,6 +249,8 @@
 				33E3DA6B1B903C1700E47395 /* DVTSourceTextView+MPXSelectionVisualization.m */,
 				337F17611B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.h */,
 				337F17621B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.m */,
+				334F8D1E1BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.h */,
+				334F8D1F1BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.m */,
 				3336EC891BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.h */,
 				3336EC8A1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m */,
 				33D7559B1BD960A7000CBE8E /* DVTSourceTextView+MPXWhitespaceTrimming.h */,
@@ -265,37 +265,10 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
-		33D9FF1D1B8BC6EC00A9CD4D /* Modules */ = {
-			isa = PBXGroup;
-			children = (
-				33D9FFC01B8BD24300A9CD4D /* MPXFoundation.xcodeproj */,
-				33D9FF421B8BC72600A9CD4D /* MPXSelectionCore.xcodeproj */,
-			);
-			name = Modules;
-			sourceTree = "<group>";
-		};
-		33D9FF431B8BC72600A9CD4D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */,
-				33D9FF4A1B8BC72600A9CD4D /* MPXSelectionCoreTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		33D9FF921B8BD05000A9CD4D /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				33D9FF961B8BD05100A9CD4D /* IDEHeaders.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		33D9FFC11B8BD24300A9CD4D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				33D9FFC61B8BD24300A9CD4D /* MPXFoundation.framework */,
-				33D9FFC81B8BD24300A9CD4D /* MPXFoundationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -327,7 +300,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				33D9FF661B8BCEF300A9CD4D /* PBXTargetDependency */,
 			);
 			name = Multiplex;
 			productName = Semantique;
@@ -358,14 +330,6 @@
 					ProductGroup = 33D9FF921B8BD05000A9CD4D /* Products */;
 					ProjectRef = 33D9FF911B8BD05000A9CD4D /* IDEHeaders.xcodeproj */;
 				},
-				{
-					ProductGroup = 33D9FFC11B8BD24300A9CD4D /* Products */;
-					ProjectRef = 33D9FFC01B8BD24300A9CD4D /* MPXFoundation.xcodeproj */;
-				},
-				{
-					ProductGroup = 33D9FF431B8BC72600A9CD4D /* Products */;
-					ProjectRef = 33D9FF421B8BC72600A9CD4D /* MPXSelectionCore.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -375,39 +339,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		33D9FF481B8BC72600A9CD4D /* MPXSelectionCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = MPXSelectionCore.framework;
-			remoteRef = 33D9FF471B8BC72600A9CD4D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		33D9FF4A1B8BC72600A9CD4D /* MPXSelectionCoreTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = MPXSelectionCoreTests.xctest;
-			remoteRef = 33D9FF491B8BC72600A9CD4D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		33D9FF961B8BD05100A9CD4D /* IDEHeaders.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = IDEHeaders.framework;
 			remoteRef = 33D9FF951B8BD05100A9CD4D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		33D9FFC61B8BD24300A9CD4D /* MPXFoundation.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = MPXFoundation.framework;
-			remoteRef = 33D9FFC51B8BD24300A9CD4D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		33D9FFC81B8BD24300A9CD4D /* MPXFoundationTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = MPXFoundationTests.xctest;
-			remoteRef = 33D9FFC71B8BD24300A9CD4D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -476,12 +412,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33619CD01BDD662200F59C50 /* MPXTextViewSelectionDecorator.m in Sources */,
 				337F175D1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m in Sources */,
 				337F176F1B8EB2F1002FA72B /* DVTSourceTextView+MPXMouseEvents.m in Sources */,
 				333860F61BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m in Sources */,
 				337F17531B8EA3FF002FA72B /* DVTSourceTextView+MPXClipboard.m in Sources */,
 				33D7559D1BD960A7000CBE8E /* DVTSourceTextView+MPXWhitespaceTrimming.m in Sources */,
 				33E3DA6C1B903C1700E47395 /* DVTSourceTextView+MPXSelectionVisualization.m in Sources */,
+				33619CCE1BDD662200F59C50 /* MPXSelectionManager.m in Sources */,
 				334A19B91BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m in Sources */,
 				334F8D201BDC94D8007D449E /* DVTSourceTextView+MPXTabMovement.m in Sources */,
 				337F17631B8EAC2C002FA72B /* DVTSourceTextView+MPXSwizzling.m in Sources */,
@@ -490,7 +428,9 @@
 				337F176C1B8EAFED002FA72B /* DVTSourceTextView+MPXArrowKeyMovement.m in Sources */,
 				33D9FE911B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m in Sources */,
 				33502CDD1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m in Sources */,
+				33619CCF1BDD662200F59C50 /* MPXSelectionMutation.m in Sources */,
 				337F17691B8EAECE002FA72B /* DVTSourceTextView+MPXAutocompletion.m in Sources */,
+				33619CCD1BDD662200F59C50 /* MPXSelection.m in Sources */,
 				33B3A3F918CD36BF00AA64C8 /* MultiplexPlugin.m in Sources */,
 				337F175A1B8EA5A0002FA72B /* DVTSourceTextView+MPXWordMovement.m in Sources */,
 				3336EC8B1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m in Sources */,
@@ -498,14 +438,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		33D9FF661B8BCEF300A9CD4D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MPXSelectionCore;
-			targetProxy = 33D9FF651B8BCEF300A9CD4D /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		33B3A3F418CD36BE00AA64C8 /* InfoPlist.strings */ = {
@@ -569,18 +501,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/$(PROJECT_NAME)/Modules/IDEHeaders/IDEHeaders/";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/$(PROJECT_NAME)/IDEHeaders/IDEHeaders/";
 				INFOPLIST_FILE = "${PROJECT_NAME}/${PROJECT_NAME}-Info.plist";
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-isystem",
-					"$(PROJECT_DIR)/$(PROJECT_NAME)/Modules/IDEHeaders/IDEHeaders/",
-				);
-				OTHER_LDFLAGS = (
-					"-framework",
-					"\"MPXSelectionCore\"",
+					"$(PROJECT_DIR)/$(PROJECT_NAME)/IDEHeaders/IDEHeaders",
 				);
 				SDKROOT = macosx;
 			};
@@ -630,17 +558,13 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/$(PROJECT_NAME)/Modules/IDEHeaders/IDEHeaders/";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/$(PROJECT_NAME)/IDEHeaders/IDEHeaders/";
 				INFOPLIST_FILE = "${PROJECT_NAME}/${PROJECT_NAME}-Info.plist";
 				INSTALL_PATH = /;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CFLAGS = (
 					"-isystem",
-					"$(PROJECT_DIR)/$(PROJECT_NAME)/Modules/IDEHeaders/IDEHeaders/",
-				);
-				OTHER_LDFLAGS = (
-					"-framework",
-					"\"MPXSelectionCore\"",
+					"$(PROJECT_DIR)/$(PROJECT_NAME)/IDEHeaders/IDEHeaders",
 				);
 				SDKROOT = macosx;
 			};

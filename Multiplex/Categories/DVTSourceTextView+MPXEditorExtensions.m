@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Kolin Krewinkel. All rights reserved.
 //
 
-@import MPXFoundation;
-@import MPXSelectionCore;
 @import ReactiveCocoa;
 
 #import <DVTFoundation/DVTTextPreferences.h>
@@ -24,6 +22,10 @@
 
 #import <libextobjc/EXTSynthesize.h>
 
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
+#import "MPXTextViewSelectionDecorator.h"
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
 #import "DVTSourceTextView+MPXQuickAddNext.h"
