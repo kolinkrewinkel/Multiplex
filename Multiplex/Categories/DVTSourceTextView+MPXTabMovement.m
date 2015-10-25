@@ -6,11 +6,12 @@
 //  Copyright © 2015 Kolin Krewinkel. All rights reserved.
 //
 
-@import MPXSelectionCore;
 
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelection.h"
 
 #import "DVTSourceTextView+MPXDocumentMovement.h"
 

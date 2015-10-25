@@ -11,10 +11,12 @@
 #import <DVTKit/DVTTextStorage.h>
 #import <DVTKit/DVTFontAndColorTheme.h>
 
-@import MPXFoundation;
 @import ReactiveCocoa;
 
 #import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
+#import "MPXGeometry.h"
 
 #import "MPXTextViewSelectionDecorator.h"
 
@@ -62,7 +64,7 @@
 
     // Remove any onscreen cursors
     for (RACTuple *tuple in self.caretViews) {
-        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = tuple;
+        NSView *caretView = tuple[1];
         [caretView removeFromSuperview];
     }
 
@@ -109,7 +111,7 @@
 - (void)setCursorsVisible:(BOOL)visible
 {
     for (RACTuple *tuple in self.caretViews) {
-        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = tuple;
+        NSView *caretView = tuple[1];
         caretView.alphaValue = !visible;
     }
 
@@ -165,7 +167,7 @@
 
     // If there's only one selection, always show it in the breadcrumb bar and have it be the basis for autocompletion.
     if ([self.caretViews count] == 1) {
-        RACTupleUnpack(MPXSelection *selection, NSView *caretView) = [self.caretViews firstObject];
+        MPXSelection *selection = [self.caretViews firstObject][0];
         [self setTextViewSelectedRangeSafely:selection.range];
         return;
     }

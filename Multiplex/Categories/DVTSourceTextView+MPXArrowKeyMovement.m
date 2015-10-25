@@ -7,12 +7,14 @@
 //
 
 @import JRSwizzle;
-@import MPXSelectionCore;
 
 #import <DVTKit/DVTLayoutManager.h>
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
 
 #import "DVTSourceTextView+MPXArrowKeyMovement.h"
 

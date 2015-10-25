@@ -7,12 +7,14 @@
 //
 
 @import JRSwizzle;
-@import MPXSelectionCore;
 
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXTextViewSelectionDecorator.h"
 
 #import "DVTSourceTextView+MPXAutocompletion.h"
 

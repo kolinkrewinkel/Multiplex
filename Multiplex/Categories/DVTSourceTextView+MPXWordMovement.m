@@ -8,9 +8,8 @@
 
 #import <DVTKit/DVTTextStorage.h>
 
-@import MPXSelectionCore;
-
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "MPXSelection.h"
 
 #import "DVTSourceTextView+MPXWordMovement.h"
 

@@ -1,4 +1,0 @@
-inhibit_all_warnings!
-use_frameworks!
-
-pod 'ReactiveCocoa', '~> 2.3'

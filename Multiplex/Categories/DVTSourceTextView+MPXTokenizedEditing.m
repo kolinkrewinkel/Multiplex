@@ -10,9 +10,10 @@
 
 #import <DVTKit/DVTLayoutManager.h>
 
-@import MPXSelectionCore;
-
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+
 #import "DVTSourceTextView+MPXTokenizedEditing.h"
 
 @implementation DVTSourceTextView (MPXTokenizedEditing)
