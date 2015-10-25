@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXSelectionVisualization.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -8,12 +8,12 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
-#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
+#import "DVTSourceTextView+MPXSelectionVisualization.h"
 
 @import libextobjc;
 @import MPXSelectionCore;
 
-@implementation DVTSourceTextView (MPXEditorSelectionVisualization)
+@implementation DVTSourceTextView (MPXSelectionVisualization)
 @synthesizeAssociation(DVTSourceTextView, mpx_textViewSelectionDecorator);
 
 - (void)mpx_viewWillMoveToWindow:(NSWindow *)window

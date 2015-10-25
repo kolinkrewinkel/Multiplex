@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXAutocompletion.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -12,11 +12,11 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
+#import "DVTSourceTextView+MPXSelectionVisualization.h"
 
-#import "DVTSourceTextView+MPXSwizzling.h"
+#import "DVTSourceTextView+MPXAutocompletion.h"
 
-@implementation DVTSourceTextView (MPXEditorAutocompletion)
+@implementation DVTSourceTextView (MPXAutocompletion)
 
 - (void)mpx_didInsertCompletionTextAtRange:(NSRange)completedTextRange
 {

@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.h
+//  DVTSourceTextView+MPXMouseEvents.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -8,7 +8,7 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@interface DVTSourceTextView (MPXEditorMouseEvents)
+@interface DVTSourceTextView (MPXMouseEvents)
 
 - (void)mpx_mouseDown:(NSEvent *)event;
 - (void)mpx_mouseDragged:(NSEvent *)event;

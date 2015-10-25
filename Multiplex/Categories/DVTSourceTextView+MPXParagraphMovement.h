@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.h
+//  DVTSourceTextView+MPXParagraphMovement.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -8,6 +8,6 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@interface DVTSourceTextView (MPXEditorParagraphMovement)
+@interface DVTSourceTextView (MPXParagraphMovement)
 
 @end

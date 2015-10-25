@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXMouseEvents.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -16,11 +16,11 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
+#import "DVTSourceTextView+MPXSelectionVisualization.h"
 
-#import "DVTSourceTextView+MPXEditorMouseEvents.h"
+#import "DVTSourceTextView+MPXMouseEvents.h"
 
-@implementation DVTSourceTextView (MPXEditorMouseEvents)
+@implementation DVTSourceTextView (MPXMouseEvents)
 @synthesizeAssociation(DVTSourceTextView, mpx_altPopoverTimer);
 @synthesizeAssociation(DVTSourceTextView, mpx_rangeInProgress);
 

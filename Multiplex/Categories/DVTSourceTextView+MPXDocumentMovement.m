@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorDocumentMovement.h"
+//  DVTSourceTextView+MPXDocumentMovement.h"
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -12,9 +12,9 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
-#import "DVTSourceTextView+MPXEditorDocumentMovement.h"
+#import "DVTSourceTextView+MPXDocumentMovement.h"
 
-@implementation DVTSourceTextView (MPXEditorDocumentMovement)
+@implementation DVTSourceTextView (MPXDocumentMovement)
 
 - (void)moveToBeginningOfDocument:(id)sender
 {

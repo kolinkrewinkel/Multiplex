@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXArrowKeyMovement.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -13,9 +13,10 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-#import "DVTSourceTextView+MPXEditorArrowKeyMovement.h"
 
-@implementation DVTSourceTextView (MPXEditorArrowKeyMovement)
+#import "DVTSourceTextView+MPXArrowKeyMovement.h"
+
+@implementation DVTSourceTextView (MPXArrowKeyMovement)
 
 #pragma mark - Convenience
 

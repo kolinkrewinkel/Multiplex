@@ -8,11 +8,11 @@
 
 @import JRSwizzle;
 
-#import "DVTSourceTextView+MPXEditorAutocompletion.h"
+#import "DVTSourceTextView+MPXAutocompletion.h"
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-#import "DVTSourceTextView+MPXEditorMouseEvents.h"
-#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
-#import "DVTSourceTextView+MPXEditorClipboardSupport.h"
+#import "DVTSourceTextView+MPXMouseEvents.h"
+#import "DVTSourceTextView+MPXSelectionVisualization.h"
+#import "DVTSourceTextView+MPXClipboard.h"
 #import "DVTSourceTextView+MPXWhitespaceTrimming.h"
 
 #import "DVTSourceTextView+MPXSwizzling.h"

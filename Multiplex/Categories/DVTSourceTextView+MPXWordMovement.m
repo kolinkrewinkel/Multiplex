@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXWordMovement.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -8,15 +8,13 @@
 
 #import <DVTKit/DVTTextStorage.h>
 
-#import <MPXFoundation/MPXFoundation.h>
-
-#import <MPXSelectionCore/MPXSelectionCore.h>
+@import MPXSelectionCore;
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
-#import "DVTSourceTextView+MPXEditorWordMovement.h"
+#import "DVTSourceTextView+MPXWordMovement.h"
 
-@implementation DVTSourceTextView (MPXEditorWordMovement)
+@implementation DVTSourceTextView (MPXWordMovement)
 
 - (void)mpx_moveSelectionsToWordWithAffinity:(NSSelectionAffinity)affinity
                              modifySelection:(BOOL)modifySelection

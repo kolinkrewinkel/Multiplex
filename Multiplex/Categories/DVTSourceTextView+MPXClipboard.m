@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXClipboard.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -11,10 +11,11 @@
 #import <DVTKit/DVTLayoutManager.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
-#import "DVTSourceTextView+MPXEditorClipboardSupport.h"
+#import "DVTSourceTextView+MPXSelectionVisualization.h"
 
-@implementation DVTSourceTextView (MPXEditorClipboardSupport)
+#import "DVTSourceTextView+MPXClipboard.h"
+
+@implementation DVTSourceTextView (MPXClipboard)
 
 #pragma mark - Convenience
 

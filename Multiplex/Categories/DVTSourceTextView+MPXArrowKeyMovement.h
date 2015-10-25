@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorDocumentMovement.h
+//  DVTSourceTextView+MPXArrowKeyMovement.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -8,6 +8,8 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@interface DVTSourceTextView (MPXEditorDocumentMovement)
-
+/**
+ * Handles movement using the up/down/left/right arrow keys.
+ */
+@interface DVTSourceTextView (MPXArrowKeyMovement)
 @end

@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.m
+//  DVTSourceTextView+MPXParagraphMovement.m
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -14,9 +14,9 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 
-#import "DVTSourceTextView+MPXEditorParagraphMovement.h"
+#import "DVTSourceTextView+MPXParagraphMovement.h"
 
-@implementation DVTSourceTextView (MPXEditorParagraphMovement)
+@implementation DVTSourceTextView (MPXParagraphMovement)
 
 - (void)mpx_moveLinePositionIncludingLength:(BOOL)includeLength modifySelection:(BOOL)modifySelection
 {

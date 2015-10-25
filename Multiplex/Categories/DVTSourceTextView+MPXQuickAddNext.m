@@ -12,7 +12,7 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
-#import "DVTSourceTextView+MPXEditorSelectionVisualization.h"
+#import "DVTSourceTextView+MPXSelectionVisualization.h"
 
 #import "DVTSourceTextView+MPXQuickAddNext.h"
 

@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.h
+//  DVTSourceTextView+MPXClipboard.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -8,8 +8,5 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
-@interface DVTSourceTextView (MPXEditorClipboardSupport)
-
-- (void)copy:(id)sender;
-
+@interface DVTSourceTextView (MPXClipboard)
 @end

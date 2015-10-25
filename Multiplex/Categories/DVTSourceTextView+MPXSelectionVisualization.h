@@ -1,5 +1,5 @@
 //
-//  DVTSourceTextView+MPXEditorClipboardSupport.h
+//  DVTSourceTextView+MPXSelectionVisualization.h
 //  Multiplex
 //
 //  Created by Kolin Krewinkel on 8/26/15.
@@ -9,7 +9,7 @@
 #import <DVTKit/DVTSourceTextView.h>
 
 @class MPXTextViewSelectionDecorator;
-@interface DVTSourceTextView (MPXEditorSelectionVisualization)
+@interface DVTSourceTextView (MPXSelectionVisualization)
 
 @property (nonatomic) MPXTextViewSelectionDecorator *mpx_textViewSelectionDecorator;
 
