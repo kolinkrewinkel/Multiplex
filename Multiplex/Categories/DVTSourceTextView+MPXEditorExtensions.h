@@ -21,9 +21,6 @@
 
 - (void)mpx_commonInitDVTSourceTextView;
 
-- (void)mpx_indentSelection:(id)sender;
-- (NSString *)mpx_tabString;
-
 - (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;
 
 #pragma mark - Selection Management Core

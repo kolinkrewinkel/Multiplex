@@ -10,6 +10,7 @@
 
 #import "DVTSourceTextView+MPXAutocompletion.h"
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "DVTSourceTextView+MPXIndentation.h"
 #import "DVTSourceTextView+MPXMouseEvents.h"
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
 #import "DVTSourceTextView+MPXClipboard.h"

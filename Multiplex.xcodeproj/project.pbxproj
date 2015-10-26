@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		332AA5B61BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 332AA5B51BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m */; };
 		3336EC8B1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m in Sources */ = {isa = PBXBuildFile; fileRef = 3336EC8A1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m */; };
 		333860F61BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m in Sources */ = {isa = PBXBuildFile; fileRef = 333860F51BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m */; };
 		334A19B91BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m in Sources */ = {isa = PBXBuildFile; fileRef = 334A19B81BCA391B0054E8B2 /* IDEEditorCoordinator+MPXJumpWorkaround.m */; };
@@ -62,6 +63,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		332AA5B41BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXIndentation.h"; sourceTree = "<group>"; };
+		332AA5B51BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXIndentation.m"; sourceTree = "<group>"; };
 		3336EC891BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXTokenizedEditing.h"; sourceTree = "<group>"; };
 		3336EC8A1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceTextView+MPXTokenizedEditing.m"; sourceTree = "<group>"; };
 		333860F41BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTSourceTextView+MPXQuickAddNext.h"; sourceTree = "<group>"; };
@@ -237,6 +240,8 @@
 				337F17651B8EAD9D002FA72B /* DVTSourceTextView+MPXDocumentMovement.m */,
 				33D9FE8A1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.h */,
 				33D9FE8B1B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m */,
+				332AA5B41BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.h */,
+				332AA5B51BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m */,
 				337F175B1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.h */,
 				337F175C1B8EA7A5002FA72B /* DVTSourceTextView+MPXLineMovement.m */,
 				337F176D1B8EB2F1002FA72B /* DVTSourceTextView+MPXMouseEvents.h */,
@@ -426,6 +431,7 @@
 				337F17661B8EAD9D002FA72B /* DVTSourceTextView+MPXDocumentMovement.m in Sources */,
 				337F17601B8EAB32002FA72B /* DVTSourceTextView+MPXParagraphMovement.m in Sources */,
 				337F176C1B8EAFED002FA72B /* DVTSourceTextView+MPXArrowKeyMovement.m in Sources */,
+				332AA5B61BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m in Sources */,
 				33D9FE911B8AE32400A9CD4D /* DVTSourceTextView+MPXEditorExtensions.m in Sources */,
 				33502CDD1B9A07AC00DEB9A6 /* DVTTextCompletionListWindowController+MPXAutocompleteAnimation.m in Sources */,
 				33619CCF1BDD662200F59C50 /* MPXSelectionMutation.m in Sources */,

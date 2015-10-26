@@ -10,6 +10,7 @@
 #import <DVTKit/DVTTextStorage.h>
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
+#import "DVTSourceTextView+MPXIndentation.h"
 #import "MPXSelectionManager.h"
 #import "MPXSelection.h"
 
