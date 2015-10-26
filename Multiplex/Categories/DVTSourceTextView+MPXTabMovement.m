@@ -11,8 +11,9 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "DVTSourceTextView+MPXIndentation.h"
-#import "MPXSelectionManager.h"
 #import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
 
 #import "DVTSourceTextView+MPXDocumentMovement.h"
 
@@ -51,12 +52,20 @@
                                                                              limit:NSMaxRange(lineRange)];
 
         if (placeholderOnSameLine.length > 0) {
-            [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+            MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
                 // Select the entirety of the next placeholder for quick typing-over/deletion.
-                return [[MPXSelection alloc] initWithSelectionRange:placeholderOnSameLine
-                                              indexWantedWithinLine:MPXNoStoredLineIndex
-                                                             origin:placeholderOnSameLine.location];
-            } sequentialModification:NO modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
+                MPXSelection *selection = [[MPXSelection alloc] initWithSelectionRange:placeholderOnSameLine
+                                                                 indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                                origin:placeholderOnSameLine.location];
+
+                return [[MPXSelectionMutation alloc] initWithInitialSelection:selectionToModify
+                                                               finalSelection:selection
+                                                                  mutatedText:NO];
+            };
+            
+            [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                                      modifyingSelections:NO
+                                                               usingBlock:transformBlock];
 
             return YES;
         }

@@ -10,6 +10,8 @@
 
 #import "DVTSourceTextView+MPXEditorExtensions.h"
 #import "MPXSelection.h"
+#import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
 
 #import "DVTSourceTextView+MPXWordMovement.h"
 
@@ -18,14 +20,14 @@
 - (void)mpx_moveSelectionsToWordWithAffinity:(NSSelectionAffinity)affinity
                              modifySelection:(BOOL)modifySelection
 {
-    // The built in method is relative to back/forwards. Right means forward.
-    BOOL wordForward = affinity == NSSelectionAffinityDownstream;
-
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        // The built in method is relative to back/forwards. Right means forward.
+        BOOL wordForward = affinity == NSSelectionAffinityDownstream;
+        
         // Get the new word index from the text storage.
         // The "nextWord..." method is specific to the DVTTextStorage class.
         NSUInteger wordIndex = [self.textStorage nextWordFromIndex:selection.insertionIndex forward:wordForward];
-
+        
         NSRange newRange;
         
         if (modifySelection) {
@@ -46,11 +48,19 @@
         } else {
             origin = newRange.location;
         }
+        
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:origin];
 
-        return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                      indexWantedWithinLine:MPXNoStoredLineIndex
-                                                     origin:origin];
-    }];
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:affinity
+                                              modifyingSelections:modifySelection
+                                                       usingBlock:transformBlock];
 }
 
 #pragma mark - Directional Movements

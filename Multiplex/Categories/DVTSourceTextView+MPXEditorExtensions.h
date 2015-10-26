@@ -13,12 +13,6 @@
 
 @interface DVTSourceTextView (MPXEditorExtensions)
 
-- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock;
-- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
-                  sequentialModification:(BOOL)sequentialModification
-             modifyingExistingSelections:(BOOL)modifySelection
-                       movementDirection:(NSSelectionAffinity)movementDirection;
-
 - (void)mpx_commonInitDVTSourceTextView;
 
 - (BOOL)mpx_validateMenuItem:(NSMenuItem *)menuItem;

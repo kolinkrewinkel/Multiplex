@@ -19,12 +19,12 @@
 
 - (void)mpx_moveLinePositionIncludingLength:(BOOL)includeLength modifySelection:(BOOL)modifySelection
 {
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
         NSRange previousAbsoluteRange = selection.range;
         NSRange previousLineRange = [self.textStorage.string lineRangeForRange:previousAbsoluteRange];
-
+        
         NSRange newAbsoluteRange = previousAbsoluteRange;
-
+        
         if (includeLength) {
             // It's at the end of the line and needs to be moved down
             if (NSMaxRange(previousAbsoluteRange) == (NSMaxRange(previousLineRange) - 1)
@@ -43,13 +43,26 @@
                 newAbsoluteRange = NSMakeRange(previousLineRange.location, 0);
             }
         }
-
+        
+        MPXSelection *newSelection = nil;
         if (modifySelection) {
-            return [MPXSelection selectionWithRange:NSUnionRange(previousAbsoluteRange, newAbsoluteRange)];
+            newSelection = [[MPXSelection alloc] initWithSelectionRange:NSUnionRange(previousAbsoluteRange, newAbsoluteRange)
+                                                  indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                 origin:newAbsoluteRange.location];
+        } else {
+            newSelection = [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
+                                                  indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                 origin:newAbsoluteRange.location];
         }
-
-        return [MPXSelection selectionWithRange:newAbsoluteRange];
-    }];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:includeLength ? NSSelectionAffinityDownstream : NSSelectionAffinityUpstream
+                                              modifyingSelections:modifySelection
+                                                       usingBlock:transformBlock];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender

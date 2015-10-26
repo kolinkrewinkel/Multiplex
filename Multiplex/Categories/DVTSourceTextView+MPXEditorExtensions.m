@@ -348,30 +348,6 @@ static NSString *kMPXNewlineString = @"\n";
     return [self mpx_validateMenuItem:item];
 }
 
-- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
-{
-    [self mpx_mapAndFinalizeSelectedRanges:mapBlock
-                    sequentialModification:NO
-               modifyingExistingSelections:NO
-                         movementDirection:NSSelectionAffinityDownstream];
-}
-
-- (void)mpx_mapAndFinalizeSelectedRanges:(MPXSelection * (^)(MPXSelection *selection))mapBlock
-                  sequentialModification:(BOOL)sequentialModification
-             modifyingExistingSelections:(BOOL)modifySelection
-                       movementDirection:(NSSelectionAffinity)movementDirection;
-{
-    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
-        return [[MPXSelectionMutation alloc] initWithInitialSelection:selectionToModify
-                                                       finalSelection:mapBlock(selectionToModify)
-                                                          mutatedText:NO];
-    };
-
-    [self.mpx_selectionManager mapSelectionsWithMovementDirection:movementDirection
-                                              modifyingSelections:modifySelection
-                                                       usingBlock:transformBlock];
-}
-
 - (NSString *)followupStringToMakePair:(NSString *)originalInsertString
 {
     if ([originalInsertString length] != 1) {

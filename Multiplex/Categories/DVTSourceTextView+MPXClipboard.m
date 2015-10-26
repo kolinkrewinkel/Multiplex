@@ -13,6 +13,7 @@
 #import "DVTSourceTextView+MPXSelectionVisualization.h"
 #import "MPXSelection.h"
 #import "MPXSelectionManager.h"
+#import "MPXSelectionMutation.h"
 #import "MPXTextViewSelectionDecorator.h"
 
 #import "DVTSourceTextView+MPXClipboard.h"
@@ -143,23 +144,28 @@
     
     NSEnumerator *clipboardEnumerator = [clipboardLines objectEnumerator];
 
-    __block NSInteger offset = 0;
-    [self mpx_mapAndFinalizeSelectedRanges:^MPXSelection *(MPXSelection *selection) {
-        NSRange range = selection.range;
-        NSRange offsetRange = NSMakeRange(range.location + offset, range.length);
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selectionToModify) {
+        NSRange range = selectionToModify.range;
         NSString *clipboardItemToBeInserted = [clipboardEnumerator nextObject];
-
-        [self.textStorage replaceCharactersInRange:offsetRange
+        
+        [self.textStorage replaceCharactersInRange:range
                                         withString:clipboardItemToBeInserted
                                    withUndoManager:self.undoManager];
         
-        NSRange newRange = NSMakeRange(offsetRange.location + [clipboardItemToBeInserted length], 0);
-        offset -= range.length - [clipboardItemToBeInserted length];
-
-        return [[MPXSelection alloc] initWithSelectionRange:newRange
-                                      indexWantedWithinLine:MPXNoStoredLineIndex
-                                                     origin:newRange.location];
-    } sequentialModification:YES modifyingExistingSelections:NO movementDirection:NSSelectionAffinityDownstream];
+        NSRange newRange = NSMakeRange(range.location + [clipboardItemToBeInserted length], 0);
+        
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:newRange.location];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selectionToModify
+                                                       finalSelection:newSelection
+                                                          mutatedText:YES];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
 }
 
 @end
