@@ -19,7 +19,7 @@ extern NSString *kMPXQuickAddNextMenuItemTitle;
 /**
  * Injects the "Quick Add Next" menu item into the "Find" menu.
  */
-+ (void)mpx_addQuickAddNextMenuItem;
++ (void)mpx_addQuickAddNextMenuItemToSubmenu:(NSMenu *)findMenu;
 
 /**
  * Used as the string to search for (grabs the current word enclosing the cursor, or the homogenous word(s) currently

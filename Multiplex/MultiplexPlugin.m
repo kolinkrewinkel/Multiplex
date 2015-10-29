@@ -54,13 +54,29 @@ static NSString *kMPXApplicationName = @"Xcode";
 {
     if (self = [self init]) {
         self.bundle = bundle;
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [DVTSourceTextView mpx_addQuickAddNextMenuItem];
-        });
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(mpx_addQuickAddNextMenuItem:)
+                                                     name:NSMenuDidAddItemNotification
+                                                   object:nil];
+        
     }
 
     return self;
+}
+
+- (void)mpx_addQuickAddNextMenuItem:(NSNotification *)notification
+{
+    // Make sure there's a menu item to add it to in the first place.
+    NSMenu *menu = notification.object;
+    NSMenu *findSubmenu = [[menu itemWithTitle:@"Find"] submenu];
+    if (!findSubmenu) {
+        return;
+    }
+    
+    // Prevent an infinite loop because we'll be adding an item to a menu, setting off another notification.
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidAddItemNotification object:nil];
+    [DVTSourceTextView mpx_addQuickAddNextMenuItemToSubmenu:findSubmenu];
 }
 
 @end

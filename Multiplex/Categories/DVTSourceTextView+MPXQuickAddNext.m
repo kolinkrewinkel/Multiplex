@@ -21,10 +21,8 @@ NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
 
 @implementation DVTSourceTextView (MPXQuickAddNext)
 
-+ (void)mpx_addQuickAddNextMenuItem
++ (void)mpx_addQuickAddNextMenuItemToSubmenu:(NSMenu *)findMenu
 {
-    NSMenuItem *findMenuItem = [[NSApp mainMenu] itemWithTitle:@"Find"];
-    NSMenu *findMenu = findMenuItem.submenu;
     if ([findMenu itemWithTitle:kMPXQuickAddNextMenuItemTitle]) {
         return;
     }
