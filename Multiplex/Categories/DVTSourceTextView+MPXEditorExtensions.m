@@ -199,7 +199,8 @@ static NSString *kMPXNewlineString = @"\n";
                 NSRange lineRange = NSMakeRange(index + [kMPXNewlineString length], [lineToIndent length] + [kMPXNewlineString length]);                                
                 NSRange indentedRange = [self mpx_indentRange:lineRange];
                 
-                if (NSMaxRange(rangeOfInsertedText) >= lineRange.location) {
+                BOOL lineChanged = lineRange.length != indentedRange.length;
+                if (NSMaxRange(rangeOfInsertedText) >= lineRange.location && lineChanged) {
                     rangeOfInsertedText.location += indentedRange.location - lineRange.location;
                 }
 
