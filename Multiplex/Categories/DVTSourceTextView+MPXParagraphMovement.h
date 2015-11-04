@@ -8,6 +8,10 @@
 
 #import <DVTKit/DVTSourceTextView.h>
 
+/**
+ * For some reason, -moveToBeginningOfParagraph: and -moveParagraphBackwardsModifyingSelection: are used rather than
+ * a matching set (-x and -xModifyingSelection).
+ */
 @interface DVTSourceTextView (MPXParagraphMovement)
 
 @end

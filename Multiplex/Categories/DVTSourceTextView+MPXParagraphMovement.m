@@ -17,82 +17,106 @@
 
 @implementation DVTSourceTextView (MPXParagraphMovement)
 
-- (void)mpx_moveLinePositionIncludingLength:(BOOL)includeLength modifySelection:(BOOL)modifySelection
+#pragma mark - Upstream
+
+- (void)moveToBeginningOfParagraph:(id)sender
 {
     MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
-        NSRange previousAbsoluteRange = selection.range;
-        NSRange previousLineRange = [self.textStorage.string lineRangeForRange:previousAbsoluteRange];
+        NSRange rangeOfLine = [self.textStorage.string lineRangeForRange:selection.range];
         
-        NSRange newAbsoluteRange = previousAbsoluteRange;
-        
-        if (includeLength) {
-            // It's at the end of the line and needs to be moved down
-            if (NSMaxRange(previousAbsoluteRange) == (NSMaxRange(previousLineRange) - 1)
-                && NSMaxRange(previousLineRange) < [self.textStorage length]) {
-                NSRange newLineRange = [self.textStorage.string lineRangeForRange:NSMakeRange(NSMaxRange(previousLineRange), 0)];
-                newAbsoluteRange = NSMakeRange(NSMaxRange(newLineRange) - 1, 0);
-            } else {
-                newAbsoluteRange = NSMakeRange(NSMaxRange(previousLineRange) - 1, 0);
-            }
-        } else {
-            // It's at the beginning of the line and needs to be moved up
-            if (previousAbsoluteRange.location == previousLineRange.location && previousLineRange.location > 0) {
-                NSRange newLineRange = [self.textStorage.string lineRangeForRange:NSMakeRange(previousLineRange.location - 1, 0)];
-                newAbsoluteRange = NSMakeRange(newLineRange.location, 0);
-            } else {
-                newAbsoluteRange = NSMakeRange(previousLineRange.location, 0);
-            }
-        }
-        
-        MPXSelection *newSelection = nil;
-        if (modifySelection) {
-            newSelection = [[MPXSelection alloc] initWithSelectionRange:NSUnionRange(previousAbsoluteRange, newAbsoluteRange)
-                                                  indexWantedWithinLine:MPXNoStoredLineIndex
-                                                                 origin:newAbsoluteRange.location];
-        } else {
-            newSelection = [[MPXSelection alloc] initWithSelectionRange:newAbsoluteRange
-                                                  indexWantedWithinLine:MPXNoStoredLineIndex
-                                                                 origin:newAbsoluteRange.location];
-        }
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:NSMakeRange(rangeOfLine.location, 0)
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:rangeOfLine.location];
         
         return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
                                                        finalSelection:newSelection
                                                           mutatedText:NO];
     };
     
-    [self.mpx_selectionManager mapSelectionsWithMovementDirection:includeLength ? NSSelectionAffinityDownstream : NSSelectionAffinityUpstream
-                                              modifyingSelections:modifySelection
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityUpstream
+                                              modifyingSelections:NO
                                                        usingBlock:transformBlock];
-}
-
-- (void)moveToBeginningOfParagraph:(id)sender
-{
-    [self mpx_moveLinePositionIncludingLength:NO modifySelection:NO];
-}
-
-- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
-{
-    [self mpx_moveLinePositionIncludingLength:NO modifySelection:YES];
-}
-
-- (void)moveToEndOfParagraph:(id)sender
-{
-    [self mpx_moveLinePositionIncludingLength:YES modifySelection:NO];
-}
-
-- (void)moveToEndOfParagraphAndModifySelection:(id)sender
-{
-    [self mpx_moveLinePositionIncludingLength:YES modifySelection:YES];
 }
 
 - (void)moveParagraphBackwardAndModifySelection:(id)sender
 {
-    [self mpx_moveLinePositionIncludingLength:NO modifySelection:YES];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        if (selection.insertionIndex == 0) {
+            return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                           finalSelection:selection
+                                                              mutatedText:NO];
+        }
+
+        NSRange searchRange = NSMakeRange(selection.insertionIndex - 1, 0);
+        NSRange rangeOfLine = [self.textStorage.string lineRangeForRange:searchRange];
+        
+        NSRange newRange = [selection modifySelectionUpstreamByAmount:selection.insertionIndex - rangeOfLine.location];
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:selection.origin];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityUpstream
+                                              modifyingSelections:YES
+                                                       usingBlock:transformBlock];
+}
+
+#pragma mark - Downstream
+
+- (void)moveToEndOfParagraph:(id)sender
+{
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        NSRange rangeOfLine = [self.textStorage.string lineRangeForRange:selection.range];
+        NSRange endOfLineCaret = NSMakeRange(NSMaxRange(rangeOfLine) - 1, 0);
+        
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:endOfLineCaret
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:endOfLineCaret.location];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:NO
+                                                       usingBlock:transformBlock];
 }
 
 - (void)moveParagraphForwardAndModifySelection:(id)sender
 {
-    [self mpx_moveLinePositionIncludingLength:YES modifySelection:YES];
+    MPXSelectionMutationBlock transformBlock = ^MPXSelectionMutation *(MPXSelection *selection) {
+        // Prevent trying to move beyond the end of the text.
+        if (selection.insertionIndex + 1 > [self.textStorage.string length]) {
+            return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                           finalSelection:selection
+                                                              mutatedText:NO];
+        }
+    
+        // Check the position after the end of the range because when at the end of a line, we want to move forward onto
+        // the next line.
+        NSRange searchRange = NSMakeRange(selection.insertionIndex + 1, 0);
+
+        NSRange rangeOfLine = [self.textStorage.string lineRangeForRange:searchRange];
+        NSUInteger endOfLine = NSMaxRange(rangeOfLine) - 1;
+        
+        NSRange newRange = [selection modifySelectionDownstreamByAmount:endOfLine - selection.insertionIndex];
+        MPXSelection *newSelection = [[MPXSelection alloc] initWithSelectionRange:newRange
+                                                            indexWantedWithinLine:MPXNoStoredLineIndex
+                                                                           origin:selection.origin];
+        
+        return [[MPXSelectionMutation alloc] initWithInitialSelection:selection
+                                                       finalSelection:newSelection
+                                                          mutatedText:NO];
+    };
+    
+    [self.mpx_selectionManager mapSelectionsWithMovementDirection:NSSelectionAffinityDownstream
+                                              modifyingSelections:YES
+                                                       usingBlock:transformBlock];
 }
 
 @end
