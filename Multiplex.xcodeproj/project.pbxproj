@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		17963587F420FC6C9D934711 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B522172E4B68B9D17AA320A5 /* Pods.framework */; };
 		332AA5B61BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 332AA5B51BDDA0740037D1B7 /* DVTSourceTextView+MPXIndentation.m */; };
 		3336EC8B1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m in Sources */ = {isa = PBXBuildFile; fileRef = 3336EC8A1BD555E100EB032D /* DVTSourceTextView+MPXTokenizedEditing.m */; };
 		333860F61BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m in Sources */ = {isa = PBXBuildFile; fileRef = 333860F51BD5F11D0010ED50 /* DVTSourceTextView+MPXQuickAddNext.m */; };
@@ -299,7 +299,6 @@
 				33B3A3E718CD36BE00AA64C8 /* Frameworks */,
 				33B3A3E818CD36BE00AA64C8 /* Resources */,
 				303CED84CD8D47809E5313FB /* Copy Pods Resources */,
-				304B6276742BCA837B85B48E /* Embed Pods Frameworks */,
 				33A7959C1BAB22E300388FC2 /* CopyFiles */,
 			);
 			buildRules = (
@@ -378,21 +377,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		304B6276742BCA837B85B48E /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C03EF8C1E0814521B8BD1948 /* Check Pods Manifest.lock */ = {
