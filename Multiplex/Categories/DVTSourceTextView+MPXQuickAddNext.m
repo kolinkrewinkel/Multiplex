@@ -21,6 +21,11 @@ NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
 
 @implementation DVTSourceTextView (MPXQuickAddNext)
 
++ (void)mpx_overrideDuplicateMenuItem:(NSMenuItem *)duplicateItem
+{
+    duplicateItem.keyEquivalentModifierMask = NSCommandKeyMask | NSShiftKeyMask;
+}
+
 + (void)mpx_addQuickAddNextMenuItemToSubmenu:(NSMenu *)findMenu
 {
     if ([findMenu itemWithTitle:kMPXQuickAddNextMenuItemTitle]) {
@@ -32,17 +37,10 @@ NSString *kMPXQuickAddNextMenuItemTitle = @"Quick Add Next";
 
     NSMenuItem *quickAddNextItem = [[NSMenuItem alloc] initWithTitle:kMPXQuickAddNextMenuItemTitle
                                                               action:@selector(mpx_quickAddNext:)
-                                                       keyEquivalent:@"D"];
-    quickAddNextItem.keyEquivalent = @"d";
+                                                       keyEquivalent:@"d"];
     quickAddNextItem.keyEquivalentModifierMask = NSCommandKeyMask;
     quickAddNextItem.target = self;
     [findMenu addItem:quickAddNextItem];
-
-    NSMenuItem *editMenuItem = [[NSApp mainMenu] itemWithTitle:@"Edit"];
-    NSMenu *editMenu = editMenuItem.submenu;
-
-    NSMenuItem *duplicateItem = [editMenu itemWithTitle:@"Duplicate"];
-    duplicateItem.keyEquivalentModifierMask = NSCommandKeyMask | NSAlternateKeyMask;
 }
 
 - (void)mpx_quickAddNext:(id)sender

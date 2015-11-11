@@ -17,6 +17,11 @@ extern NSString *kMPXQuickAddNextMenuItemTitle;
 @interface DVTSourceTextView (MPXQuickAddNext)
 
 /**
+ * Updates the key equivalent mask for the duplicate item so that Quick Add Next can use Command-D.
+ */
++ (void)mpx_overrideDuplicateMenuItem:(NSMenuItem *)duplicateMenuItem;
+
+/**
  * Injects the "Quick Add Next" menu item into the "Find" menu.
  */
 + (void)mpx_addQuickAddNextMenuItemToSubmenu:(NSMenu *)findMenu;

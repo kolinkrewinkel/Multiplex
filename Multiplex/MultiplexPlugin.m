@@ -50,32 +50,45 @@ static NSString *kMPXApplicationName = @"Xcode";
 
 #pragma mark - Designated Initializer
 
-- (id)initWithBundle:(NSBundle *)bundle
+- (instancetype)initWithBundle:(NSBundle *)bundle
 {
     if (self = [self init]) {
         self.bundle = bundle;
-        
+
+        // Listen for additions to a menu so we can add the Quick Add Next item, if necessary.
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(mpx_addQuickAddNextMenuItem:)
+                                                 selector:@selector(menuItemAdded:)
                                                      name:NSMenuDidAddItemNotification
                                                    object:nil];
-        
     }
 
     return self;
 }
 
-- (void)mpx_addQuickAddNextMenuItem:(NSNotification *)notification
+#pragma mark - Menu Item Setup
+
+- (void)menuItemAdded:(NSNotification *)notification
 {
     // Make sure there's a menu item to add it to in the first place.
     NSMenu *menu = notification.object;
+
+    NSMenu *editSubmenu = [[menu itemWithTitle:@"Edit"] submenu];
+    if (editSubmenu) {
+        NSMenuItem *duplicateItem = [editSubmenu itemWithTitle:@"Duplicate"];
+        if (duplicateItem) {
+            [DVTSourceTextView mpx_overrideDuplicateMenuItem:duplicateItem];
+        }
+    }
+
     NSMenu *findSubmenu = [[menu itemWithTitle:@"Find"] submenu];
+
     if (!findSubmenu) {
         return;
     }
     
     // Prevent an infinite loop because we'll be adding an item to a menu, setting off another notification.
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidAddItemNotification object:nil];
+
     [DVTSourceTextView mpx_addQuickAddNextMenuItemToSubmenu:findSubmenu];
 }
 
