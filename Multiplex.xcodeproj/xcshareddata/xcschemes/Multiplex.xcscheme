@@ -29,26 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "33D9FFAF1B8BD24200A9CD4D"
-               BuildableName = "MPXFoundationTests.xctest"
-               BlueprintName = "MPXFoundationTests"
-               ReferencedContainer = "container:Multiplex/Modules/MPXFoundation/MPXFoundation.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "33D9FF311B8BC72600A9CD4D"
-               BuildableName = "MPXSelectionCoreTests.xctest"
-               BlueprintName = "MPXSelectionCoreTests"
-               ReferencedContainer = "container:Multiplex/Modules/MPXSelectionCore/MPXSelectionCore.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
